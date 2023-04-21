@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import DoctorRegister from '../views/DoctorRegister.vue'
 import PatientRegister from '../views/PatientRegister.vue'
 import Dashboard from '../views/Dashboard.vue'
+import Test from '../views/Test.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -23,9 +24,21 @@ const router = createRouter({
       component: PatientRegister
     },
     {
+      path: '/test',
+      name: 'test',
+      component: Test
+    },
+    {
       path: '/dashboard',
       name: 'dashboard',
-      component: Dashboard
+      component: Dashboard,
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          next('/');
+        }
+        next()
+      }
     },
     {
       path: '/about',
