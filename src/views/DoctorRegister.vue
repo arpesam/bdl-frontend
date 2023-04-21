@@ -69,6 +69,7 @@
 </template>
 
 <script>
+import { findProp } from '@vue/compiler-core'
 import axios from 'axios'
 
 export default {
@@ -115,7 +116,7 @@ export default {
         !!this.user.email &&
         !!this.user.name &&
         !!this.user.professional_id &&
-        // !!this.user.confirmPassword &&
+        !!this.user.confirmPassword &&
         !!this.user.password
       )
     },
