@@ -14,65 +14,65 @@
           <v-alert v-if="showAlert" title="Opps, ocorreu um erro!" :text="error" type="warning"></v-alert>
           <v-alert v-if="showSuccess" title="Sucesso!" text="Usuário cadastrado com sucesso!" type="success"></v-alert>
           <v-sheet class="d-flex flex-column align-center justify-center text-center">
-            <br />
-            <v-text-field
-              style="width: 250px"
-              label="Iniciais"
-              :rules="rules.mandatory"
-              hide-details="auto"
-              v-model="patient.initials"
-            ></v-text-field>
-            <br />
-            <v-text-field
-              style="width: 250px"
-              label="Núm. de registro"
-              :rules="rules.mandatory"
-              hide-details="auto"
-              v-model="patient.register_num"
-            ></v-text-field>
-            <br />
-            <v-text-field
-              style="width: 250px"
-              label="Data de nascimento"
-              :rules="rules.mandatory"
-              hide-details="auto"
-              v-model="patient.birth_date"
-            ></v-text-field>
-            <br />
-            <v-text-field
-              style="width: 250px"
-              label="Peso (74)"
-              :rules="rules.mandatory"
-              hide-details="auto"
-              v-model="patient.weight"
-            ></v-text-field>
-            <br />
-            <!-- <v-date-picker v-model="picker" :landscape="landscape" :reactive="reactive"></v-date-picker> -->
-
-            <br/>
-            <v-text-field
-              style="width: 250px"
-              label="Altura (1,60)"
-              :rules="rules.mandatory"
-              hide-details="auto"
-              v-model="patient.height"
-            ></v-text-field>
-            <br />
-            <v-select
-              :items="patient.items"
-              label="Etnia"
-              style="width: 250px"
-              v-model="patient.ethnicity"
-            ></v-select>
-            <br />
-            <v-radio-group v-model="patient.genre" inline>
-              <v-radio label="Masculino" value="masculino"></v-radio>
-              <v-radio label="Feminino" value="feminino"></v-radio>
-            </v-radio-group>
-            <v-btn variant="flat" color="info" @click="register" :loading="btn.loading" :disabled="!enableBtn">
-              Cadastrar
-            </v-btn>
-
+            <v-form v-model="isFormValid">
+              <br />
+              <v-text-field
+                style="width: 250px"
+                label="Iniciais"
+                :rules="rules.mandatory"
+                hide-details="auto"
+                v-model="patient.initials"
+              ></v-text-field>
+              <br />
+              <v-text-field
+                style="width: 250px"
+                label="Núm. de registro"
+                :rules="rules.mandatory"
+                hide-details="auto"
+                v-model="patient.register_num"
+              ></v-text-field>
+              <br />
+              <v-text-field
+                style="width: 250px"
+                label="Data de nascimento"
+                :rules="rules.mandatory"
+                hide-details="auto"
+                v-model="patient.birth_date"
+              ></v-text-field>
+              <br />
+              <v-text-field
+                style="width: 250px"
+                label="Peso (74)"
+                :rules="rules.mandatory"
+                hide-details="auto"
+                v-model="patient.weight"
+              ></v-text-field>
+              <br />
+              <!-- <v-date-picker v-model="picker" :landscape="landscape" :reactive="reactive"></v-date-picker> -->
+              <br/>
+              <v-text-field
+                style="width: 250px"
+                label="Altura (1,60)"
+                :rules="rules.mandatory"
+                hide-details="auto"
+                v-model="patient.height"
+              ></v-text-field>
+              <br />
+              <v-select
+                :items="patient.items"
+                label="Etnia"
+                style="width: 250px"
+                v-model="patient.ethnicity"
+              ></v-select>
+              <br />
+              <v-radio-group v-model="patient.genre" inline>
+                <v-radio label="Masculino" value="masculino"></v-radio>
+                <v-radio label="Feminino" value="feminino"></v-radio>
+              </v-radio-group>
+              <v-btn variant="flat" color="info" @click="register" :loading="btn.loading" :disabled="!enableBtn">
+                Cadastrar
+              </v-btn>
+            </v-form>
             <RouterLink to="/dashboard">
               <v-btn variant="flat" color="default" icon="mdi-arrow-left"></v-btn>
             </RouterLink>
@@ -94,6 +94,7 @@ export default {
   // },
   data() {
     return {
+      isFormValid: false,
       patient: {
         initials: '',
         register_num: '',
@@ -128,7 +129,7 @@ export default {
         !!this.patient.genre &&
         !!this.patient.height &&
         !!this.patient.items
-      )
+      ) && this.isFormValid
     }
   },
   methods: {

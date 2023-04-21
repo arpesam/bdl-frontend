@@ -5,54 +5,56 @@
     <v-alert v-if="showAlert" title="Opps, ocorreu um erro!" :text="error" type="warning"></v-alert>
     <v-alert v-if="showSuccess" title="Sucesso!" text="Usuário cadastrado com sucesso!" type="success"></v-alert>
     <br />
-    <v-text-field
-      style="width: 250px"
-      label="Nome*"
-      :rules="rules.name"
-      hide-details="auto"
-      v-model="user.name"
-      required
-    ></v-text-field>
-    <br />
-    <v-text-field
-      style="width: 250px"
-      label="Email*"
-      :rules="rules.email"
-      hide-details="auto"
-      v-model="user.email"
-      required
-    ></v-text-field>
-    <br />
-    <v-text-field
-      style="width: 250px"
-      label="Reg. Profissional*"
-      :rules="rules.professional_id"
-      hide-details="auto"
-      v-model="user.professional_id"
-      required
-    ></v-text-field>
-    <br />
-    <v-text-field
-      style="width: 250px"
-      label="Senha*"
-      :rules="rules.password"
-      hide-details="auto"
-      type="password"
-      v-model="user.password"
-      required
-    ></v-text-field>
-    <br />
+    <v-form v-model="isFormValid">
+      <v-text-field
+        style="width: 250px"
+        label="Nome*"
+        :rules="rules.name"
+        hide-details="auto"
+        v-model="user.name"
+        required
+      ></v-text-field>
+      <br />
+      <v-text-field
+        style="width: 250px"
+        label="Email*"
+        :rules="rules.email"
+        hide-details="auto"
+        v-model="user.email"
+        required
+      ></v-text-field>
+      <br />
+      <v-text-field
+        style="width: 250px"
+        label="Reg. Profissional*"
+        :rules="rules.professional_id"
+        hide-details="auto"
+        v-model="user.professional_id"
+        required
+      ></v-text-field>
+      <br />
+      <v-text-field
+        style="width: 250px"
+        label="Senha*"
+        :rules="rules.password"
+        hide-details="auto"
+        type="password"
+        v-model="user.password"
+        required
+      ></v-text-field>
+      <br />
 
-    <v-text-field
-      style="width: 250px"
-      label="Repita a senha"
-      :rules="rules.confirmPassword"
-      hide-details="auto"
-      type="password"
-      v-model="user.confirmPassword"
-      required
-    ></v-text-field>
-    <br />
+      <v-text-field
+        style="width: 250px"
+        label="Repita a senha"
+        :rules="rules.confirmPassword"
+        hide-details="auto"
+        type="password"
+        v-model="user.confirmPassword"
+        required
+      ></v-text-field>
+      <br />
+    </v-form>
     <v-btn
       variant="flat"
       color="info"
@@ -90,6 +92,7 @@ export default {
       error: '',
       showAlert: false,
       showSuccess: false,
+      isFormValid: false,
       rules: {
         email: [
           (value) => !!value || 'Preencha um email válido',
@@ -112,13 +115,14 @@ export default {
   },
   computed: {
     enableBtn() {
+
       return (
         !!this.user.email &&
         !!this.user.name &&
         !!this.user.professional_id &&
         !!this.user.confirmPassword &&
         !!this.user.password
-      )
+      ) && this.isFormValid
     },
     passwordMatchRule() {
       return (value) => value === this.password || 'Passwords do not match';

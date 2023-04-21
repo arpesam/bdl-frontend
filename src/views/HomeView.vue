@@ -4,23 +4,25 @@
     <br />
     <v-alert v-if="showAlert" title="Opps!" :text="error" type="warning"></v-alert>
     <br />
-    <v-text-field
-      style="width: 250px"
-      label="E-mail"
-      :rules="rules.email"
-      hide-details="auto"
-      v-model="user.email"
-    ></v-text-field>
-    <br />
-    <v-text-field
-      style="width: 250px"
-      label="Senha"
-      type="password"
-      :rules="rules.password"
-      hide-details="auto"
-      v-model="user.password"
-    ></v-text-field>
-    <br />
+    <v-form v-model="isFormValid">
+      <v-text-field
+        style="width: 250px"
+        label="E-mail"
+        :rules="rules.email"
+        hide-details="auto"
+        v-model="user.email"
+      ></v-text-field>
+      <br />
+      <v-text-field
+        style="width: 250px"
+        label="Senha"
+        type="password"
+        :rules="rules.password"
+        hide-details="auto"
+        v-model="user.password"
+      ></v-text-field>
+      <br />
+    </v-form>
     <v-btn
       variant="flat"
       color="success"
@@ -44,6 +46,7 @@ import axios from 'axios'
 export default {
   data() {
     return {
+      isFormValid: false,
       APIbasePath: import.meta.env.VITE_API_URL,
       user: {
         email: '',
@@ -65,7 +68,7 @@ export default {
   },
   methods: {
     login() {
-      if (!this.user.email || !this.user.password) {
+      if (!this.user.email || !this.user.password || !this.isFormValid) {
         this.error = "Preencha todos os campos"
         this.showAlert = true
         return
