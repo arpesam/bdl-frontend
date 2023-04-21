@@ -65,9 +65,16 @@ export default {
   },
   methods: {
     login() {
+      if (!this.user.email || !this.user.password) {
+        this.error = "Preencha todos os campos"
+        this.showAlert = true
+        return
+      }
+
       this.btn.loading = true
       this.btn.disabled = true
       this.showAlert = false
+
 
       axios
         .post(`${this.APIbasePath}/login`, {
