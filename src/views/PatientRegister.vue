@@ -119,10 +119,10 @@ export default {
         register_num: '',
         birth_date: '',
         weight: '',
-        ethnicity: 'Pardo',
+        ethnicity: 'Parda',
         genre: 'masculino',
         height: '',
-        items: ['Pardo', 'Branco', 'Preto', 'Amarelo', 'Indígena']
+        items: ['Parda', 'Branca', 'Preta', 'Amarela', 'Indígena']
       },
       btn: {
         loading: false,
@@ -221,10 +221,10 @@ export default {
         register_num: '',
         birth_date: '',
         weight: '',
-        ethnicity: 'Pardo',
+        ethnicity: 'Parda',
         genre: 'masculino',
         height: '',
-        items: ['Branco', 'Pardo', 'Preto', 'Amarelo', 'Indígena']
+        items: ['Branca', 'Parda', 'Preta', 'Amarela', 'Indígena']
       }
     }
 
