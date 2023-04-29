@@ -3,7 +3,7 @@
     <v-layout>
       <v-app-bar color="blue" density="compact">
         <template v-slot:prepend>
-          <v-app-bar-nav-icon></v-app-bar-nav-icon>
+          <!-- <v-app-bar-nav-icon></v-app-bar-nav-icon> -->
         </template>
 
         <v-app-bar-title>Cadastrar paciente</v-app-bar-title>
@@ -11,8 +11,18 @@
 
       <v-main>
         <v-container fluid fill-height style="height: 94vh">
-          <v-alert v-if="showAlert" title="Opps, ocorreu um erro!" :text="error" type="warning"></v-alert>
-          <v-alert v-if="showSuccess" title="Sucesso!" text="Usuário cadastrado com sucesso!" type="success"></v-alert>
+          <v-alert
+            v-if="showAlert"
+            title="Opps, ocorreu um erro!"
+            :text="error"
+            type="warning"
+          ></v-alert>
+          <v-alert
+            v-if="showSuccess"
+            title="Sucesso!"
+            text="Paciente cadastrado com sucesso!"
+            type="success"
+          ></v-alert>
           <v-sheet class="d-flex flex-column align-center justify-center text-center">
             <v-form v-model="isFormValid">
               <br />
@@ -35,25 +45,28 @@
               <v-text-field
                 style="width: 250px"
                 label="Data de nascimento"
-                :rules="rules.mandatory"
+                v-mask="'##/##/####'"
+                placeholder="DD/MM/YYYY"
+                :rules="rules.birth"
                 hide-details="auto"
                 v-model="patient.birth_date"
               ></v-text-field>
               <br />
               <v-text-field
                 style="width: 250px"
-                label="Peso (74)"
-                :rules="rules.mandatory"
+                label="Peso"
+                placeholder="74"
+                :rules="rules.number"
                 hide-details="auto"
                 v-model="patient.weight"
               ></v-text-field>
               <br />
               <!-- <v-date-picker v-model="picker" :landscape="landscape" :reactive="reactive"></v-date-picker> -->
-              <br/>
               <v-text-field
                 style="width: 250px"
-                label="Altura (1,60)"
-                :rules="rules.mandatory"
+                label="Altura"
+                placeholder="1,60"
+                :rules="rules.number"
                 hide-details="auto"
                 v-model="patient.height"
               ></v-text-field>
@@ -69,7 +82,13 @@
                 <v-radio label="Masculino" value="masculino"></v-radio>
                 <v-radio label="Feminino" value="feminino"></v-radio>
               </v-radio-group>
-              <v-btn variant="flat" color="info" @click="register" :loading="btn.loading" :disabled="!enableBtn">
+              <v-btn
+                variant="flat"
+                color="info"
+                @click="register"
+                :loading="btn.loading"
+                :disabled="!enableBtn"
+              >
                 Cadastrar
               </v-btn>
             </v-form>
@@ -86,12 +105,12 @@
 
 <script>
 import axios from 'axios'
-// import DatePicker from '../components/DatePicker.vue';
+import VueMask from 'vue-the-mask'
 
 export default {
-  // components: {
-  //   DatePicker
-  // },
+  directives: {
+    mask: VueMask.directive // Registre a diretiva de máscara globalmente
+  },
   data() {
     return {
       isFormValid: false,
@@ -103,19 +122,33 @@ export default {
         ethnicity: 'Pardo',
         genre: 'masculino',
         height: '',
-        items: ['Branco', 'Preto', 'Pardo', 'Amarelo']
+        items: ['Pardo', 'Branco', 'Preto', 'Amarelo', 'Indígena']
       },
       btn: {
         loading: false,
         disabled: false
       },
       rules: {
-        mandatory: [(value) => !!value || 'Este campo é obrigatório']
+        mandatory: [(value) => !!value || 'Este campo é obrigatório'],
+        number: [
+          (value) => !!value || 'Este campo é obrigatório',
+          (value) => {
+            const regex = /^\d{1,3}(,\d{1,5})?$/
+            return regex.test(value) || 'Peso deve ser um número'
+          }
+        ],
+        birth: [
+          (value) => !!value || 'Este campo é obrigatório',
+          (value) => {
+            const regex = /^\d{2}\/\d{2}\/\d{4}$/
+            return regex.test(value) || 'Esta data é inválida'
+          }
+        ]
       },
       APIbasePath: import.meta.env.VITE_API_URL,
       error: '',
       showAlert: false,
-      showSuccess: false,
+      showSuccess: false
     }
   },
   computed: {
@@ -128,8 +161,9 @@ export default {
         !!this.patient.ethnicity &&
         !!this.patient.genre &&
         !!this.patient.height &&
-        !!this.patient.items
-      ) && this.isFormValid
+        !!this.patient.items &&
+        this.isFormValid
+      )
     }
   },
   methods: {
@@ -138,18 +172,33 @@ export default {
       this.btn.disabled = true
       this.showAlert = false
       axios
-        .post(`${this.APIbasePath}/patient`, {
-          ...this.patient
-        })
+        .post(
+          `${this.APIbasePath}/patient`,
+          {
+            ...this.patient
+          },
+          {
+            headers: {
+              Authorization: localStorage.getItem('token')
+            }
+          }
+        )
         .then((response) => {
           if (response.status == 201) {
             console.log('Paciente cadastrado com sucesso', response)
             this.btn.loading = false
             this.showSuccess = true
-            // setTimeout(() => {
-            //   this.$router.push(`/dashboard`)
-            // }, 1000);
-            // localStorage.setItem('token', response.data.token)
+            // let patients = sessionStorage.getItem('patients')
+            // if (patients) {
+            //   patients = JSON.parse(patients)
+            //   patients.push(this.patient)
+            // }
+            // sessionStorage.setItem('patients', JSON.stringify(patients));
+            setTimeout(() => {
+              this.$router.push(`/dashboard`)
+              this.showSuccess = false
+              this.btn.loading = false
+            }, 2000)
           }
         })
         .catch((err) => {
@@ -158,8 +207,27 @@ export default {
           this.btn.disabled = false
           this.btn.loading = false
           this.error = err?.response?.data?.message
+          setTimeout(() => {
+            this.$router.push(`/`)
+            this.showAlert = false
+          }, 5000)
+
+
         })
+    },
+    clearInfo() {
+      this.patient = {
+        initials: '',
+        register_num: '',
+        birth_date: '',
+        weight: '',
+        ethnicity: 'Pardo',
+        genre: 'masculino',
+        height: '',
+        items: ['Branco', 'Pardo', 'Preto', 'Amarelo', 'Indígena']
+      }
     }
+
   }
 }
 </script>

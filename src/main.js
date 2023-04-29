@@ -6,6 +6,7 @@ import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
+import VueMask from 'v-mask'
 
 
 const vuetify = createVuetify({
@@ -22,6 +23,7 @@ const app = createApp(App)
 app.use(createPinia())
 app.use(router)
 app.use(vuetify)
+// app.use(VueMask)
 app.component('VueDatePicker', VueDatePicker)
 
 app.mount('#app')
