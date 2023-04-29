@@ -57,7 +57,7 @@
                     class="pa-4 text-center mx-auto"
                   >
                     <img
-                      v-if="usr.gender === 'Masculino'"
+                      v-if="usr.genre === 'masculino'"
                       src="../assets/man.png"
                       width="50"
                       style="opacity: 0.3"
