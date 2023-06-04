@@ -29,72 +29,31 @@
       <!-- CODE -->
       <v-main>
         <v-container fluid class="fill-height">
-          <v-row  v-if="loading">
+          <v-row v-if="loading">
             <v-col justify-center>
               <LoadingComponent :loading="loading" />
             </v-col>
           </v-row>
           <v-row v-else>
-              <v-col v-if="patients.length === 0" justify-center cols="12" sm="12">
-                <div class="empty-message">Voce ainda não cadastrou nenhum paciente, clique em Cadastrar para adicionar novos pacientes</div>
-              </v-col>
-              <v-col
-                  v-else
-                  v-for="usr in patients"
-                  :key="usr.id"
-                  cols="12"
-                  xs="6"
-                  sm="6"
-                  md="3"
-                  lg="3"
-                  xl="4"
-                >
-                  <v-sheet
-                    elevation="12"
-                    max-width="600"
-                    rounded="lg"
-                    width="100%"
-                    class="pa-4 text-center mx-auto"
-                  >
-                    <img
-                      v-if="usr.genre === 'masculino'"
-                      src="../assets/man.png"
-                      width="50"
-                      style="opacity: 0.3"
-                    />
-                    <img v-else src="../assets/woman.png" width="50" style="opacity: 0.3" />
-
-                    <h2 class="text-h5 mb-3">{{ usr.initials }}</h2>
-
-                    <!-- registro -->
-                    <p class="mb-1 text-medium-emphasis text-body-2">
-                      {{ usr.register_num }}
-                    </p>
-
-                    <!-- etnia -->
-                    <p class="mb-1 text-medium-emphasis text-body-2">
-                      {{ usr.ethnicity }}
-                    </p>
-
-                    <!-- peso -->
-                    <p class="mb-1 text-medium-emphasis text-body-2">
-                      {{ usr.weight }}
-                    </p>
-                    <!-- altura -->
-                    <p class="mb-1 text-medium-emphasis text-body-2">
-                      {{ usr.height }}
-                    </p>
-
-                    <!-- genero -->
-                    <p class="mb-1 text-medium-emphasis text-body-2">
-                      {{ usr.gender }}
-                    </p>
-
-                    <!-- <v-divider class="mb-1"></v-divider> -->
-
-                    <div class="text-end"></div>
-                  </v-sheet>
-                </v-col>
+            <v-col v-if="patients.length === 0" justify-center cols="12" sm="12">
+              <div class="empty-message">
+                Voce ainda não cadastrou nenhum paciente, clique em Cadastrar para adicionar novos
+                pacientes
+              </div>
+            </v-col>
+            <v-col
+              v-else
+              v-for="usr in patients"
+              :key="usr.id"
+              cols="12"
+              xs="6"
+              sm="6"
+              md="3"
+              lg="3"
+              xl="4"
+            >
+              <PatientCard :patient="usr" @cardClick="goToEdit(usr)" />
+            </v-col>
           </v-row>
         </v-container>
       </v-main>
@@ -105,10 +64,12 @@
 <script>
 import axios from 'axios'
 import LoadingComponent from '@/components/Loading.vue'
+import PatientCard from '@/components/PatientCard.vue'
 
 export default {
   components: {
-    LoadingComponent
+    LoadingComponent,
+    PatientCard
   },
   data() {
     return {
@@ -127,19 +88,20 @@ export default {
     logout() {
       localStorage.removeItem('token')
       this.$router.push(`/`)
+    },
+    goToEdit(patient) {
+      console.log('test', patient._id)
+      console.log('patient', patient)
+      localStorage.setItem(`${patient._id}`, JSON.stringify(patient))
+      this.$router.push({
+        name: 'exams-view',
+        params: { id: patient._id, patient }
+      })
     }
   },
 
   mounted() {
     this.loading = true
-    // const patients = sessionStorage.getItem('patients')
-
-    // if (patients) {
-    //   debugger
-    //   this.patients = JSON.parse(patients)
-    //   return
-    // }
-
     axios
       .get(`${this.APIbasePath}/patient`, {
         headers: {
@@ -150,7 +112,13 @@ export default {
         this.loading = false
         console.log(response.data.patients)
         this.patients = response.data.patients
-        // sessionStorage.setItem('patients', response.data.patients)
+      })
+      .catch((err) => {
+        if (err?.response?.status == 401) {
+          this.$router.push({
+            name: 'home'
+          })
+        }
       })
   }
 }

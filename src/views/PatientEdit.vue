@@ -6,16 +6,28 @@
           <!-- <v-app-bar-nav-icon></v-app-bar-nav-icon> -->
         </template>
 
-        <v-app-bar-title>Cadastrar paciente!</v-app-bar-title>
+        <v-app-bar-title>Editar paciente</v-app-bar-title>
       </v-app-bar>
 
       <v-main>
         <v-container fluid fill-height style="height: 94vh">
-          <Alert :successAlert="successAlert" :warningAlert="warningAlert" />
+          <v-alert
+            v-if="showAlert"
+            title="Opps, ocorreu um erro!"
+            :text="error"
+            type="warning"
+          ></v-alert>
+          <v-alert
+            v-if="showSuccess"
+            title="Sucesso!"
+            text="Paciente editado com sucesso!"
+            type="success"
+          ></v-alert>
           <v-sheet class="d-flex flex-column align-center justify-center text-center">
             <v-form v-model="isFormValid">
               <br />
               <v-text-field
+              class="mt-2"
                 style="width: 250px"
                 label="Iniciais"
                 :rules="rules.mandatory"
@@ -34,6 +46,7 @@
               <v-text-field
                 style="width: 250px"
                 label="Data de nascimento"
+                v-mask="'##/##/####'"
                 placeholder="DD/MM/YYYY"
                 :rules="rules.birth"
                 hide-details="auto"
@@ -77,7 +90,7 @@
                 :loading="btn.loading"
                 :disabled="!enableBtn"
               >
-                Cadastrar
+                Salvar
               </v-btn>
             </v-form>
             <RouterLink to="/dashboard">
@@ -93,12 +106,13 @@
 
 <script>
 import axios from 'axios'
-import Alert from '@/components/Alert.vue'
+import VueMask from 'vue-the-mask'
 
 export default {
-  components: {
-    Alert
+  directives: {
+    mask: VueMask.directive // Registre a diretiva de máscara globalmente
   },
+  // props: ['patient'],
   data() {
     return {
       isFormValid: false,
@@ -110,6 +124,7 @@ export default {
         ethnicity: 'Parda',
         genre: 'masculino',
         height: '',
+        _id: '',
         items: ['Parda', 'Branca', 'Preta', 'Amarela', 'Indígena']
       },
       btn: {
@@ -136,13 +151,12 @@ export default {
       APIbasePath: import.meta.env.VITE_API_URL,
       error: '',
       showAlert: false,
-      showSuccess: false,
-      successAlert: '',
-      warningAlert: ''
+      showSuccess: false
     }
   },
   computed: {
     enableBtn() {
+      // debugger
       return (
         !!this.patient.initials &&
         !!this.patient.register_num &&
@@ -150,9 +164,9 @@ export default {
         !!this.patient.weight &&
         !!this.patient.ethnicity &&
         !!this.patient.genre &&
-        !!this.patient.height &&
-        !!this.patient.items &&
-        this.isFormValid
+        !!this.patient.height
+        // !!this.patient.items
+        // this.isFormValid
       )
     }
   },
@@ -160,11 +174,11 @@ export default {
     register() {
       this.btn.loading = true
       this.btn.disabled = true
-      this.successAlert = ''
-      this.warningAlert = ''
+      this.showAlert = false
+      console.log("----", this.patient._id);
       axios
-        .post(
-          `${this.APIbasePath}/patient`,
+        .put(
+          `${this.APIbasePath}/patient/${this.patient._id}`,
           {
             ...this.patient
           },
@@ -175,46 +189,61 @@ export default {
           }
         )
         .then((response) => {
-          if (response.status == 201) {
-            console.log('Paciente cadastrado com sucesso', response)
+          if (response.status == 200) {
+            console.log('Paciente editado com sucesso', response)
             this.btn.loading = false
-            this.successAlert = 'Paciente cadastrado com sucesso!'
+            this.showSuccess = true
+            // let patients = sessionStorage.getItem('patients')
+            // if (patients) {
+            //   patients = JSON.parse(patients)
+            //   patients.push(this.patient)
+            // }
+            // sessionStorage.setItem('patients', JSON.stringify(patients));
             setTimeout(() => {
-              this.$router.push(`/dashboard`)
-              this.successAlert = ''
+              // this.$router.push(`/dashboard`)
+              this.showSuccess = false
               this.btn.loading = false
             }, 2000)
           }
         })
         .catch((err) => {
           console.log(err)
-          this.warningAlert = err?.response?.data?.message || "Erro desconhecido"
+          this.showAlert = true
           this.btn.disabled = false
           this.btn.loading = false
+          this.error = err?.response?.data?.message
           setTimeout(() => {
             // this.$router.push(`/`)
-            this.warningAlert = ''
+            this.showAlert = false
           }, 5000)
+
+
         })
     },
-    clearInfo() {
-      this.patient = {
-        initials: '',
-        register_num: '',
-        birth_date: '',
-        weight: '',
-        ethnicity: 'Parda',
-        genre: 'masculino',
-        height: '',
-        items: ['Branca', 'Parda', 'Preta', 'Amarela', 'Indígena']
-      }
-    }
+  },
+  mounted() {
+    this.loading = true
+    console.log("params-", this.$route.params);
+    var patient = localStorage.getItem(this.$route.params.id)
+    patient = JSON.parse(patient)
+
+    console.log("pateint", patient);
+    const date = new Date(patient.birth_date);
+
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based, so we need to add 1
+    const year = date.getFullYear();
+
+    const formattedDate = `${day}/${month}/${year}`;
+    this.patient = patient
+    this.patient.birth_date = formattedDate
   }
 }
 </script>
 
 <style>
 .login-container {
+  /* border: 2px solid red; */
   color: #3d3d3d;
   display: flex;
   flex-direction: column;
@@ -226,13 +255,6 @@ export default {
   transform: translate(-50%, -50%);
 }
 
-.button-container {
-  margin-top: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
 
 button {
   margin: 10px;

@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import DoctorRegister from '../views/DoctorRegister.vue'
 import PatientRegister from '../views/PatientRegister.vue'
+import PatientEdit from '../views/PatientEdit.vue'
+import ExamsView from '../views/ExamsView.vue'
 import Dashboard from '../views/Dashboard.vue'
 import Test from '../views/Test.vue'
 
@@ -21,7 +23,45 @@ const router = createRouter({
     {
       path: '/register/patient',
       name: 'patient-register',
-      component: PatientRegister
+      component: PatientRegister,
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token')
+        if (!token) {
+          next('/')
+        }
+        next()
+      }
+    },
+    {
+      path: '/register/:id',
+      name: 'patient-edit',
+      component: PatientEdit,
+      props: true,
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token')
+        if (!token) {
+          next('/')
+        }
+        next()
+      }
+    },
+    {
+      path: '/test',
+      name: 'test',
+      component: Test
+    },
+    {
+      path: '/patient/:id/exams',
+      name: 'exams-view',
+      component: ExamsView,
+      props: true,
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token')
+        if (!token) {
+          next('/')
+        }
+        next()
+      }
     },
     {
       path: '/test',
@@ -33,9 +73,9 @@ const router = createRouter({
       name: 'dashboard',
       component: Dashboard,
       beforeEnter: (to, from, next) => {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('token')
         if (!token) {
-          next('/');
+          next('/')
         }
         next()
       }
@@ -50,5 +90,13 @@ const router = createRouter({
     }
   ]
 })
+
+function beforeEnter(to, from, next) {
+  const token = localStorage.getItem('token')
+  if (!token) {
+    next('/')
+  }
+  next()
+}
 
 export default router
