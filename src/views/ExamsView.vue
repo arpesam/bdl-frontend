@@ -39,7 +39,7 @@
                 <v-radio label="Não" value=""></v-radio>
               </v-radio-group>
 
-              <v-radio-group v-model="exams.selected_physicalExam">
+              <v-radio-group v-model="exams.selected_physical_exam">
                 <template v-slot:label>
                   <div style="white-space: wrap">
                     <strong>Exame físico: apresenta as alterações abaixo?</strong>
@@ -47,12 +47,12 @@
                 </template>
                 <v-radio
                   label="Dispnéia e/ou sinais de insuficiência respiratória"
-                  value="dispnéia"
+                  value="dispneia"
                 ></v-radio>
-                <v-radio label="Má perfusão tecidual" value="máPerfusão"></v-radio>
+                <v-radio label="Má perfusão tecidual" value="ma-ferfusao"></v-radio>
                 <v-radio
                   label="Sonolência e/ou alteração do nível da consciência"
-                  value="sonolência"
+                  value="sonolencia"
                 ></v-radio>
                 <v-radio label="PAM < 70 mmHg e/ou FC > 100 bpm" value="PAM/FC"></v-radio>
                 <v-radio label="Não" value=""></v-radio>
@@ -228,7 +228,7 @@ export default {
         selected_leucocito: null,
         selected_plaquetas: null,
         selected_transfusion: null,
-        selected_physicalExam: ''
+        selected_physical_exam: ''
       },
       patient: {
         _id: ''
@@ -249,7 +249,7 @@ export default {
     needTransfusion() {
       let hb = this.exams.selected_hb
       let comorbidity = this.exams.comorbities
-      let physicalExamSymptoms = this.exams.selected_physicalExam
+      let physicalExamSymptoms = this.exams.selected_physical_exam
 
       console.log(
         'hb',
