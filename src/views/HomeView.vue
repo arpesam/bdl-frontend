@@ -85,7 +85,6 @@ export default {
         })
         .then((response) => {
           if (response.status == 200) {
-            console.log('usuário cadastrado com sucesso', response)
             this.btn.loading = false
             localStorage.setItem('token', response.data.token)
             this.$router.push(`/dashboard`)
@@ -100,7 +99,6 @@ export default {
           if (message == 'Invalid email or password') {
             this.error = 'Email ou senha inválidos'
             setTimeout(() => {
-              console.log('teste')
               this.showAlert = false
               this.error = ''
             }, 3000)

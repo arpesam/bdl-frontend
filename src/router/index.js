@@ -33,7 +33,7 @@ const router = createRouter({
       }
     },
     {
-      path: '/register/:id',
+      path: '/patient/:id',
       name: 'patient-edit',
       component: PatientEdit,
       props: true,

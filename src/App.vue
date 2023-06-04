@@ -1,7 +1,5 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
-import VuetifyApp from './components/VuetifyApp.vue';
 </script>
 
 <template>
@@ -26,7 +24,6 @@ import VuetifyApp from './components/VuetifyApp.vue';
 <style scoped>
   .main {
     height: 100vh;
-    border: 2px solid green;
   }
 
 </style>

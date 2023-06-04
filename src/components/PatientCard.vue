@@ -1,3 +1,4 @@
+      <!-- @click="$emit('cardClick', patient)" -->
 <template>
     <v-sheet
       elevation="12"
@@ -5,7 +6,7 @@
       rounded="lg"
       width="100%"
       class="pa-4 text-center mx-auto"
-      @click="$emit('cardClick', patient)"
+      @click="hideDetails"
     >
       <img
         v-if="patient.genre === 'masculino'"
@@ -22,28 +23,31 @@
         {{ patient.register_num }}
       </p>
 
-      <!-- etnia -->
-      <p class="mb-1 text-medium-emphasis text-body-2">
-        {{ patient.ethnicity }}
-      </p>
+      <div v-if="showDetails">
+        <!-- etnia -->
+        <p class="mb-1 text-medium-emphasis text-body-2">
+          {{ patient.ethnicity }}
+        </p>
 
-      <!-- peso -->
-      <p class="mb-1 text-medium-emphasis text-body-2">
-        {{ patient.weight }}
-      </p>
-      <!-- altura -->
-      <p class="mb-1 text-medium-emphasis text-body-2">
-        {{ patient.height }}
-      </p>
+        <!-- peso -->
+        <p class="mb-1 text-medium-emphasis text-body-2">
+          {{ patient.weight }}
+        </p>
+        <!-- altura -->
+        <p class="mb-1 text-medium-emphasis text-body-2">
+          {{ patient.height }}
+        </p>
 
-      <!-- genero -->
-      <p class="mb-1 text-medium-emphasis text-body-2">
-        {{ patient.gender }}
-      </p>
-
-      <!-- <v-divider class="mb-1"></v-divider> -->
-
-      <div class="text-end"></div>
+        <!-- genero -->
+        <p class="mb-1 text-medium-emphasis text-body-2">
+          {{ patient.gender }}
+        </p>
+      </div>
+      <div v-if="!showDetails">
+          <v-btn color="red" @click="$emit('deletePatient', patient)" icon="mdi-trash-can-outline" class="mr-3" size="x-large"></v-btn>
+          <v-btn color="blue" @click="goToPatientEdit" icon="mdi-pencil" class="mr-3" size="x-large"></v-btn>
+          <v-btn color="green" @click="goToExams" icon="mdi-test-tube" class="ml-3" size="x-large"></v-btn>
+      </div>
     </v-sheet>
 </template>
 
@@ -53,7 +57,31 @@ export default {
     patient: {
       type: Object,
       required: true
+    },
+  },
+  data() {
+    return {
+      showDetails: true
     }
+  },
+  methods: {
+    hideDetails(){
+      this.showDetails = !this.showDetails
+    },
+    goToPatientEdit() {
+      localStorage.setItem(`${this.patient._id}`, JSON.stringify(this.patient))
+      this.$router.push({
+        name: 'patient-edit',
+        params: { id: this.patient._id}
+      })
+    },
+    goToExams() {
+      localStorage.setItem(`${this.patient._id}`, JSON.stringify(this.patient))
+      this.$router.push({
+        name: 'exams-view',
+        params: { id: this.patient._id }
+      })
+    },
   }
 }
 </script>

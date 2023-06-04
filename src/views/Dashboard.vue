@@ -1,5 +1,5 @@
 <template>
-  <v-card class="mx-auto">
+  <v-card class="mx-auto" elevation="0">
     <v-layout>
       <v-app-bar color="blue" density="compact">
         <template v-slot:prepend>
@@ -10,10 +10,7 @@
 
         <template v-slot:append>
           <RouterLink to="/register/patient">
-            <v-btn class="ma-2" color="white" variant="flat">
-              <v-icon start icon="mdi-plus"></v-icon>
-              Cadastrar
-            </v-btn>
+            <v-btn icon="mdi-account-multiple-plus" color="white" size="x-large"></v-btn>
           </RouterLink>
         </template>
       </v-app-bar>
@@ -29,6 +26,7 @@
       <!-- CODE -->
       <v-main>
         <v-container fluid class="fill-height">
+          <Alert :successAlert="successAlert" :warningAlert="warningAlert" />
           <v-row v-if="loading">
             <v-col justify-center>
               <LoadingComponent :loading="loading" />
@@ -52,24 +50,33 @@
               lg="3"
               xl="4"
             >
-              <PatientCard :patient="usr" @cardClick="goToEdit(usr)" />
+              <PatientCard :patient="usr" @deletePatient="deletePatient(usr)" />
             </v-col>
           </v-row>
         </v-container>
       </v-main>
     </v-layout>
   </v-card>
+  <v-snackbar v-model="snackbar">
+    {{ snackBarText }}
+
+    <template v-slot:actions>
+      <v-btn :color="snackbarColor" variant="text" @click="snackbar = false"> Fechar </v-btn>
+    </template>
+  </v-snackbar>
 </template>
 
 <script>
 import axios from 'axios'
 import LoadingComponent from '@/components/Loading.vue'
 import PatientCard from '@/components/PatientCard.vue'
+import Alert from '@/components/Alert.vue'
 
 export default {
   components: {
     LoadingComponent,
-    PatientCard
+    PatientCard,
+    Alert
   },
   data() {
     return {
@@ -78,7 +85,12 @@ export default {
       menu: 'fa-list',
       password: '',
       patients: [],
-      loading: false
+      loading: false,
+      successAlert: '',
+      warningAlert: '',
+      snackbar: false,
+      snackBarText: '',
+      snackbarColor: 'green'
     }
   },
   methods: {
@@ -90,13 +102,42 @@ export default {
       this.$router.push(`/`)
     },
     goToEdit(patient) {
-      console.log('test', patient._id)
-      console.log('patient', patient)
       localStorage.setItem(`${patient._id}`, JSON.stringify(patient))
       this.$router.push({
         name: 'exams-view',
         params: { id: patient._id, patient }
       })
+    },
+    deletePatient(patient) {
+      this.warningAlert = ''
+      this.successAlert = ''
+      this.loading = true
+      axios
+        .delete(`${this.APIbasePath}/patient/${patient._id}`, {
+          headers: {
+            Authorization: localStorage.getItem('token')
+          }
+        })
+        .then((response) => {
+          if (response.status == 200) {
+            this.patients = this.patients.map((pt) => {
+              if (pt._id != patient._id) {
+                return pt
+              }
+            })
+            this.loading = false
+            this.successAlert = 'Removido com sucesso'
+            this.snackbar = true
+            this.snackBarText = 'Removido com sucesso'
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+          this.loading = false
+          this.snackbarColor = 'orange'
+          this.snackbar = true
+          this.snackBarText = err?.response?.data?.message
+        })
     }
   },
 

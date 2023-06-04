@@ -1,68 +1,68 @@
 <template>
-  <v-card class="mx-auto">
+  <v-card class="mx-auto" elevation="0">
     <v-layout>
-      <v-app-bar color="blue" density="compact">
-        <template v-slot:prepend>
-          <!-- <v-app-bar-nav-icon></v-app-bar-nav-icon> -->
-        </template>
+      <v-app-bar color="blue" density="compact" elevation="0">
+        <v-app-bar-title>Cadastrar paciente</v-app-bar-title>
 
-        <v-app-bar-title>Cadastrar paciente!</v-app-bar-title>
+        <template v-slot:append>
+          <RouterLink to="/dashboard">
+          <v-btn icon="mdi-arrow-left" color="white" size="x-large"></v-btn>
+          </RouterLink>
+        </template>
       </v-app-bar>
 
       <v-main>
-        <v-container fluid fill-height style="height: 94vh">
+        <v-container fluid fill-height>
           <Alert :successAlert="successAlert" :warningAlert="warningAlert" />
           <v-sheet class="d-flex flex-column align-center justify-center text-center">
             <v-form v-model="isFormValid">
-              <br />
               <v-text-field
-                style="width: 250px"
+                style="width: 250px; margin-bottom: 10px;"
                 label="Iniciais"
                 :rules="rules.mandatory"
                 hide-details="auto"
                 v-model="patient.initials"
               ></v-text-field>
-              <br />
+              <!-- <br /> -->
               <v-text-field
-                style="width: 250px"
+                style="width: 250px; margin-bottom: 10px;"
                 label="Núm. de registro"
                 :rules="rules.mandatory"
                 hide-details="auto"
                 v-model="patient.register_num"
               ></v-text-field>
-              <br />
+
               <v-text-field
-                style="width: 250px"
+                style="width: 250px; margin-bottom: 10px;"
                 label="Data de nascimento"
                 placeholder="DD/MM/YYYY"
                 :rules="rules.birth"
                 hide-details="auto"
                 v-model="patient.birth_date"
               ></v-text-field>
-              <br />
+
               <v-text-field
-                style="width: 250px"
+                style="width: 250px; margin-bottom: 10px;"
                 label="Peso"
                 placeholder="74"
                 :rules="rules.number"
                 hide-details="auto"
                 v-model="patient.weight"
               ></v-text-field>
-              <br />
-              <!-- <v-date-picker v-model="picker" :landscape="landscape" :reactive="reactive"></v-date-picker> -->
+
               <v-text-field
-                style="width: 250px"
+                style="width: 250px; margin-bottom: 10px;"
                 label="Altura"
                 placeholder="1,60"
                 :rules="rules.number"
                 hide-details="auto"
                 v-model="patient.height"
               ></v-text-field>
-              <br />
+              <!-- <br /> -->
               <v-select
                 :items="patient.items"
                 label="Etnia"
-                style="width: 250px"
+                style="width: 250px; margin-bottom: 10px;"
                 v-model="patient.ethnicity"
               ></v-select>
               <br />
@@ -80,9 +80,6 @@
                 Cadastrar
               </v-btn>
             </v-form>
-            <RouterLink to="/dashboard">
-              <v-btn variant="flat" color="default" icon="mdi-arrow-left"></v-btn>
-            </RouterLink>
           </v-sheet>
           <!-- </v-row> -->
         </v-container>
@@ -176,7 +173,6 @@ export default {
         )
         .then((response) => {
           if (response.status == 201) {
-            console.log('Paciente cadastrado com sucesso', response)
             this.btn.loading = false
             this.successAlert = 'Paciente cadastrado com sucesso!'
             setTimeout(() => {

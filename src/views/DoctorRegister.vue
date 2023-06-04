@@ -2,8 +2,7 @@
   <div class="login-container">
     <img src="../assets/logo.png" alt="" srcset="../assets/logo.png" style="width: 70px" />
     <br />
-    <v-alert v-if="showAlert" title="Opps, ocorreu um erro!" :text="error" type="warning"></v-alert>
-    <v-alert v-if="showSuccess" title="Sucesso!" text="Usuário cadastrado com sucesso!" type="success"></v-alert>
+    <Alert :successAlert="successAlert" :warningAlert="warningAlert" />
     <br />
     <v-form v-model="isFormValid">
       <v-text-field
@@ -71,10 +70,13 @@
 </template>
 
 <script>
-import { findProp } from '@vue/compiler-core'
 import axios from 'axios'
+import Alert from '@/components/Alert.vue'
 
 export default {
+  components: {
+    Alert,
+  },
   data() {
     return {
       user: {
@@ -89,9 +91,8 @@ export default {
         disabled: false
       },
       APIbasePath: import.meta.env.VITE_API_URL,
-      error: '',
-      showAlert: false,
-      showSuccess: false,
+      warningAlert: '',
+      successAlert: '',
       isFormValid: false,
       rules: {
         email: [
@@ -132,7 +133,8 @@ export default {
     signup() {
       this.btn.loading = true
       this.btn.disabled = true
-      this.showAlert = false
+      this.warningAlert = ''
+      this.successAlert = ''
       delete this.user.confirmPassword
       axios
         .post(`${this.APIbasePath}/signup`, {
@@ -140,9 +142,8 @@ export default {
         })
         .then((response) => {
           if (response.status == 201) {
-            console.log('usuário cadastrado com sucesso', response)
             this.btn.loading = false
-            this.showSuccess = true
+            this.successAlert = 'Usuário cadastrado com sucesso!'
             setTimeout(() => {
               this.$router.push(`/dashboard`)
             }, 1000);
@@ -151,10 +152,9 @@ export default {
         })
         .catch((err) => {
           console.log(err)
-          this.showAlert = true
+          this.warningAlert = err?.response?.data?.message
           this.btn.disabled = false
           this.btn.loading = false
-          this.error = err?.response?.data?.message
         })
     }
   }

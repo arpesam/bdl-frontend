@@ -1,33 +1,34 @@
 <template>
-  <v-card class="mx-auto">
-    <v-layout>
-      <v-app-bar :color="needTransfusion || 'blue'" density="compact">
-        <template v-slot:prepend>
-          <!-- <v-app-bar-nav-icon></v-app-bar-nav-icon> -->
-        </template>
+  <v-layout>
+    <v-app-bar color="blue" density="compact" elevation="0">
+      <v-app-bar-title style="font-size: 15px">Sugestão de conduta</v-app-bar-title>
+      <template v-slot:append>
+        <RouterLink to="/dashboard">
+          <v-btn icon="mdi-arrow-left" color="white" size="x-large"></v-btn>
+        </RouterLink>
+      </template>
+    </v-app-bar>
 
-        <!-- <v-app-bar-title>Sugestão de conduta:</v-app-bar-title> -->
-        <v-app-bar-title>{{ needTransfusionText }}</v-app-bar-title>
-      </v-app-bar>
+    <v-app-bar :color="needTransfusion || 'grey'" density="compact">
+      <v-app-bar-title style="font-size: 15px">{{ needTransfusionText }}</v-app-bar-title>
+    </v-app-bar>
 
-      <v-main>
-        <v-container fluid fill-height>
-          <v-alert
-            v-if="showAlert"
-            title="Opps, ocorreu um erro!"
-            :text="error"
-            type="warning"
-          ></v-alert>
-          <v-alert
-            v-if="showSuccess"
-            title="Sucesso!"
-            text="Paciente editado com sucesso!"
-            type="success"
-          ></v-alert>
+    <v-main>
+      <v-container fluid fill-height>
+        <Alert :successAlert="successAlert" :warningAlert="warningAlert" />
+        <v-row v-if="loading">
+          <v-col justify-center>
+            <LoadingComponent :loading="loading" />
+          </v-col>
+        </v-row>
 
-          <v-sheet class="d-flex flex-column align-center justify-center text-center">
+        <v-row v-else>
+          <v-sheet>
             <v-form v-model="isFormValid">
-              <v-radio-group v-model="exams.comorbities" label="Presença de comorbidades">
+              <v-radio-group v-model="exams.comorbities" name="comorbity">
+                <template v-slot:label>
+                  <div style="white-space: wrap"><strong>Presença de comorbidades</strong></div>
+                </template>
                 <v-radio
                   label="Coronariopatia Isquêmica"
                   value="coronariopatia-isquemica"
@@ -38,112 +39,12 @@
                 <v-radio label="Não" value=""></v-radio>
               </v-radio-group>
 
-              <br />
-
-              <v-radio-group
-                v-model="exams.previousHemoglobine.value"
-                label="Antecedente de hemoglobinopatia?"
-              >
-                <v-radio label="Anemia falciforme" value="anemia"></v-radio>
-                <v-radio label="Talassemia" value="talassemia"></v-radio>
-                <v-radio label="Outro:" value="outro"></v-radio>
-                <v-text-field
-                  v-if="exams.previousHemoglobine.value === 'outro'"
-                  v-model="exams.previousHemoglobine.othersText"
-                  label="Especifique"
-                ></v-text-field>
-                <v-radio label="Não" value=""></v-radio>
-              </v-radio-group>
-
-              <br />
-
-              <v-radio-group
-                v-model="exams.selectedProcedure"
-                label="Procedimento cirúrgico a ser realizado:"
-              >
-                <v-radio label="Pequeno porte (colocar exemplos)" value="pequeno"></v-radio>
-                <v-radio label="Médio porte (colocar exemplos)" value="medio"></v-radio>
-                <v-radio label="Grande porte (colocar exemplos)" value="grande"></v-radio>
-              </v-radio-group>
-
-              <br />
-
-              <v-radio-group
-                v-model="exams.hemostasis.value"
-                label="Antecedente de alterações da hemostasia:"
-              >
-                <v-radio label="Hemofilia" value="hemofilia"></v-radio>
-                <v-radio label="Hepatopatia crônica" value="hepatopatia"></v-radio>
-                <v-radio label="Disfunção plaquetária" value="disfuncao"></v-radio>
-                <v-radio label="Outro:" value="outro"></v-radio>
-                <v-text-field
-                  v-if="exams.hemostasis.value === 'outro'"
-                  v-model="exams.hemostasis.othersText"
-                  label="Especifique"
-                ></v-text-field>
-                <v-radio label="Não" value=""></v-radio>
-              </v-radio-group>
-
-              <br />
-
-              <v-radio-group
-                v-model="exams.selectedMedication"
-                label="Uso de medicações que aumentam risco de sangramento (anticoagulantes, AAS):"
-                inline
-              >
-                <v-radio label="Sim" value="sim"></v-radio>
-                <v-radio label="Não" value=""></v-radio>
-              </v-radio-group>
-
-              <br />
-
-              <v-radio-group v-model="exams.selectedHb" label="Valor de Hb:">
-                <v-radio label="Hb < 7 g/dl" value="Hb<7"></v-radio>
-                <v-radio label="Hb > 7 e Hb < 9 g/dl" value="7<Hb<9"></v-radio>
-                <v-radio label="Hb > 9 e < 13 g/dl" value="9<Hb<13"></v-radio>
-              </v-radio-group>
-
-              <br />
-
-              <v-radio-group v-model="exams.selectedVCM" label="VCM:">
-                <v-radio label="< 80 fl" value="<80fl"></v-radio>
-                <v-radio label="normal 80-100 fl" value="80-100fl"></v-radio>
-                <v-radio label="> 100 fl" value=">100fl"></v-radio>
-              </v-radio-group>
-              <br />
-
-              <v-radio-group v-model="exams.selectedHCM" label="HCM:">
-                <v-radio label="< 27 pg" value="<27pg"></v-radio>
-                <v-radio label="27-32 pg" value="27-32pg"></v-radio>
-                <v-radio label="> 32 pg" value=">32pg"></v-radio>
-              </v-radio-group>
-              <br />
-
-              <v-radio-group v-model="exams.selectedLeucocito" label="Leucócito:">
-                <v-radio label="< 4000 x 109/L" value="<4000"></v-radio>
-                <v-radio label="> 4000 x 109/L" value=">4000"></v-radio>
-              </v-radio-group>
-              <br />
-
-              <v-radio-group v-model="exams.selectedPlaquetas" label="Plaquetas:">
-                <v-radio label="< 100 x 109/L" value="<100"></v-radio>
-                <v-radio label="> 100 x 109/L" value=">100"></v-radio>
-              </v-radio-group>
-              <br />
-
-              <v-radio-group
-                v-model="exams.selectedTransfusion"
-                label="Recebeu transfusão nos últimos 3 meses?"
-              >
-                <v-radio label="Sim" value="sim"></v-radio>
-                <v-radio label="Não" value=""></v-radio>
-              </v-radio-group>
-              <br />
-
-              <v-radio-group
-                v-model="exams.selectedPhysicalExam"
-                label="Exame físico: apresenta as alterações abaixo?"
-              >
+              <v-radio-group v-model="exams.selected_physicalExam">
+                <template v-slot:label>
+                  <div style="white-space: wrap">
+                    <strong>Exame físico: apresenta as alterações abaixo?</strong>
+                  </div>
+                </template>
                 <v-radio
                   label="Dispnéia e/ou sinais de insuficiência respiratória"
                   value="dispnéia"
@@ -156,125 +57,208 @@
                 <v-radio label="PAM < 70 mmHg e/ou FC > 100 bpm" value="PAM/FC"></v-radio>
                 <v-radio label="Não" value=""></v-radio>
               </v-radio-group>
-              <br />
+
+              <v-radio-group v-model="exams.previous_hemoglobine_value">
+                <template v-slot:label>
+                  <div style="white-space: wrap">
+                    <strong>Antecedente de hemoglobinopatia?</strong>
+                  </div>
+                </template>
+                <v-radio label="Anemia falciforme" value="anemia"></v-radio>
+                <v-radio label="Talassemia" value="talassemia"></v-radio>
+                <v-radio label="Outro:" value="outro"></v-radio>
+                <v-text-field
+                  v-if="exams.previous_hemoglobine_value === 'outro'"
+                  v-model="exams.previous_hemoglobine_text"
+                  label="Especifique"
+                ></v-text-field>
+                <v-radio label="Não" value=""></v-radio>
+              </v-radio-group>
+
+              <v-radio-group v-model="exams.selected_procedure">
+                <template v-slot:label>
+                  <div style="white-space: wrap">
+                    <strong>Procedimento cirúrgico a ser realizado:</strong>
+                  </div>
+                </template>
+                <v-radio label="Pequeno porte (colocar exemplos)" value="pequeno"></v-radio>
+                <v-radio label="Médio porte (colocar exemplos)" value="medio"></v-radio>
+                <v-radio label="Grande porte (colocar exemplos)" value="grande"></v-radio>
+              </v-radio-group>
+
+              <v-radio-group v-model="exams.hemostasis_value">
+                <template v-slot:label>
+                  <div style="white-space: wrap">
+                    <strong>Antecedente de alterações da hemostasia:</strong>
+                  </div>
+                </template>
+                <v-radio label="Hemofilia" value="hemofilia"></v-radio>
+                <v-radio label="Hepatopatia crônica" value="hepatopatia"></v-radio>
+                <v-radio label="Disfunção plaquetária" value="disfuncao"></v-radio>
+                <v-radio label="Outro:" value="outro"></v-radio>
+                <v-text-field
+                  v-if="exams.hemostasis_value === 'outro'"
+                  v-model="exams.hemostasis_text"
+                  label="Especifique"
+                ></v-text-field>
+                <v-radio label="Não" value=""></v-radio>
+              </v-radio-group>
+
+              <v-radio-group v-model="exams.selected_medication" inline>
+                <template v-slot:label>
+                  <div style="white-space: wrap">
+                    <strong
+                      >Uso de medicações que aumentam risco de sangramento (anticoagulantes,
+                      AAS):</strong
+                    >
+                  </div>
+                </template>
+                <v-radio label="Sim" value="sim"></v-radio>
+                <v-radio label="Não" value=""></v-radio>
+              </v-radio-group>
+
+              <v-radio-group v-model="exams.selected_hb">
+                <template v-slot:label>
+                  <div style="white-space: wrap"><strong>Valor de Hb:</strong></div>
+                </template>
+                <v-radio label="Hb < 7 g/dl" value="Hb<7"></v-radio>
+                <v-radio label="Hb > 7 e Hb < 9 g/dl" value="7<Hb<9"></v-radio>
+                <v-radio label="Hb > 9 e < 13 g/dl" value="9<Hb<13"></v-radio>
+              </v-radio-group>
+
+              <v-radio-group v-model="exams.selected_vcm">
+                <template v-slot:label>
+                  <div style="white-space: wrap"><strong>VCM:</strong></div>
+                </template>
+                <v-radio label="< 80 fl" value="<80fl"></v-radio>
+                <v-radio label="normal 80-100 fl" value="80-100fl"></v-radio>
+                <v-radio label="> 100 fl" value=">100fl"></v-radio>
+              </v-radio-group>
+
+              <v-radio-group v-model="exams.selected_hcm">
+                <template v-slot:label>
+                  <div style="white-space: wrap"><strong>HCM:</strong></div>
+                </template>
+                <v-radio label="< 27 pg" value="<27pg"></v-radio>
+                <v-radio label="27-32 pg" value="27-32pg"></v-radio>
+                <v-radio label="> 32 pg" value=">32pg"></v-radio>
+              </v-radio-group>
+
+              <v-radio-group v-model="exams.selected_leucocito">
+                <template v-slot:label>
+                  <div style="white-space: wrap"><strong>Leucócito:</strong></div>
+                </template>
+                <v-radio label="< 4000 x 109/L" value="<4000"></v-radio>
+                <v-radio label="> 4000 x 109/L" value=">4000"></v-radio>
+              </v-radio-group>
+
+              <v-radio-group v-model="exams.selected_plaquetas">
+                <template v-slot:label>
+                  <div style="white-space: wrap"><strong>Plaquetas:</strong></div>
+                </template>
+                <v-radio label="< 100 x 109/L" value="<100"></v-radio>
+                <v-radio label="> 100 x 109/L" value=">100"></v-radio>
+              </v-radio-group>
+
+              <v-radio-group v-model="exams.selected_transfusion" inline>
+                <template v-slot:label>
+                  <div style="white-space: wrap">
+                    <strong>Recebeu transfusão nos últimos 3 meses?</strong>
+                  </div>
+                </template>
+
+                <v-radio label="Sim" value="sim"></v-radio>
+                <v-radio label="Não" value=""></v-radio>
+              </v-radio-group>
 
               <v-btn
-                variant="flat"
-                color="info"
-                @click="submit"
+                fab
+                icon="mdi-content-save"
+                size="x-large"
+                fixed
+                color="blue"
                 :loading="btn.loading"
-                :disabled="!enableBtn"
+                :style="{ position: 'fixed', bottom: '0.1rem', right: '0.1rem' }"
+                @click="registerExam"
               >
+              </v-btn>
+
+              <v-btn variant="flat" color="info" @click="registerExam" :loading="btn.loading">
                 Salvar
               </v-btn>
             </v-form>
-            <RouterLink to="/dashboard">
-              <v-btn variant="flat" color="default" icon="mdi-arrow-left"></v-btn>
-            </RouterLink>
           </v-sheet>
-          <!-- </v-row> -->
-        </v-container>
-      </v-main>
-    </v-layout>
-  </v-card>
+        </v-row>
+      </v-container>
+    </v-main>
+    <v-snackbar v-model="snackbar">
+      {{ snackBarText }}
+
+      <template v-slot:actions>
+        <v-btn :color="snackbarColor" variant="text" @click="snackbar = false"> Fechar </v-btn>
+      </template>
+    </v-snackbar>
+  </v-layout>
 </template>
 
 <script>
 import axios from 'axios'
-import VueMask from 'vue-the-mask'
+import Alert from '@/components/Alert.vue'
+import LoadingComponent from '@/components/Loading.vue'
 
 export default {
-  directives: {
-    mask: VueMask.directive // Registre a diretiva de máscara globalmente
+  components: {
+    Alert,
+    LoadingComponent
   },
   data() {
     return {
       isFormValid: false,
       exams: {
         comorbities: '',
-        previousHemoglobine: {
-          value: '',
-          othersText: ''
-        },
-        selectedProcedure: null,
-        hemostasis: {
-          value: '',
-          othersText: ''
-        },
-        selectedMedication: null,
-        selectedHb: null,
-        selectedVCM: null,
-        selectedHCM: null,
-        selectedLeucocito: null,
-        selectedPlaquetas: null,
-        selectedTransfusion: null,
-        selectedPhysicalExam: ''
+        previous_hemoglobine_value: '',
+        previous_hemoglobine_text: '',
+        selected_procedure: null,
+        hemostasis_value: '',
+        hemostasis_text: '',
+        selected_medication: null,
+        selected_hb: null,
+        selected_vcm: null,
+        selected_hcm: null,
+        selected_leucocito: null,
+        selected_plaquetas: null,
+        selected_transfusion: null,
+        selected_physicalExam: ''
       },
       patient: {
-        initials: '',
-        register_num: '',
-        birth_date: '',
-        weight: '',
-        ethnicity: 'Parda',
-        genre: 'masculino',
-        height: '',
-        _id: '',
-        items: ['Parda', 'Branca', 'Preta', 'Amarela', 'Indígena']
-      },
-      btn: {
-        loading: false,
-        disabled: false
-      },
-      rules: {
-        mandatory: [(value) => !!value || 'Este campo é obrigatório'],
-        number: [
-          (value) => !!value || 'Este campo é obrigatório',
-          (value) => {
-            const regex = /^\d{1,3}(,\d{1,5})?$/
-            return regex.test(value) || 'Peso deve ser um número'
-          }
-        ],
-        birth: [
-          (value) => !!value || 'Este campo é obrigatório',
-          (value) => {
-            const regex = /^\d{2}\/\d{2}\/\d{4}$/
-            return regex.test(value) || 'Esta data é inválida'
-          }
-        ]
+        _id: ''
       },
       APIbasePath: import.meta.env.VITE_API_URL,
-      error: '',
-      showAlert: false,
-      showSuccess: false
-    }
-  },
-  methods: {
-    submit() {
-      console.log('sumit')
+      successAlert: '',
+      warningAlert: '',
+      loading: false,
+      snackbar: false,
+      snackBarText: '',
+      snackbarColor: 'green',
+      btn: {
+        loading: false
+      }
     }
   },
   computed: {
-    enableBtn() {
-      // debugger
-      return (
-        !!this.patient.initials &&
-        !!this.patient.register_num &&
-        !!this.patient.birth_date &&
-        !!this.patient.weight &&
-        !!this.patient.ethnicity &&
-        !!this.patient.genre &&
-        !!this.patient.height
-        // !!this.patient.items
-        // this.isFormValid
-      )
-    },
     needTransfusion() {
+      let hb = this.exams.selected_hb
+      let comorbidity = this.exams.comorbities
+      let physicalExamSymptoms = this.exams.selected_physicalExam
 
-      let hb = this.exams.selectedHb;
-      let comorbidity = this.exams.comorbities;
-      let physicalExamSymptoms = this.exams.selectedPhysicalExam;
-
-      console.log("hb", hb, "- comorbidity", comorbidity, "- physicalExamSymptoms", physicalExamSymptoms);
+      console.log(
+        'hb',
+        hb,
+        '- comorbidity',
+        comorbidity,
+        '- physicalExamSymptoms',
+        physicalExamSymptoms
+      )
 
       if (hb === 'Hb<7') {
         if (!comorbidity && !physicalExamSymptoms) {
@@ -312,63 +296,89 @@ export default {
     },
     needTransfusionText() {
       let color = this.needTransfusion
-      console.log("color", color);
       switch (color) {
         case 'green':
           return 'Transfusão não necessária'
         case 'yellow':
           return 'Necessário mais acompanhamento'
         case 'orange':
-          return 'Existe um risco de transfusão'
+          return 'Existe risco de transfusão'
         case 'red':
           return 'A transfusão pode ser necessária'
         default:
-          return 'Sugestão de conduta: Preencha os campos'
+          return 'Preencha mais campos'
       }
     }
   },
   methods: {
-    register() {
+    registerExam() {
       this.btn.loading = true
       this.btn.disabled = true
-      this.showAlert = false
-      console.log('to implement')
+      this.successAlert = ''
+      this.warningAlert = ''
+      axios
+        .post(
+          `${this.APIbasePath}/patient/${this.patient._id}/exam`,
+          {
+            patient_id: this.patient._id,
+            ...this.exams
+          },
+          {
+            headers: {
+              Authorization: localStorage.getItem('token')
+            }
+          }
+        )
+        .then((response) => {
+          if (response.status == 201) {
+            this.btn.loading = false
+            this.snackbar = true
+            this.snackBarText = 'Atualizado com sucesso'
+            this.btn.loading = false
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+          this.btn.loading = false
+          this.snackbarColor = 'orange'
+          this.snackbar = true
+          this.snackBarText = err?.response?.data?.message || 'Erro desconhecido'
+        })
     }
   },
   mounted() {
+    var patient = localStorage.getItem(this.$route.params.id)
+    patient = JSON.parse(patient)
+    this.patient._id = patient._id
     this.loading = true
+    axios
+      .get(`${this.APIbasePath}/patient/${this.patient._id}/exam`, {
+        headers: {
+          Authorization: localStorage.getItem('token')
+        }
+      })
+      .then((response) => {
+        this.loading = false
+        console.log(response.data)
+        this.exams = response.data.exam[0]
+      })
+      .catch((err) => {
+        if (err?.response?.status == 404) {
+          this.loading = false
+          return
+        }
+
+        this.warningAlert =
+          'Não foi possível encontrar este registro, experimente sair e entrar novamente. Erro: ' +
+          err?.response?.data?.message
+        if (err?.response?.status == 401) {
+          // this.$router.push({
+          //   name: 'home'
+          // })
+        }
+      })
   }
 }
 </script>
 
-<style>
-.login-container {
-  /* border: 2px solid red; */
-  color: #3d3d3d;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-button {
-  margin: 10px;
-  padding: 5px 10px;
-  border-radius: 5px;
-  font-size: 16px;
-  color: white;
-  width: 150px;
-}
-
-.login-button {
-  background-color: #28a745;
-}
-
-.signup-button {
-  background-color: #007bff;
-}
-</style>
+<style></style>
