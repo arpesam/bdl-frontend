@@ -18,7 +18,7 @@
             <v-form v-model="isFormValid">
               <v-text-field
                 style="width: 250px; margin-bottom: 10px;"
-                label="Iniciais"
+                label="Iniciais do paciente"
                 :rules="rules.mandatory"
                 hide-details="auto"
                 v-model="patient.initials"
@@ -26,7 +26,7 @@
               <!-- <br /> -->
               <v-text-field
                 style="width: 250px; margin-bottom: 10px;"
-                label="Núm. de registro"
+                label="Núm. de registro do paciente"
                 :rules="rules.mandatory"
                 hide-details="auto"
                 v-model="patient.register_num"
@@ -126,7 +126,7 @@ export default {
           (value) => !!value || 'Este campo é obrigatório',
           (value) => {
             const regex = /^\d{2}\/\d{2}\/\d{4}$/
-            return regex.test(value) || 'Esta data é inválida'
+            return regex.test(value) || 'Preencha a data nesse formato DD/MM/YYYY'
           }
         ]
       },

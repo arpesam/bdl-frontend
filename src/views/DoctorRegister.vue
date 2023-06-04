@@ -25,7 +25,7 @@
       <br />
       <v-text-field
         style="width: 250px"
-        label="Reg. Profissional*"
+        label="Reg. Profissional (CRM)*"
         :rules="rules.professional_id"
         hide-details="auto"
         v-model="user.professional_id"
