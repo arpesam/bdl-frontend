@@ -3,7 +3,18 @@
     <v-layout>
       <v-app-bar color="blue" density="compact">
         <template v-slot:prepend>
-          <v-app-bar-nav-icon @click="toggleLogoutDropdown"></v-app-bar-nav-icon>
+          <!-- <v-app-bar-nav-icon @click="toggleLogoutDropdown"></v-app-bar-nav-icon> -->
+          <v-menu>
+            <template v-slot:activator="{ props }">
+              <v-btn icon="mdi-menu" v-bind="props"></v-btn>
+            </template>
+
+            <v-list>
+              <v-list-item @click="logout">
+                <v-list-item-title>Sair</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
         </template>
 
         <v-app-bar-title>Pacientes</v-app-bar-title>
@@ -14,14 +25,6 @@
           </RouterLink>
         </template>
       </v-app-bar>
-
-      <v-menu v-model="logoutDropdown" bottom left>
-        <v-list>
-          <v-list-item @click="logout">
-            <v-list-item-title>Sair</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
 
       <!-- CODE -->
       <v-main>
