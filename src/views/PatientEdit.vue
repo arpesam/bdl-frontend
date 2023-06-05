@@ -135,7 +135,7 @@ export default {
         number: [
           (value) => !!value || 'Este campo é obrigatório',
           (value) => {
-            const regex = /^\d{1,3}(,\d{1,5})?$/
+            const regex = /^\d{1,3}([,.]\d{1,5})?$/
             return regex.test(value) || 'Peso deve ser um número'
           }
         ],
@@ -171,6 +171,10 @@ export default {
       this.btn.loading = true
       this.btn.disabled = true
       this.showAlert = false
+
+      this.patient.height = `${this.patient.height}`.replace(/,/g, '.')
+      this.patient.weight = `${this.patient.weight}`.replace(/,/g, '.')
+
       axios
         .put(
           `${this.APIbasePath}/patient/${this.patient._id}`,

@@ -35,7 +35,9 @@
           <v-row v-else>
             <v-col v-if="patients.length === 0" justify-center cols="12" sm="12">
               <div class="empty-message">
-                Voce ainda não cadastrou nenhum paciente, clique em Cadastrar para adicionar novos
+                Voce ainda não cadastrou nenhum paciente, clique em <br/> <RouterLink to="/register/patient">
+            <v-btn icon="mdi-account-multiple-plus" color="white" size="x-large"></v-btn>
+          </RouterLink> <br/>para adicionar novos
                 pacientes
               </div>
             </v-col>
@@ -126,7 +128,7 @@ export default {
               }
             })
             this.loading = false
-            this.successAlert = 'Removido com sucesso'
+            // this.successAlert = 'Removido com sucesso'
             this.snackbar = true
             this.snackBarText = 'Removido com sucesso'
           }
