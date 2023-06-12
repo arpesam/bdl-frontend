@@ -125,11 +125,13 @@ export default {
         })
         .then((response) => {
           if (response.status == 200) {
-            this.patients = this.patients.map((pt) => {
+            const patients = this.patients.filter((pt) => {
               if (pt._id != patient._id) {
                 return pt
               }
             })
+
+            this.patients = patients
             this.loading = false
             // this.successAlert = 'Removido com sucesso'
             this.snackbar = true
