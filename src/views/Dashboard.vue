@@ -11,8 +11,7 @@
         <div class="empty-message">
           Voce ainda não cadastrou nenhum paciente, clique em <br/> <RouterLink to="/register/patient">
       <v-btn icon="mdi-account-multiple-plus" color="white" size="x-large"></v-btn>
-    </RouterLink> <br/>para adicionar novos
-          pacientes
+    </RouterLink> <br/>para adicionar novos pacientes. <br><br>Após isso você poderá registrar os dados clínicos do paciente e receber sugestões de conduta.
         </div>
       </v-col>
       <v-col
@@ -120,7 +119,7 @@ async mounted() {
 
 <style>
 .container {
-color: #3d3d3d;
+color: #3d3d3d !important;
 display: flex;
 flex-direction: column;
 align-items: center;
@@ -133,5 +132,6 @@ transform: translate(-50%, -50%);
 .empty-message {
 text-align: center;
 margin: 100px;
+color: #3d3d3d;
 }
 </style>

@@ -9,7 +9,7 @@
 
 <!-- CONDUTA -->
 <v-alert
-  v-if="!overlay"
+  v-if="!overlay && !warningAlert"
   class="mt-1 mb-3"
   icon="$info"
   title="Sugestão de conduta"
@@ -598,10 +598,12 @@ export default {
         )
         .then((response) => {
           if (response.status == 201) {
-            this.overlay = false
+            // this.overlay = false
             this.snackbar = true
             this.snackBarText = 'Atualizado com sucesso'
             this.saveClikedForGroup1 = true
+
+            setTimeout(() => { this.overlay = false }, 600)
 
             if (this.isGroup2Filled && this.saveClikedForGroup1) {
               this.saveClikedForGroup2 = true
@@ -767,11 +769,12 @@ export default {
         }
 
         this.warningAlert =
-          'Não foi possível encontrar este registro, experimente sair e entrar novamente. Erro: ' +
+          'Occorreu um erro ou não foi possível os dados clínicos, experimente sair e entrar novamente. Erro: ' +
           err?.response?.data?.message
         if (err?.response?.status == 401) {
           setTimeout(() => {
             this.warningAlert = "Sua seção expirou, redirecionando para a página de login"
+            this.$router.push(`/`)
           }, 3000);
 
           this.$router.push({

@@ -17,7 +17,7 @@ import { RouterLink, RouterView } from 'vue-router'
             <v-btn icon="mdi-account-multiple-plus" color="white" size="x-large"></v-btn>
           </RouterLink>
         </template>
-        <template v-slot:append v-if="$route.name == 'Dados clínicos' || $route.name == 'Editar paciente' || $route.name == 'Add paciente'">
+        <template v-slot:append v-if="$route.name == 'Dados clínicos' || $route.name == 'Editar paciente' || $route.name == 'Add paciente' || $route.name == 'Minha conta'">
           <RouterLink to="/dashboard">
             <v-btn icon="mdi-arrow-left" color="white" size="x-large"></v-btn>
           </RouterLink>
