@@ -1,10 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import LoginView from '../views/LoginView.vue'
 import DoctorRegister from '../views/DoctorRegister.vue'
+import DoctorEdit from '../views/DoctorEdit.vue'
 import PatientRegister from '../views/PatientRegister.vue'
 import PatientEdit from '../views/PatientEdit.vue'
 import ExamsView from '../views/ExamsView.vue'
 import Dashboard from '../views/Dashboard.vue'
+import TermsAndConditions from '../views/TermsAndConditions.vue'
 import Test from '../views/Test.vue'
 
 const router = createRouter({
@@ -12,17 +14,22 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: HomeView
+      name: 'Login',
+      component: LoginView
     },
     {
       path: '/register/doctor',
-      name: 'register-doctor',
-      component: DoctorRegister
+      name: 'Cadastro',
+      component: DoctorRegister,
+    },
+    {
+      path: '/edit/doctor',
+      name: 'Minha conta',
+      component: DoctorEdit
     },
     {
       path: '/register/patient',
-      name: 'patient-register',
+      name: 'Add paciente',
       component: PatientRegister,
       beforeEnter: (to, from, next) => {
         const token = localStorage.getItem('token')
@@ -34,7 +41,7 @@ const router = createRouter({
     },
     {
       path: '/patient/:id',
-      name: 'patient-edit',
+      name: 'Editar paciente',
       component: PatientEdit,
       props: true,
       beforeEnter: (to, from, next) => {
@@ -46,13 +53,8 @@ const router = createRouter({
       }
     },
     {
-      path: '/test',
-      name: 'test',
-      component: Test
-    },
-    {
       path: '/patient/:id/exams',
-      name: 'exams-view',
+      name: 'Dados clínicos',
       component: ExamsView,
       props: true,
       beforeEnter: (to, from, next) => {
@@ -64,13 +66,8 @@ const router = createRouter({
       }
     },
     {
-      path: '/test',
-      name: 'test',
-      component: Test
-    },
-    {
       path: '/dashboard',
-      name: 'dashboard',
+      name: 'Pacientes',
       component: Dashboard,
       beforeEnter: (to, from, next) => {
         const token = localStorage.getItem('token')
@@ -81,12 +78,22 @@ const router = createRouter({
       }
     },
     {
+      path: '/terms-and-conditions',
+      name: 'Termos',
+      component: TermsAndConditions,
+    },
+    {
       path: '/about',
-      name: 'about',
+      name: 'Sobre',
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/AboutView.vue')
+    },
+    {
+      path: '/test',
+      name: 'Teste',
+      component: Test,
     }
   ]
 })

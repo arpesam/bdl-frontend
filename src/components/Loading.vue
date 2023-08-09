@@ -1,6 +1,6 @@
 <template>
-  <div v-if="loading" class="loading-overlay">
-    <div class="loading-spinner"></div>
+  <div v-if="loading" class="loading-overlay" >
+    <div class="loading-spinner" :style="style"></div>
   </div>
 </template>
 
@@ -10,12 +10,28 @@ export default {
     loading: {
       type: Boolean,
       required: true
+    },
+    height: {
+      type: String,
+      default: '100px'
+    },
+    width: {
+      type: String,
+      default: '100px'
+    }
+  },
+  computed: {
+    style() {
+      return {
+        height: this.height || '100px',
+        width: this.width || '100px',
+      }
     }
   }
 }
 </script>
 
-<style>
+<style scoped>
 .loading-overlay {
   z-index: 9999;
   display: flex;
@@ -27,8 +43,8 @@ export default {
   border: 10px solid rgba(0, 38, 80, 0.3);
   border-top: 10px solid #6492f6;
   border-radius: 50%;
-  width: 100px;
-  height: 100px;
+  /* width: 100px;
+  height: 100px; */
   animation: spin 0.8s linear infinite;
 }
 

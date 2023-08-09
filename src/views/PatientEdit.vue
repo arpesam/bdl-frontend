@@ -1,116 +1,94 @@
 <template>
-  <v-card class="mx-auto" elevation="0">
-    <v-layout>
-      <v-app-bar color="blue" density="compact" elevation="0">
-        <template v-slot:prepend>
-          <!-- <v-app-bar-nav-icon></v-app-bar-nav-icon> -->
-        </template>
+  <v-container fluid fill-height>
+    <v-alert v-if="showAlert" title="Opps, ocorreu um erro!" :text="error" type="warning"></v-alert>
+    <v-alert
+      v-if="showSuccess"
+      title="Sucesso!"
+      text="Paciente editado com sucesso!"
+      type="success"
+    ></v-alert>
+    <v-sheet class="d-flex flex-column align-center justify-center text-center">
+      <v-form v-model="isFormValid">
+        <v-text-field
+          class="mt-2"
+          style="width: 250px; margin-bottom: 10px"
+          label="Iniciais"
+          :rules="rules.mandatory"
+          hide-details="auto"
+          v-model="patient.initials"
+        ></v-text-field>
 
-        <v-app-bar-title>Editar paciente</v-app-bar-title>
-        <template v-slot:append>
-          <RouterLink to="/dashboard">
-          <v-btn icon="mdi-arrow-left" color="white" size="x-large"></v-btn>
-          </RouterLink>
-        </template>
+        <v-text-field
+          style="width: 250px; margin-bottom: 10px"
+          label="Núm. de registro"
+          :rules="rules.mandatory"
+          hide-details="auto"
+          v-model="patient.register_num"
+        ></v-text-field>
 
-      </v-app-bar>
+        <v-text-field
+          style="width: 250px; margin-bottom: 10px"
+          label="Peso"
+          placeholder="74"
+          :rules="rules.number"
+          hide-details="auto"
+          v-model="patient.weight"
+        ></v-text-field>
 
-      <v-main>
-        <v-container fluid fill-height>
-          <v-alert
-            v-if="showAlert"
-            title="Opps, ocorreu um erro!"
-            :text="error"
-            type="warning"
-          ></v-alert>
-          <v-alert
-            v-if="showSuccess"
-            title="Sucesso!"
-            text="Paciente editado com sucesso!"
-            type="success"
-          ></v-alert>
-          <v-sheet class="d-flex flex-column align-center justify-center text-center">
-            <v-form v-model="isFormValid">
+        <v-text-field
+          style="width: 250px; margin-bottom: 10px"
+          label="Altura"
+          placeholder="1,60"
+          :rules="rules.number"
+          hide-details="auto"
+          v-model="patient.height"
+        ></v-text-field>
 
-              <v-text-field
-              class="mt-2"
-                style="width: 250px; margin-bottom: 10px;"
-                label="Iniciais"
-                :rules="rules.mandatory"
-                hide-details="auto"
-                v-model="patient.initials"
-              ></v-text-field>
+        <v-select
+          :items="patient.items"
+          label="Etnia"
+          style="width: 250px; margin-bottom: 10px"
+          v-model="patient.ethnicity"
+        ></v-select>
 
-              <v-text-field
-                style="width: 250px; margin-bottom: 10px;"
-                label="Núm. de registro"
-                :rules="rules.mandatory"
-                hide-details="auto"
-                v-model="patient.register_num"
-              ></v-text-field>
+        <label for="calendar-div">Data de nascimento</label><br />
+        <Datepicker
+          v-model="patient.birth_date"
+          language="pt"
+          input-class="teste"
+          style="width: 250px; margin-bottom: 20px"
+        />
 
-              <v-text-field
-                style="width: 250px; margin-bottom: 10px;"
-                label="Data de nascimento"
-                placeholder="DD/MM/YYYY"
-                :rules="rules.birth"
-                hide-details="auto"
-                v-model="patient.birth_date"
-              ></v-text-field>
-
-              <v-text-field
-                style="width: 250px; margin-bottom: 10px;"
-                label="Peso"
-                placeholder="74"
-                :rules="rules.number"
-                hide-details="auto"
-                v-model="patient.weight"
-              ></v-text-field>
-
-              <v-text-field
-                style="width: 250px; margin-bottom: 10px;"
-                label="Altura"
-                placeholder="1,60"
-                :rules="rules.number"
-                hide-details="auto"
-                v-model="patient.height"
-              ></v-text-field>
-
-              <v-select
-                :items="patient.items"
-                label="Etnia"
-                style="width: 250px; margin-bottom: 10px;"
-                v-model="patient.ethnicity"
-              ></v-select>
-
-              <v-radio-group v-model="patient.genre" inline>
-                <v-radio label="Masculino" value="masculino"></v-radio>
-                <v-radio label="Feminino" value="feminino"></v-radio>
-              </v-radio-group>
-              <v-btn
-                variant="flat"
-                color="info"
-                @click="register"
-                :loading="btn.loading"
-                :disabled="!enableBtn"
-              >
-                Salvar
-              </v-btn>
-            </v-form>
-          </v-sheet>
-        </v-container>
-      </v-main>
-    </v-layout>
-  </v-card>
+        <v-radio-group v-model="patient.genre" inline>
+          <v-radio label="Masculino" value="masculino"></v-radio>
+          <v-radio label="Feminino" value="feminino"></v-radio>
+        </v-radio-group>
+        <v-btn
+          variant="flat"
+          color="info"
+          @click="register"
+          :loading="btn.loading"
+          :disabled="!enableBtn"
+        >
+          Salvar
+        </v-btn>
+      </v-form>
+      <!-- <RouterLink to="/dashboard">
+        <v-btn variant="text">Voltar</v-btn>
+      </RouterLink> -->
+    </v-sheet>
+  </v-container>
 </template>
 
 <script>
 import axios from 'axios'
 import Alert from '@/components/Alert.vue'
+import Datepicker from 'vuejs3-datepicker'
 
 export default {
   components: {
     Alert,
+    Datepicker
   },
   data() {
     return {
@@ -207,29 +185,25 @@ export default {
             // this.$router.push(`/`)
             this.showAlert = false
           }, 5000)
-
-
         })
-    },
+    }
   },
   mounted() {
     this.loading = true
     var patient = localStorage.getItem(this.$route.params.id)
     patient = JSON.parse(patient)
 
-    const date = new Date(patient.birth_date);
+    // const date = new Date(patient.birth_date);
 
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based, so we need to add 1
-    const year = date.getFullYear();
+    // const day = String(date.getDate()).padStart(2, '0');
+    // const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based, so we need to add 1
+    // const year = date.getFullYear();
 
-    const formattedDate = `${day}/${month}/${year}`;
+    // const formattedDate = `${day}/${month}/${year}`;
     this.patient = patient
-    this.patient.birth_date = formattedDate
+    // this.patient.birth_date = formattedDate
   }
 }
 </script>
 
-<style>
-
-</style>
+<style></style>

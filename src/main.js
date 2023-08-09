@@ -4,10 +4,9 @@ import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
-import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
-import VueMask from 'v-mask'
-
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
+import { vMaska } from "maska"
 
 const vuetify = createVuetify({
   components,
@@ -19,11 +18,14 @@ import router from './router'
 
 import './assets/main.css'
 
+const pinia = createPinia()
+pinia.use(piniaPluginPersistedstate)
+
 const app = createApp(App)
-app.use(createPinia())
+app.use(pinia)
 app.use(router)
 app.use(vuetify)
-// app.use(VueMask)
-app.component('VueDatePicker', VueDatePicker)
+app.directive("maska", vMaska)
+
 
 app.mount('#app')

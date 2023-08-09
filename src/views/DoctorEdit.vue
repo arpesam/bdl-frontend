@@ -3,8 +3,6 @@
     <v-row no-gutters>
       <v-col align-self="center">
         <v-sheet class="d-flex flex-column justify-center align-center">
-          <img src="../assets/logo.png" alt="" srcset="../assets/logo.png" style="width: 70px" />
-          <br />
           <Alert :successAlert="successAlert" :warningAlert="warningAlert" />
           <br />
           <v-form v-model="isFormValid">
@@ -35,18 +33,25 @@
               required
             ></v-text-field>
             <br />
-            <v-text-field
-              style="width: 250px"
-              label="Senha*"
-              :rules="rules.password"
-              hide-details="auto"
-              type="password"
-              v-model="user.password"
-              required
-            ></v-text-field>
+
+            <div class="d-flex">
+              <v-text-field
+                style="width: 150px"
+                :label="disabledPswd ? 'Senha' : 'Nova senha'"
+                :rules="rules.password"
+                hide-details="auto"
+                type="password"
+                v-model="user.password"
+                :disabled="disabledPswd"
+                required
+              ></v-text-field>
+
+              <v-btn icon="mdi-pencil" variant="text" color="info" @click="disablePswd"> </v-btn>
+            </div>
             <br />
 
             <v-text-field
+              v-if="!disabledPswd"
               style="width: 250px"
               label="Repita a senha"
               :rules="rules.confirmPassword"
@@ -55,19 +60,8 @@
               v-model="user.confirmPassword"
               required
             ></v-text-field>
-
-            <br />
           </v-form>
-          <v-checkbox v-model="user.terms_and_conditions">
-            <template v-slot:label>
-              <div>
-                Eu concordo que li e aceito os
-                <router-link target="_blank" to="/terms-and-conditions"
-                  >termos e condições</router-link
-                >
-              </div>
-            </template>
-          </v-checkbox>
+
           <v-btn
             variant="flat"
             color="info"
@@ -75,11 +69,10 @@
             :loading="btn.loading"
             :disabled="!enableBtn"
           >
-            Enviar
+            Atualizar
           </v-btn>
-
-          <RouterLink to="/">
-            <v-btn variant="flat" color="default" icon="mdi-arrow-left"></v-btn>
+          <RouterLink to="/dashboard">
+            <v-btn variant="text">Voltar</v-btn>
           </RouterLink>
         </v-sheet>
       </v-col>
@@ -90,6 +83,8 @@
 <script>
 import axios from 'axios'
 import Alert from '@/components/Alert.vue'
+import { useUserStore } from '@/stores/user'
+import { mapActions, mapState, mapWritableState } from 'pinia'
 
 export default {
   components: {
@@ -97,14 +92,7 @@ export default {
   },
   data() {
     return {
-      user: {
-        name: '',
-        email: '',
-        professional_id: '',
-        password: '',
-        confirmPassword: '',
-        terms_and_conditions: false
-      },
+      disabledPswd: true,
       btn: {
         loading: false,
         disabled: false
@@ -119,28 +107,42 @@ export default {
           (value) => /.+@.+\..+/.test(value) || 'Preencha um email válido'
         ],
         name: [(value) => !!value || 'Campo obrigatório'],
-        password: [(value) => !!value || 'Campo obrigatório'],
+        // password: [(value) => ((!this.disabledPswd && !!value) || this.disabledPswd)|| 'Campo obrigatório'],
         confirmPassword: [(value) => value === this.user.password || 'As senhas estão diferentes'],
         professional_id: [(value) => !!value || 'Campo obrigatório']
       }
     }
   },
   computed: {
+    ...mapWritableState(useUserStore, ['user']),
     enableBtn() {
-      return (
-        !!this.user.email &&
-        !!this.user.name &&
-        !!this.user.professional_id &&
-        !!this.user.confirmPassword &&
-        !!this.user.password &&
-        this.isFormValid
-      )
+      console.log('----', this.disabledPswd)
+      if (this.disabledPswd) {
+        return !!this.user.email && !!this.user.name && !!this.user.professional_id
+      } else {
+        return (
+          !!this.user.email &&
+          !!this.user.name &&
+          !!this.user.professional_id &&
+          !!this.user.confirmPassword &&
+          !!this.user.password &&
+          this.isFormValid &&
+          this.user.confirmPassword == this.user.password
+        )
+      }
     },
     passwordMatchRule() {
       return (value) => value === this.password || 'Passwords do not match'
     }
   },
   methods: {
+    disablePswd() {
+      this.disabledPswd = !this.disabledPswd
+      if (this.disablePswd) {
+        console.log('delete')
+        this.user.password = ''
+      }
+    },
     signup() {
       this.btn.loading = true
       this.btn.disabled = true
@@ -148,17 +150,26 @@ export default {
       this.successAlert = ''
       delete this.user.confirmPassword
       axios
-        .post(`${this.APIbasePath}/signup`, {
-          ...this.user
-        })
+        .put(
+          `${this.APIbasePath}/doctor/${this.user._id}`,
+          {
+            ...this.user
+          },
+          {
+            headers: {
+              Authorization: localStorage.getItem('token')
+            }
+          }
+        )
         .then((response) => {
-          if (response.status == 201) {
+          if (response.status == 200) {
             this.btn.loading = false
-            this.successAlert = 'Usuário cadastrado com sucesso!'
-            setTimeout(() => {
-              this.$router.push(`/dashboard`)
-            }, 1000)
-            localStorage.setItem('token', response.data.token)
+            this.successAlert = 'Dados atualizados com sucesso!'
+            this.disabledPswd = true
+            // setTimeout(() => {
+            //   this.$router.push(`/dashboard`)
+            // }, 1000)
+            // localStorage.setItem('token', response.data.token)
           }
         })
         .catch((err) => {
@@ -172,7 +183,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .login-container {
   color: #3d3d3d;
   display: flex;

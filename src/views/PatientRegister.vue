@@ -1,100 +1,85 @@
 <template>
-  <v-card class="mx-auto" elevation="0">
-    <v-layout>
-      <v-app-bar color="blue" density="compact" elevation="0">
-        <v-app-bar-title>Cadastrar paciente</v-app-bar-title>
+  <v-container fluid fill-height>
+    <Alert :successAlert="successAlert" :warningAlert="warningAlert" />
+    <v-sheet class="d-flex flex-column align-center justify-center text-center">
+      <v-form v-model="isFormValid">
+        <v-text-field
+          style="width: 250px; margin-bottom: 10px"
+          label="Iniciais do paciente"
+          :rules="rules.mandatory"
+          hide-details="auto"
+          v-model="patient.initials"
+        ></v-text-field>
+        <!-- <br /> -->
+        <v-text-field
+          style="width: 250px; margin-bottom: 10px"
+          label="Núm. de registro do paciente"
+          :rules="rules.mandatory"
+          hide-details="auto"
+          v-model="patient.register_num"
+        ></v-text-field>
 
-        <template v-slot:append>
-          <RouterLink to="/dashboard">
-          <v-btn icon="mdi-arrow-left" color="white" size="x-large"></v-btn>
-          </RouterLink>
-        </template>
-      </v-app-bar>
+        <v-text-field
+          style="width: 250px; margin-bottom: 10px"
+          label="Peso"
+          placeholder="74"
+          :rules="rules.number"
+          hide-details="auto"
+          v-model="patient.weight"
+        ></v-text-field>
 
-      <v-main>
-        <v-container fluid fill-height>
-          <Alert :successAlert="successAlert" :warningAlert="warningAlert" />
-          <v-sheet class="d-flex flex-column align-center justify-center text-center">
-            <v-form v-model="isFormValid">
-              <v-text-field
-                style="width: 250px; margin-bottom: 10px;"
-                label="Iniciais do paciente"
-                :rules="rules.mandatory"
-                hide-details="auto"
-                v-model="patient.initials"
-              ></v-text-field>
-              <!-- <br /> -->
-              <v-text-field
-                style="width: 250px; margin-bottom: 10px;"
-                label="Núm. de registro do paciente"
-                :rules="rules.mandatory"
-                hide-details="auto"
-                v-model="patient.register_num"
-              ></v-text-field>
-
-              <v-text-field
-                style="width: 250px; margin-bottom: 10px;"
-                label="Data de nascimento"
-                placeholder="DD/MM/YYYY"
-                :rules="rules.birth"
-                hide-details="auto"
-                v-model="patient.birth_date"
-              ></v-text-field>
-
-              <v-text-field
-                style="width: 250px; margin-bottom: 10px;"
-                label="Peso"
-                placeholder="74"
-                :rules="rules.number"
-                hide-details="auto"
-                v-model="patient.weight"
-              ></v-text-field>
-
-              <v-text-field
-                style="width: 250px; margin-bottom: 10px;"
-                label="Altura"
-                placeholder="1,60"
-                :rules="rules.number"
-                hide-details="auto"
-                v-model="patient.height"
-              ></v-text-field>
-              <!-- <br /> -->
-              <v-select
-                :items="patient.items"
-                label="Etnia"
-                style="width: 250px; margin-bottom: 10px;"
-                v-model="patient.ethnicity"
-              ></v-select>
-              <br />
-              <v-radio-group v-model="patient.genre" inline>
-                <v-radio label="Masculino" value="masculino"></v-radio>
-                <v-radio label="Feminino" value="feminino"></v-radio>
-              </v-radio-group>
-              <v-btn
-                variant="flat"
-                color="info"
-                @click="register"
-                :loading="btn.loading"
-                :disabled="!enableBtn"
-              >
-                Cadastrar
-              </v-btn>
-            </v-form>
-          </v-sheet>
-          <!-- </v-row> -->
-        </v-container>
-      </v-main>
-    </v-layout>
-  </v-card>
+        <v-text-field
+          style="width: 250px; margin-bottom: 10px"
+          label="Altura"
+          placeholder="1,60"
+          :rules="rules.number"
+          hide-details="auto"
+          v-model="patient.height"
+        ></v-text-field>
+        <!-- <br /> -->
+        <v-select
+          :items="patient.items"
+          label="Etnia"
+          style="width: 250px; margin-bottom: 10px"
+          v-model="patient.ethnicity"
+        ></v-select>
+        <label for="calendar-div">Data de nascimento</label><br />
+        <Datepicker
+          v-model="patient.birth_date"
+          language="pt"
+          input-class="teste"
+          style="width: 250px; margin-bottom: 20px"
+        />
+        <v-radio-group v-model="patient.genre" inline>
+          <v-radio label="Masculino" value="masculino"></v-radio>
+          <v-radio label="Feminino" value="feminino"></v-radio>
+        </v-radio-group>
+        <v-btn
+          variant="flat"
+          color="info"
+          @click="register"
+          :loading="btn.loading"
+          :disabled="!enableBtn"
+        >
+          Cadastrar
+        </v-btn>
+      </v-form>
+      <RouterLink to="/dashboard">
+        <v-btn variant="text">Voltar</v-btn>
+      </RouterLink>
+    </v-sheet>
+  </v-container>
 </template>
 
 <script>
 import axios from 'axios'
 import Alert from '@/components/Alert.vue'
+import Datepicker from 'vuejs3-datepicker'
 
 export default {
   components: {
-    Alert
+    Alert,
+    Datepicker
   },
   data() {
     return {
@@ -102,7 +87,7 @@ export default {
       patient: {
         initials: '',
         register_num: '',
-        birth_date: '',
+        birth_date: new Date(),
         weight: '',
         ethnicity: 'Parda',
         genre: 'masculino',
@@ -188,7 +173,7 @@ export default {
         })
         .catch((err) => {
           console.log(err)
-          this.warningAlert = err?.response?.data?.message || "Erro desconhecido"
+          this.warningAlert = err?.response?.data?.message || 'Erro desconhecido'
           this.btn.disabled = false
           this.btn.loading = false
           setTimeout(() => {
@@ -213,7 +198,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .login-container {
   color: #3d3d3d;
   display: flex;
@@ -249,5 +234,9 @@ button {
 
 .signup-button {
   background-color: #007bff;
+}
+
+.teste {
+  width: 230px;
 }
 </style>
