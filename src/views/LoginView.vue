@@ -3,7 +3,10 @@
     <v-row no-gutters>
       <v-col align-self="center" class="d-flex flex-column justify-center align-center">
         <v-sheet class="d-flex flex-column justify-center align-center px-8 mt-6">
-          <img src="../assets/logo.png" alt="" srcset="../assets/logo.png" style="width: 70px" />
+          <!-- <img src="../assets/logo-1.png" alt="" srcset="../assets/logo-1.png" style="width: 70px" /> -->
+          <!-- <img src="../assets/logo-2.png" alt="" srcset="../assets/logo-2.png" style="width: 50px" /> -->
+          <!-- <img src="../assets/logo-3.png" alt="" srcset="../assets/logo-3.png" style="width: 50px" /> -->
+          <img src="../assets/logo-4.png" alt="" srcset="../assets/logo-4.png" style="width: 50px" />
           <br />
           <v-alert v-if="showAlert" title="Opps!" :text="error" type="warning"></v-alert>
           <br />
@@ -28,7 +31,8 @@
           </v-form>
           <v-btn
             variant="flat"
-            color="success"
+            style="color: white;"
+            color="#038C8C"
             :disabled="btn.disabled"
             :loading="btn.loading"
             @click="login"

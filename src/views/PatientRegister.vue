@@ -37,19 +37,13 @@
           v-model="patient.height"
         ></v-text-field>
         <!-- <br /> -->
+        <DateInput @input="handleInput" :rules="rules.birth" :value="patient.birth_date" style="width: 250px; "/>
         <v-select
           :items="patient.items"
           label="Etnia"
           style="width: 250px; margin-bottom: 10px"
           v-model="patient.ethnicity"
         ></v-select>
-        <label for="calendar-div">Data de nascimento</label><br />
-        <Datepicker
-          v-model="patient.birth_date"
-          language="pt"
-          input-class="teste"
-          style="width: 250px; margin-bottom: 20px"
-        />
         <v-radio-group v-model="patient.genre" inline>
           <v-radio label="Masculino" value="masculino"></v-radio>
           <v-radio label="Feminino" value="feminino"></v-radio>
@@ -74,12 +68,13 @@
 <script>
 import axios from 'axios'
 import Alert from '@/components/Alert.vue'
-import Datepicker from 'vuejs3-datepicker'
+import DateInput from '@/components/DateInput.vue'
+
 
 export default {
   components: {
     Alert,
-    Datepicker
+    DateInput,
   },
   data() {
     return {
@@ -87,7 +82,7 @@ export default {
       patient: {
         initials: '',
         register_num: '',
-        birth_date: new Date(),
+        birth_date: '',
         weight: '',
         ethnicity: 'Parda',
         genre: 'masculino',
@@ -111,7 +106,17 @@ export default {
           (value) => !!value || 'Este campo é obrigatório',
           (value) => {
             const regex = /^\d{2}\/\d{2}\/\d{4}$/
-            return regex.test(value) || 'Preencha a data nesse formato DD/MM/YYYY'
+            return regex.test(value) || 'Preencha o dia, mês e ano'
+          },
+          (value) => {
+            let dd = value.slice(0,2)
+            let mm = value.slice(3,5)
+            let yyyy = value.slice(6,10)
+            let currentYear = new Date().getFullYear()
+            if (dd > 31 || mm > 12 || yyyy > currentYear || (currentYear - yyyy) > 130) {
+              return 'Data inválida'
+            }
+            return true
           }
         ]
       },
@@ -139,6 +144,11 @@ export default {
     }
   },
   methods: {
+    handleInput(v) {
+      if (v?.target?.value) {
+        this.patient.birth_date = v.target.value
+      }
+    },
     register() {
       this.btn.loading = true
       this.btn.disabled = true

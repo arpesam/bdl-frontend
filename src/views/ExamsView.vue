@@ -23,45 +23,43 @@
 <!-- <div v-if="isGroup2Filled"> -->
   <InputPanel v-if="askFerroSerico" title="Ferro sérico:" :value="selected_ferro_serico">
     <v-radio-group v-model="selected_ferro_serico">
-      <v-radio label="< 80 fl" value="<80fl"></v-radio>
-      <v-radio label="normal 80-100 fl" value="80-100fl"></v-radio>
-      <v-radio label="> 100 fl" value=">100fl"></v-radio>
+      <v-radio label="< 60 mcg/dl" value="< 60 mcg/dl"></v-radio>
+      <v-radio label="≥ 60 mcg/dl" value="≥ 60 mcg/dl"></v-radio>
     </v-radio-group>
   </InputPanel>
 
   <InputPanel v-if="askFerritine" title="Ferritina:" :value="selected_ferritina">
     <v-radio-group v-model="selected_ferritina">
-      <v-radio label="< 80 fl" value="<80fl"></v-radio>
-      <v-radio label="normal 80-100 fl" value="80-100fl"></v-radio>
-      <v-radio label="> 100 fl" value=">100fl"></v-radio>
+      <v-radio label="< 30 mcg/L" value="< 30 mcg/L"></v-radio>
+      <v-radio label="≥ 30 e < 100 mcg/L" value="≥ 30 e < 100 mcg/L"></v-radio>
+      <v-radio label="≥100 e < 500 mcg/L" value="≥100 e < 500 mcg/L"></v-radio>
+      <v-radio label="≥ 500 mcg/L" value="≥ 500 mcg/L"></v-radio>
     </v-radio-group>
   </InputPanel>
 
   <InputPanel v-if="askFerritineSaturation" title="Saturação transferrina:" :value="selected_transferrine_saturation">
     <v-radio-group v-model="selected_transferrine_saturation">
-      <v-radio label="< 80 fl" value="<80fl"></v-radio>
-      <v-radio label="normal 80-100 fl" value="80-100fl"></v-radio>
-      <v-radio label="> 100 fl" value=">100fl"></v-radio>
+      <v-radio label="< 20%" value="< 20%"></v-radio>
+      <v-radio label="≥ 20% e < 30%" value="≥ 20% e < 30%"></v-radio>
+      <v-radio label="≥ 30%" value="≥ 30%"></v-radio>
     </v-radio-group>
   </InputPanel>
 
   <InputPanel v-if="askB12Vitamine" title="Vatamina B12:" :value="selected_b12_vitamine">
     <v-radio-group v-model="selected_b12_vitamine">
-      <v-radio label="< 80 fl" value="<80fl"></v-radio>
-      <v-radio label="normal 80-100 fl" value="80-100fl"></v-radio>
-      <v-radio label="> 100 fl" value=">100fl"></v-radio>
+      <v-radio label="< 200 ng/L" value="< 200 ng/L"></v-radio>
+      <v-radio label="≥ 200 ng/L" value="≥ 200 ng/L"></v-radio>
     </v-radio-group>
   </InputPanel>
 
   <InputPanel v-if="askFolicAcid" title="Ácido fólico:" :value="selected_folic_acid">
     <v-radio-group v-model="selected_folic_acid">
-      <v-radio label="< 80 fl" value="<80fl"></v-radio>
-      <v-radio label="normal 80-100 fl" value="80-100fl"></v-radio>
-      <v-radio label="> 100 fl" value=">100fl"></v-radio>
+      <v-radio label="< 6 ng/ml" value="< 6 ng/ml"></v-radio>
+      <v-radio label="≥ 6 ng/ml" value="≥ 6 ng/ml"></v-radio>
     </v-radio-group>
   </InputPanel>
-
 </div>
+
 
 <!-- GRUPO 2 -->
 <div calss="group2" v-if="isGroup1Filled && saveClikedForGroup1 && !overlay">
@@ -105,7 +103,7 @@
 
 <!-- GRUPO 1 -->
 <div class="group1">
-  <InputPanel title="Valor de HB:" :value="selected_hb">
+  <InputPanel title="Valor de Hemoglobina:" :value="selected_hb">
     <v-radio-group v-model="selected_hb">
       <v-radio label="Hb < 7 g/dl" value="Hb<7"></v-radio>
       <v-radio label="Hb > 7 e Hb < 9 g/dl" value="7<Hb<9"></v-radio>
@@ -119,23 +117,26 @@
       <v-checkbox v-model="set_comorbities" label="Insuficiência Cardíaca" value="Insuficiência Cardíaca"></v-checkbox>
       <v-checkbox v-model="set_comorbities" label="DPOC" value="DPOC"></v-checkbox>
       <v-checkbox v-model="set_comorbities" label="Doença Renal Crônica" value="Doença Renal Crônica"></v-checkbox>
-      <v-checkbox v-model="set_comorbities" label="Não" value="Não"></v-checkbox>
+      <v-checkbox v-model="set_comorbities" label="Nenhuma das anteriores" value="Não"></v-checkbox>
     </div>
   </InputPanel>
 
-  <InputPanel title="Exames físicos apresentam as alterações abaixo?" :value="selected_physical_exam" >
+  <InputPanel title="Exame físico: apresenta as alterações abaixo?" :value="selected_physical_exam" >
       <v-checkbox v-model="set_selected_physical_exam" label="Dispnéia e/ou sinais de insuficiência respiratória" value="Dispnéia e/ou sinais de insuficiência respiratória" ></v-checkbox>
       <v-checkbox v-model="set_selected_physical_exam" label="Má perfusão tecidual" value="Má perfusão tecidual"></v-checkbox>
       <v-checkbox v-model="set_selected_physical_exam" label="Sonolência e/ou alteração do nível da consciência" value="Sonolência e/ou alteração do nível da consciência" ></v-checkbox>
       <v-checkbox v-model="set_selected_physical_exam" label="PAM < 70 mmHg e/ou FC > 100 bpm" value="PAM < 70 mmHg e/ou FC > 100 bpm"></v-checkbox>
-      <v-checkbox v-model="set_selected_physical_exam" label="Não" value="Não"></v-checkbox>
+      <v-checkbox v-model="set_selected_physical_exam" label="Nenhuma das anteriores" value="Não"></v-checkbox>
   </InputPanel>
 
   <InputPanel title="Procedimento cirúrgico a ser realizado:" :value="selected_procedure">
     <v-radio-group v-model="selected_procedure">
-      <v-radio label="Pequeno porte (colocar exemplos)" value="Pequeno porte"></v-radio>
-      <v-radio label="Médio porte (colocar exemplos)" value="Médio porte"></v-radio>
-      <v-radio label="Grande porte (colocar exemplos)" value="Grande porte"></v-radio>
+      <v-radio label="Pequeno porte (ex: cirurgias dermatológicas, procedimentos dentários, cirurgias endoscópicas, herniorrafias, cirurgias ortopédicas e ginecológicas menores, endarterectomia, RTU)" value="Pequeno porte"></v-radio>
+      <br>
+      <v-radio label="Médio porte (ex: cirurgias intra-abdominais, angioplastia periférica, aneurisma endovascular, histerectomia, cirurgias plásticas maiores, cirurgia ortopédica de quadril ou coluna, transplante renal, neurocirurgia)" value="Médio porte"></v-radio>
+      <br>
+      <v-radio label="Grande porte (ex: cirurgia cardíaca, cirurgia vascular maior, transplante hepático ou pulmonar, cirurgia  de ressecção hepática, cirurgia duodeno-pancreática, cistectomia, pneumectomia, amputação de membro inferior, esofagectomia)" value="Grande porte"></v-radio>
+      <br>
       <v-text-field
         v-if="selected_procedure"
         v-model="previous_hemoglobine_text"
@@ -175,8 +176,6 @@
     </v-radio-group>
   </InputPanel>
 </div>
-<!-- <p style="color: red !important">isGroup1Filled={{isGroup1Filled}}  saveClicked1={{saveClikedForGroup1}} overlay={{!overlay}}</p>
-<p style="color: red !important">isGroup2Filled={{isGroup2Filled}}  saveClicked2={{saveClikedForGroup2}} overlay={{!overlay}}</p> -->
 
 <!-- BUTTONS -->
 <v-row class="mt-5">
@@ -187,7 +186,8 @@
         icon="mdi-content-save"
         size="x-large"
         fixed
-        color="blue"
+        color="#038C8C"
+        style="color: white"
         :disabled="overlay"
         :style="{ position: 'fixed', bottom: '0.6rem', right: '0.6rem', zIndex: 1 }"
         @click="registerExam"
@@ -196,7 +196,7 @@
       <v-btn class="ml-8 pl-4 pr-4" variant="flat" color="warning" @click="dialog = true" :disabled="overlay">
         Resetar valores
       </v-btn>
-      <v-btn class="ml-10" variant="flat" color="info" @click="registerExam" :disabled="overlay">
+      <v-btn class="ml-10" variant="flat" color="#038C8C" @click="registerExam" :disabled="overlay" style="color: white;">
         Salvar
       </v-btn>
     <!-- </v-form> -->
@@ -463,10 +463,10 @@ export default {
       let physicalmptoms = this.selected_physical_exam.length > 0 && !this.selected_physical_exam.includes('Não')
       if (hb === 'Hb<7') {
         if (!comorbidity && !physicalmptoms) {
-          this.conductSuggestionText = 'xxx1 A transfusão não é recomendada neste caso, mas é fundamental investigar a etiologia da anemia e prosseguir com o tratamento antes da cirurgia. Solicite os exames abaixo e preencha os resultados.'
+          this.conductSuggestionText = 'A transfusão não é recomendada neste caso, mas é fundamental investigar a etiologia da anemia e prosseguir com o tratamento antes da cirurgia. Solicite os exames abaixo e preencha os resultados.'
           return positive
         } else if (comorbidity && !physicalmptoms) {
-          this.conductSuggestionText = 'xxx2 Provavelmente não deverá ser transfundido por não apresentar repercussão clínica da anemia. Paciente de maior risco pré-operatório por apresentar comorbidade  e anemia. É fundamental investigar a etiologia da anemia e prosseguir com o tratamento antes da cirurgia. Solicite os exames abaixo e preencha os resultados.'
+          this.conductSuggestionText = 'Provavelmente não deverá ser transfundido por não apresentar repercussão clínica da anemia. Paciente de maior risco pré-operatório por apresentar comorbidade  e anemia. É fundamental investigar a etiologia da anemia e prosseguir com o tratamento antes da cirurgia. Solicite os exames abaixo e preencha os resultados.'
           return alert
         } else if (comorbidity && physicalmptoms) {
           // Nao seria o caso de deixar essa sugestao mais branda?

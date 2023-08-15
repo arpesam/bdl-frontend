@@ -73,3 +73,12 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 a { text-decoration: none; }
+
+.date-input {
+  height: 50px;
+  padding: 10px;
+  border-radius: 5px 5px 0 0;
+  border-bottom: 1px solid grey;
+  background-color: #f6f6f6;
+  width: 250px;
+}

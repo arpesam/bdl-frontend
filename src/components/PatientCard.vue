@@ -33,7 +33,7 @@
         <v-icon icon="mdi-list-box-outline"></v-icon> {{ patient.register_num }}
       </p>
       <p class="text-disabled text-body-2">
-        <v-icon icon="mdi-baby-face-outline"></v-icon> {{ getBirthDate }}
+        <v-icon icon="mdi-baby-face-outline"></v-icon> {{ patient.birth_date }}
       </p>
       <!-- etnia -->
       <p class="text-disabled text-body-2">
@@ -85,7 +85,7 @@
             <span class="text-h5">Sobre os dados clínicos</span>
           </v-card-title>
           <v-card-text>
-            Por favor, forneça dados clínicos para este paciente. A conduta sugerida é apenas uma ajuda e não substitui a sua avaliação profissional para determinar o procedimento a ser seguido.
+            O fornecimento dos dados clínicos de forma adequada é fundamental para análise das informações e sugestão de conduta. Este sistema não substitui a avaliação médica e que o objetivo é auxiliar o profissional a tomar uma melhor decisão.
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
@@ -114,16 +114,6 @@ export default {
     return {
       dialog: false,
       showDetails: true
-    }
-  },
-  computed: {
-    getBirthDate() {
-      let date = new Date(this.patient.birth_date)
-      let day = date.getDay()
-      let month = date.getMonth()
-      let fullYear = date.getFullYear()
-
-      return `${day}/${month}/${fullYear}`
     }
   },
   methods: {

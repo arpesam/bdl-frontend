@@ -8,7 +8,7 @@ import { RouterLink, RouterView } from 'vue-router'
     </div> -->
     <v-layout>
       <!-- NAVBAR -->
-      <v-app-bar color="blue" density="compact" v-if="isLoggedIn && $route.name != 'Login' && $route.name != 'Cadastro'">
+      <v-app-bar color="#038C8C" density="compact" v-if="isLoggedIn && $route.name != 'Login' && $route.name != 'Cadastro'" style="color: white">
         <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
         <v-app-bar-title>{{ $route.name }}</v-app-bar-title>
         <!-- <v-spacer></v-spacer> -->
@@ -37,6 +37,12 @@ import { RouterLink, RouterView } from 'vue-router'
           <v-list-item prepend-icon="mdi-forum" title="Sobre" value="about"></v-list-item>
           <v-list-item prepend-icon="mdi-logout" title="Sair" value="logout" @click="logoutAndClean"></v-list-item>
         </v-list>
+
+        <template v-slot:append>
+          <div class="pa-2">
+            v0.14.beta
+          </div>
+        </template>
       </v-navigation-drawer>
 
       <!-- MAIN CONTENT -->

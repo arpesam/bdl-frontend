@@ -15,7 +15,6 @@ const vuetify = createVuetify({
 
 import App from './App.vue'
 import router from './router'
-
 import './assets/main.css'
 
 const pinia = createPinia()
@@ -26,6 +25,5 @@ app.use(pinia)
 app.use(router)
 app.use(vuetify)
 app.directive("maska", vMaska)
-
 
 app.mount('#app')

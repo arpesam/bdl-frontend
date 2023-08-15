@@ -42,7 +42,9 @@
           :rules="rules.number"
           hide-details="auto"
           v-model="patient.height"
-        ></v-text-field>
+          ></v-text-field>
+
+        <DateInput @input="handleInput" :rules="rules.birth" :value="patient.birth_date" style="width: 250px; "/>
 
         <v-select
           :items="patient.items"
@@ -50,14 +52,6 @@
           style="width: 250px; margin-bottom: 10px"
           v-model="patient.ethnicity"
         ></v-select>
-
-        <label for="calendar-div">Data de nascimento</label><br />
-        <Datepicker
-          v-model="patient.birth_date"
-          language="pt"
-          input-class="teste"
-          style="width: 250px; margin-bottom: 20px"
-        />
 
         <v-radio-group v-model="patient.genre" inline>
           <v-radio label="Masculino" value="masculino"></v-radio>
@@ -72,6 +66,7 @@
         >
           Salvar
         </v-btn>
+
       </v-form>
       <!-- <RouterLink to="/dashboard">
         <v-btn variant="text">Voltar</v-btn>
@@ -83,16 +78,17 @@
 <script>
 import axios from 'axios'
 import Alert from '@/components/Alert.vue'
-import Datepicker from 'vuejs3-datepicker'
+import DateInput from '@/components/DateInput.vue'
 
 export default {
   components: {
     Alert,
-    Datepicker
+    DateInput
   },
   data() {
     return {
       isFormValid: false,
+      options: { mask: '##/##/####' },
       patient: {
         initials: '',
         register_num: '',
@@ -121,7 +117,17 @@ export default {
           (value) => !!value || 'Este campo é obrigatório',
           (value) => {
             const regex = /^\d{2}\/\d{2}\/\d{4}$/
-            return regex.test(value) || 'Esta data é inválida'
+            return regex.test(value) || 'Preencha o dia, mês e ano'
+          },
+          (value) => {
+            let dd = value.slice(0,2)
+            let mm = value.slice(3,5)
+            let yyyy = value.slice(6,10)
+            let currentYear = new Date().getFullYear()
+            if (dd > 31 || mm > 12 || yyyy > currentYear || (currentYear - yyyy) > 130) {
+              return 'Data inválida'
+            }
+            return true
           }
         ]
       },
@@ -145,6 +151,11 @@ export default {
     }
   },
   methods: {
+    handleInput(v) {
+      if (v?.target?.value) {
+        this.patient.birth_date = v.target.value
+      }
+    },
     register() {
       this.btn.loading = true
       this.btn.disabled = true
@@ -192,16 +203,7 @@ export default {
     this.loading = true
     var patient = localStorage.getItem(this.$route.params.id)
     patient = JSON.parse(patient)
-
-    // const date = new Date(patient.birth_date);
-
-    // const day = String(date.getDate()).padStart(2, '0');
-    // const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based, so we need to add 1
-    // const year = date.getFullYear();
-
-    // const formattedDate = `${day}/${month}/${year}`;
     this.patient = patient
-    // this.patient.birth_date = formattedDate
   }
 }
 </script>
