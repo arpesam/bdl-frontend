@@ -3,7 +3,8 @@
     <v-row no-gutters>
       <v-col align-self="center">
         <v-sheet class="d-flex flex-column justify-center align-center">
-          <img src="../assets/logo.png" alt="" srcset="../assets/logo.png" style="width: 70px" />
+          <!-- <img src="../assets/logo.png" alt="" srcset="../assets/logo.png" style="width: 70px" /> -->
+          <img src="../assets/logo-4.png" alt="" srcset="../assets/logo-4.png" style="width: 50px" />
           <br />
           <Alert :successAlert="successAlert" :warningAlert="warningAlert" />
           <br />
@@ -70,7 +71,8 @@
           </v-checkbox>
           <v-btn
             variant="flat"
-            color="info"
+            style="color: white;"
+            color="#038C8C"
             @click="signup"
             :loading="btn.loading"
             :disabled="!enableBtn"
@@ -128,6 +130,7 @@ export default {
   computed: {
     enableBtn() {
       return (
+        this.user.terms_and_conditions &&
         !!this.user.email &&
         !!this.user.name &&
         !!this.user.professional_id &&
