@@ -12,7 +12,7 @@
   v-if="!overlay && !warningAlert"
   class="mt-1 mb-3"
   icon="$info"
-  title="Sugestão de conduta"
+  :title="`Sugestão de conduta [${flow}]`"
   style="color: white;"
   :text="conductSuggestionText"
   :color="needTransfusion"
@@ -285,6 +285,7 @@ export default {
   },
   data() {
     return {
+      flow: '',
       saveClikedForGroup1: false,
       saveClikedForGroup2: false,
       dialog: false,
@@ -408,7 +409,7 @@ export default {
         this.isGroup1Filled = result.isGroup1Filled
         this.isGroup2Filled = result.isGroup2Filled
         this.isGroup3Filled = result.isGroup3Filled
-
+        this.flow = result.flow
 
         return this.conductSuggestionColor
 
@@ -613,10 +614,9 @@ export default {
         this.selected_folic_acid = exam.selected_folic_acid
         window.scrollTo(0,0)
 
-        console.log("-=======", );
         const processExamInputs = this.processExamInputsAction()
         const result = processExamInputs(this)
-        console.log("-======2=", result);
+        this.flow = result.flow
 
         if (result.isGroup1Filled) {
           this.saveClikedForGroup1 = true

@@ -202,7 +202,7 @@ function processGroup3(exams, group2Suggestion) {
 
   return {
     ...group2Suggestion,
-    flow: group2Suggestion.flow + '/' + 'G3-uknown',
+    flow: group2Suggestion.flow + '/' + 'G3-00',
     conductText: 'Infelizmente não foi possível processar uma sugestão de conduta, a combinação de exames não foi mapeada. Verifique se os dados fornecidos estão corretos e clique em Salvar para processar novamente.'
   }
 
@@ -213,8 +213,8 @@ function processGroup2(exams, group1Suggestion) {
   let vcm = exams.selected_vcm
   let hcm = exams.selected_hcm
   let hasTalassemia = exams.previous_hemoglobine_value.includes("Talassemia")
-  let hasHemoglobinopatia = exams.set_previous_hemoglobine_value.length && !exams.set_previous_hemoglobine_value.includes("Não")
-  let hasFalciformeAnemia = exams.set_previous_hemoglobine_value.includes("Anemia falciformeão")
+  let hasHemoglobinopatia = exams.previous_hemoglobine_value.length && !exams.previous_hemoglobine_value.includes("Não")
+  let hasFalciformeAnemia = exams.previous_hemoglobine_value.includes("Anemia falciformeão")
   let hasReceivedTransfusion = exams.selected_transfusion == "Sim"
   let hasCronicHepatopatia = exams.set_hemostasis_value.includes("Hepatopatia crônica")
 
@@ -230,6 +230,7 @@ function processGroup2(exams, group1Suggestion) {
   }
 
   // flow1
+  // debugger
   if (vcm == '<80fl' && !hasFalciformeAnemia && !hasHemoglobinopatia) {
     return {
       ...group1Suggestion,
@@ -375,7 +376,7 @@ function processGroup2(exams, group1Suggestion) {
 
   return {
     ...group1Suggestion,
-    flow: group1Suggestion.flow + '/' + 'G2-uknown'
+    flow: group1Suggestion.flow + '/' + 'G2-00'
   }
 }
 
