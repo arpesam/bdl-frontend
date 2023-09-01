@@ -35,7 +35,7 @@
               <template v-slot:opposite>
                 <div :class="`pt-1 headline font-weight-bold text-teal-lighten-3`" v-text="'Passo 3'" ></div>
               </template>
-                <div class="d-flex text-teal-lighten-3"> <strong class="me-4">Informe os dados clinicos</strong> </div>
+                <div class="d-flex text-teal-lighten-3"> <strong class="me-4">Informe os dados clínicos</strong> </div>
             </v-timeline-item>
 
             <v-timeline-item dot-color="teal-lighten-3" size="small" >
