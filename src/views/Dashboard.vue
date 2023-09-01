@@ -28,21 +28,21 @@
               <template v-slot:opposite>
                 <div :class="`pt-1 headline font-weight-bold text-info`" v-text="'Passo 2'" ></div>
               </template>
-                <div class="d-flex text-info"> <strong class="me-4">Cadastre o primeiro paciente</strong></div>
+                <div class="d-flex text-info"> <strong class="me-4">Adicione o primeiro paciente</strong></div>
             </v-timeline-item>
 
             <v-timeline-item dot-color="teal-lighten-3" size="small" >
               <template v-slot:opposite>
                 <div :class="`pt-1 headline font-weight-bold text-teal-lighten-3`" v-text="'Passo 3'" ></div>
               </template>
-                <div class="d-flex text-teal-lighten-3"> <strong class="me-4">Cadastre os dados clinicos deles</strong> </div>
+                <div class="d-flex text-teal-lighten-3"> <strong class="me-4">Informe os dados clinicos</strong> </div>
             </v-timeline-item>
 
             <v-timeline-item dot-color="teal-lighten-3" size="small" >
               <template v-slot:opposite>
                 <div :class="`pt-1 headline font-weight-bold text-teal-lighten-3`" v-text="'Passo 4'" ></div>
               </template>
-                <div class="d-flex text-teal-lighten-3"> <strong class="me-4">Uma sugestão de conduta será gerada</strong> </div>
+                <div class="d-flex text-teal-lighten-3"> <strong class="me-4">Receba a sugestão de conduta</strong> </div>
             </v-timeline-item>
           </v-timeline>
           <div class="d-flex justify-center">
