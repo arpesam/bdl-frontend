@@ -8,10 +8,51 @@
     </v-row>
     <v-row v-else>
       <v-col v-if="patients.length === 0" justify-center cols="12" sm="12">
-        <div class="empty-message">
-          Voce ainda não cadastrou nenhum paciente, clique em <br/> <RouterLink to="/register/patient">
-      <v-btn icon="mdi-account-multiple-plus" color="white" size="x-large"></v-btn>
-    </RouterLink> <br/>para adicionar novos pacientes. <br><br>Após isso você poderá registrar os dados clínicos do paciente e receber sugestões de conduta.
+
+        <v-timeline v-if="showWelcome" side="end" align="start" style="max-height: 400px;">
+            <v-timeline-item dot-color="grey-lighten-4" size="small" >
+              <template v-slot:opposite>
+                <div :class="`pt-1 headline font-weight-bold text-grey-lighten-1`" v-text="'Olá'" ></div>
+              </template>
+                <div class="d-flex text-grey-lighten-1"> <strong class="me-4">Bem vindo!</strong> </div>
+            </v-timeline-item>
+
+            <v-timeline-item dot-color="grey-lighten-4" size="small" >
+              <template v-slot:opposite>
+                <div :class="`pt-1 headline font-weight-bold text-grey-lighten-1`" v-text="'Passo 1'" ></div>
+              </template>
+                <div class="d-flex text-grey-lighten-1"> <strong class="me-4">Cadastre-se</strong> </div>
+            </v-timeline-item>
+
+            <v-timeline-item dot-color="info" size="small" >
+              <template v-slot:opposite>
+                <div :class="`pt-1 headline font-weight-bold text-info`" v-text="'Passo 2'" ></div>
+              </template>
+                <div class="d-flex text-info"> <strong class="me-4">Cadastre o primeiro paciente</strong></div>
+            </v-timeline-item>
+
+            <v-timeline-item dot-color="teal-lighten-3" size="small" >
+              <template v-slot:opposite>
+                <div :class="`pt-1 headline font-weight-bold text-teal-lighten-3`" v-text="'Passo 3'" ></div>
+              </template>
+                <div class="d-flex text-teal-lighten-3"> <strong class="me-4">Cadastre os dados clinicos deles</strong> </div>
+            </v-timeline-item>
+
+            <v-timeline-item dot-color="teal-lighten-3" size="small" >
+              <template v-slot:opposite>
+                <div :class="`pt-1 headline font-weight-bold text-teal-lighten-3`" v-text="'Passo 4'" ></div>
+              </template>
+                <div class="d-flex text-teal-lighten-3"> <strong class="me-4">Uma sugestão de conduta será gerada</strong> </div>
+            </v-timeline-item>
+          </v-timeline>
+          <div class="d-flex justify-center">
+            <v-btn v-if="showWelcome" variant="outlined" color="info" @click="showWelcome=false">Entendi</v-btn>
+          </div>
+
+        <div v-if="!showWelcome" class="empty-message">
+          Para cadastrar um paciente, clique em <br/> <RouterLink to="/register/patient">
+      <v-btn icon="mdi-account-multiple-plus" variant="text" color="black" size="x-large"></v-btn>
+    </RouterLink><br>Após isso você poderá registrar os dados clínicos do paciente e receber sugestões de conduta.
         </div>
       </v-col>
       <v-col
@@ -55,6 +96,7 @@ components: {
 },
 data() {
   return {
+    showWelcome: true,
     setDetails: true,
     APIbasePath: import.meta.env.VITE_API_URL,
     logoutDropdown: false,
@@ -131,7 +173,6 @@ transform: translate(-50%, -50%);
 }
 .empty-message {
 text-align: center;
-margin: 100px;
 color: #3d3d3d;
 }
 </style>

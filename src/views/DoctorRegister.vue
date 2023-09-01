@@ -6,9 +6,52 @@
           <!-- <img src="../assets/logo.png" alt="" srcset="../assets/logo.png" style="width: 70px" /> -->
           <img src="../assets/logo-4.png" alt="" srcset="../assets/logo-4.png" style="width: 50px" />
           <br />
+
+
+          <v-timeline v-if="showWelcome" side="end" align="start" style="max-height: 400px;">
+            <v-timeline-item dot-color="grey-lighten-4" size="small" >
+              <template v-slot:opposite>
+                <div :class="`pt-1 headline font-weight-bold text-grey-lighten-1`" v-text="'Olá'" ></div>
+              </template>
+                <div class="d-flex text-grey-lighten-1"> <strong class="me-4">Bem vindo!</strong> </div>
+            </v-timeline-item>
+
+            <v-timeline-item dot-color="info" size="small" >
+              <template v-slot:opposite>
+                <div :class="`pt-1 headline font-weight-bold text-info`" v-text="'Passo 1'" ></div>
+              </template>
+                <div class="d-flex text-info"> <strong class="me-4">Cadastre-se</strong></div>
+            </v-timeline-item>
+
+            <v-timeline-item dot-color="teal-lighten-3" size="small" >
+              <template v-slot:opposite>
+                <div :class="`pt-1 headline font-weight-bold text-teal-lighten-3`" v-text="'Passo 2'" ></div>
+              </template>
+                <div class="d-flex text-teal-lighten-3"> <strong class="me-4">Adicione pacientes</strong> </div>
+            </v-timeline-item>
+
+            <v-timeline-item dot-color="teal-lighten-3" size="small" >
+              <template v-slot:opposite>
+                <div :class="`pt-1 headline font-weight-bold text-teal-lighten-3`" v-text="'Passo 3'" ></div>
+              </template>
+                <div class="d-flex text-teal-lighten-3"> <strong class="me-4">Informe os dados clinicos deles</strong> </div>
+            </v-timeline-item>
+
+            <v-timeline-item dot-color="teal-lighten-3" size="small" >
+              <template v-slot:opposite>
+                <div :class="`pt-1 headline font-weight-bold text-teal-lighten-3`" v-text="'Passo 4'" ></div>
+              </template>
+                <div class="d-flex text-teal-lighten-3"> <strong class="me-4">Uma sugestão de conduta será gerada</strong> </div>
+            </v-timeline-item>
+          </v-timeline>
+          <div class="d-flex justify-center">
+            <v-btn v-if="showWelcome" variant="outlined" color="info" @click="showWelcome=false">Entendi</v-btn>
+          </div>
+
           <Alert :successAlert="successAlert" :warningAlert="warningAlert" />
           <br />
-          <v-form v-model="isFormValid">
+
+          <v-form v-if="!showWelcome"  v-model="isFormValid">
             <v-text-field
               style="width: 250px"
               label="Nome*"
@@ -59,7 +102,7 @@
 
             <br />
           </v-form>
-          <v-checkbox v-model="user.terms_and_conditions">
+          <v-checkbox v-if="!showWelcome" v-model="user.terms_and_conditions">
             <template v-slot:label>
               <div>
                 Eu concordo que li e aceito os
@@ -70,6 +113,7 @@
             </template>
           </v-checkbox>
           <v-btn
+            v-if="!showWelcome"
             variant="flat"
             style="color: white;"
             color="#038C8C"
@@ -83,6 +127,8 @@
           <RouterLink to="/">
             <v-btn variant="flat" color="default" icon="mdi-arrow-left"></v-btn>
           </RouterLink>
+          <a style="margin-top: 20px; color: grey;" href="https://api.whatsapp.com/send/?phone=5511941411913" target="_blank"><v-icon style="color: green;" icon="mdi-whatsapp"></v-icon> Fale conosco</a>
+
         </v-sheet>
       </v-col>
     </v-row>
@@ -99,6 +145,7 @@ export default {
   },
   data() {
     return {
+      showWelcome: true,
       user: {
         name: '',
         email: '',

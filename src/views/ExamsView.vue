@@ -17,9 +17,19 @@
   :text="conductSuggestionText"
   :color="needTransfusion"
 ></v-alert>
+<!-- <div style="color: black;">
+  askFerroSerico: {{ askFerroSerico }}  <br/>
+  askFerritine: {{ askFerritine }}  <br/>
+  askFerritineSaturation: {{ askFerritineSaturation }}  <br/>
+  askB12Vitamine: {{ askB12Vitamine }}  <br/>
+  askFolicAcid: {{ askFolicAcid }} <br/><br/>
+  isGroup1Filled: {{isGroup1Filled}} <br/>
+  isGroup2Filled: {{isGroup2Filled}} <br/>
+  isGroup3Filled: {{isGroup3Filled}} <br/>
 
+</div> -->
 <!-- GRUPO 3 -->
-<div>
+<div v-if="isGroup2Filled && !overlay">
 <!-- <div v-if="isGroup2Filled"> -->
   <InputPanel v-if="askFerroSerico" title="Ferro sérico:" :value="selected_ferro_serico">
     <v-radio-group v-model="selected_ferro_serico">
@@ -60,13 +70,12 @@
   </InputPanel>
 </div>
 
-
 <!-- GRUPO 2 -->
-<div calss="group2" v-if="isGroup1Filled && saveClikedForGroup1 && !overlay">
+<div calss="group2" v-if="isGroup1Filled && !overlay">
   <InputPanel title="VCM:" :value="selected_vcm">
     <v-radio-group v-model="selected_vcm">
       <v-radio label="< 80 fl" value="<80fl"></v-radio>
-      <v-radio label="normal 80-100 fl" value="80-100fl"></v-radio>
+      <v-radio label="80-100 fl" value="80-100fl"></v-radio>
       <v-radio label="> 100 fl" value=">100fl"></v-radio>
     </v-radio-group>
   </InputPanel>
@@ -183,32 +192,32 @@
     <!-- <v-form v-model="isFormValid"> -->
       <v-btn
         fab
-        icon="mdi-content-save"
-        size="x-large"
         fixed
+        size="x-large"
         color="#038C8C"
         style="color: white"
         :disabled="overlay"
         :style="{ position: 'fixed', bottom: '0.6rem', right: '0.6rem', zIndex: 1 }"
         @click="registerExam"
       >
+      Salvar
       </v-btn>
       <v-btn class="ml-8 pl-4 pr-4" variant="flat" color="warning" @click="dialog = true" :disabled="overlay">
         Resetar valores
       </v-btn>
-      <v-btn class="ml-10" variant="flat" color="#038C8C" @click="registerExam" :disabled="overlay" style="color: white;">
+      <!-- <v-btn class="ml-10" variant="flat" color="#038C8C" @click="registerExam" :disabled="overlay" style="color: white;">
         Salvar
-      </v-btn>
+      </v-btn> -->
     <!-- </v-form> -->
   </v-sheet>
 </v-row>
 
 <!-- SNACKBAR -->
-<v-snackbar v-model="snackbar">
+<v-snackbar v-if="!overlay" :timeout="600" v-model="snackbar">
   {{ snackBarText }}
-  <template v-slot:actions>
+  <!-- <template v-slot:actions>
     <v-btn :color="snackbarColor" variant="text" @click="snackbar = false"> Fechar </v-btn>
-  </template>
+  </template> -->
 </v-snackbar>
 
 <!-- DIALOG -->
@@ -264,17 +273,6 @@ import InputPanel from '@/components/InputPanel.vue'
 import { mapActions, mapState, mapWritableState } from 'pinia'
 import { useExamStore } from '@/stores/exams'
 
-const neutral = '#455775'
-const positive = 'success'
-const info = 'info'
-const alert = 'orange'
-const danger = '#e64562'
-
-
-const red = '#e64562'
-const orange = 'orange'
-const success = 'success'
-const warning = 'warning'
 
 export default {
   components: {
@@ -291,7 +289,6 @@ export default {
       saveClikedForGroup2: false,
       dialog: false,
       overlay: false,
-      snackbar2: true,
       APIbasePath: import.meta.env.VITE_API_URL,
       isFormValid: false,
       successAlert: '',
@@ -303,8 +300,17 @@ export default {
       btn: {
         loading: false
       },
+
       conductSuggestionText: 'Por favor, complete os dados abaixo',
       conductSuggestionColor: '#2A3B4D',
+      askFerroSerico: false,
+      askFerritine: false,
+      askFerritineSaturation: false,
+      askB12Vitamine: false,
+      askFolicAcid: false,
+      isGroup1Filled: false,
+      isGroup2Filled: false,
+      isGroup3Filled: false,
 
       comorbities: [],
       previous_hemoglobine_value: [],
@@ -388,174 +394,28 @@ export default {
         this.selected_physical_exam = v.filter((item) => item !== "Não");
       }
     },
-    isGroup1Filled() {
-      return (
-        !!this.selected_hb &&
-        !!this.comorbities.length &&
-        !!this.selected_physical_exam.length &&
-        !!this.selected_procedure &&
-        !!this.previous_hemoglobine_value.length &&
-        !!this.hemostasis_value.length &&
-        !!this.selected_medication &&
-        !!this.selected_transfusion
-      )
-    },
-    isGroup2Filled() {
-      return (
-        !!this.isGroup1Filled &&
-        !!this.selected_vcm &&
-        !!this.selected_hcm &&
-        !!this.selected_leucocito &&
-        !!this.selected_plaquetas &&
-        !!this.selected_gloumerar
-      )
-    },
     needTransfusion() {
-      if (!this.isGroup1Filled || !this.saveClikedForGroup1) {
-        this.conductSuggestionText = 'Por favor, complete todos os dados abaixo e clique em "Salvar" para uma avalição prévia. Você pode salvar e retornar quando quiser.'
-        return neutral
-      }
+        const processExamInputs = this.processExamInputsAction()
+        const result = processExamInputs(this)
+        console.log("result", result);
+        this.conductSuggestionText = result.conductText
+        this.conductSuggestionColor = result.color
+        this.askFerroSerico = result.askFerroSerico
+        this.askFerritine = result.askFerritine
+        this.askFerritineSaturation = result.askFerritineSaturation
+        this.askB12Vitamine = result.askB12Vitamine
+        this.askFolicAcid = result.askFolicAcid
+        this.isGroup1Filled = result.isGroup1Filled
+        this.isGroup2Filled = result.isGroup2Filled
+        this.isGroup3Filled = result.isGroup3Filled
 
-      if (this.isGroup2Filled && this.saveClikedForGroup2) {
-        if (this.selected_vcm == "<80fl" && this.hasTalassemia && this.hasReveivedTransfusion) {
-          this.conductSuggestionText = 'Se paciente em programa de transfusão regular, será necessário avaliação do hematologista e programar reserva cirurgica com CH fenotipado. Comunicar Serviço de Hemoterapia.'
-          return alert
-        }
 
-        if (this.selected_vcm == "<80fl" && this.hasTalassemia && !this.hasHemoglobinopatia && !this.hasReveivedTransfusion) {
-          this.conductSuggestionText = 'Provavél talassemia menor se paciente com anemia leve e sem necessidade transfusionar. Solicitar avaliação do Hematologista.'
-          return alert
-        }
+        return this.conductSuggestionColor
 
-        if (this.selected_vcm == "<80-100fl" && this.selected_hcm == ">32pg" && !this.hasTalassemia && !this.hasFalciformeAnemia && !this.hasHemoglobinopatia && this.selected_gloumerar == "TGF < 60 ml/min/1,73m2") {
-          this.conductSuggestionText = 'Iniciar EPO se hb < 10 g/dl e avaliar perfil de ferro. Iniciar ferro se sat < 20%.'
-          return info
-        }
-
-        if (this.selected_vcm == ">100fl" && this.selected_hcm == "27-32pg" && !this.hasTalassemia && !this.hasFalciformeAnemia && !this.hasHemoglobinopatia && this.selected_gloumerar == "TGF < 60 ml/min/1,73m2") {
-          this.conductSuggestionText = 'Iniciar EPO se hb < 10 g/dl e avaliar perfil de ferro. Iniciar ferro se sat < 20%.'
-          return info
-        }
-
-        if (this.selected_vcm == ">100fl" && this.selected_hcm == ">32pg" && !this.hasTalassemia && !this.hasFalciformeAnemia && !this.hasHemoglobinopatia) {
-          this.conductSuggestionText = 'Solicite vitamina B12 e acido fólico e realize tratamento em caso de deficiência.'
-          return info
-        };
-
-        if (this.selected_vcm == ">100fl" && this.selected_hcm == ">32pg" && !this.hasTalassemia && !this.hasFalciformeAnemia && !this.hasHemoglobinopatia && this.selected_b12_vitamine == "Normal" && this.selected_folic_acid == "Normal" && !this.hasCronicHepatopatia) {
-          this.conductSuggestionText = 'Considerar diagnóstico de sindrome mielodisplásica e encaminhar ao hematologista.'
-          return info
-        };
-
-        if (this.selected_vcm == ">100fl" && this.selected_hcm == ">32pg" && !this.hasTalassemia && !this.hasFalciformeAnemia && !this.hasHemoglobinopatia && this.selected_b12_vitamine == "Normal" && this.selected_folic_acid == "Normal" && this.hasCronicHepatopatia) {
-          this.conductSuggestionText = 'Provável macrocitose pela hepatopatia. Descartar outras causas de anemia macrocítica como Hipotiroidismo. Encaminhar ao Hematologista.'
-          return info
-        };
-
-        if (this.hasTalassemia && !this.hasHemoglobinopatia && this.hasReveivedTransfusion) {
-          this.conductSuggestionText = 'Se paciente em programa de transfusão regular, será necessário avaliação do hematologista e programar reserva cirurgica com CH fenotipado. Comunicar Serviço de Hemoterapia.'
-          return info
-        };
-      }
-
-      let hb = this.selected_hb
-      let comorbidity = this.comorbities.length > 0 && !this.comorbities.includes('Não')
-      let physicalmptoms = this.selected_physical_exam.length > 0 && !this.selected_physical_exam.includes('Não')
-      if (hb === 'Hb<7') {
-        if (!comorbidity && !physicalmptoms) {
-          this.conductSuggestionText = 'A transfusão não é recomendada neste caso, mas é fundamental investigar a etiologia da anemia e prosseguir com o tratamento antes da cirurgia. Solicite os exames abaixo e preencha os resultados.'
-          return positive
-        } else if (comorbidity && !physicalmptoms) {
-          this.conductSuggestionText = 'Provavelmente não deverá ser transfundido por não apresentar repercussão clínica da anemia. Paciente de maior risco pré-operatório por apresentar comorbidade  e anemia. É fundamental investigar a etiologia da anemia e prosseguir com o tratamento antes da cirurgia. Solicite os exames abaixo e preencha os resultados.'
-          return alert
-        } else if (comorbidity && physicalmptoms) {
-          // Nao seria o caso de deixar essa sugestao mais branda?
-          this.conductSuggestionText = 'Provavelmente se beneficiará com a transfusão. Porém é fundamental investigar a etiologia da anemia e prosseguir com o tratamento antes da cirurgia. Este é um paciente de maior risco pré-operatório. Solicite os exames abaixo e preencha os resultados.'
-          return danger
-        } else if (!comorbidity && physicalmptoms) {
-          this.conductSuggestionText = 'Pode precisar de transfusão, mas é necessário fazer uma avaliação clínica para investigar se os sintomas estão relacionados a outras causas além da anemia, como infecção, distúrbios metabólicos, principalmente em pacientes com anemia crônica e sem sangramento agudo. Além disso, é fundamental investigar a etiologia da anemia e prosseguir com o tratamento antes da cirurgia. Solicite os exames abaixo e preencha os resultados.'
-          return alert
-        }
-      } else if (hb === '7<Hb<9') {
-        if (!comorbidity && !physicalmptoms) {
-          this.conductSuggestionText = 'Transfusão não recomendada. É fundamental investigar a etiologia da anemia e prosseguir com o tratamento antes da cirurgia. Solicite os exames abaixo e preencha os resultados.'
-          return positive
-        } else if (comorbidity && !physicalmptoms) {
-          this.conductSuggestionText = 'Provavelmente não deverá ser transfundido por não apresentar repercussão clínica da anemia. Paciente de maior risco pré-operatório por apresentar comorbidade  e anemia. É fundamental investigar a etiologia da anemia e prosseguir com o tratamento antes da cirurgia. Solicite os exames abaixo e preencha os resultados.'
-          return alert
-        } else if (comorbidity && physicalmptoms) {
-          this.conductSuggestionText = 'Pode precisar de transfusão, mas é necessário fazer uma avaliação clínica para investigar se os sintomas estão relacionados a outras causas além da anemia, como infecção, distúrbios metabólicos, principalmente em pacientes com anemia crônica e sem sangramento agudo (laranja). Paciente de maior risco pré-operatório por apresentar comorbidade e anemia. É fundamental investigar a etiologia da anemia e prosseguir com o tratamento antes da cirurgia. Solicite os exames abaixo e preencha os resultados.'
-          return danger
-        } else if (!comorbidity && physicalmptoms) {
-          this.conductSuggestionText = 'Provavelmente não precisa de transfusão, principalmente em pacientes com anemia crônica e sem sangramento agudo. Recomendamos avaliação clínica para identificar as possíveis causas dos sintomas apresentados e tratamento adequado. É fundamental investigar a etiologia da anemia e prosseguir com o tratamento antes da cirurgia. Solicite os exames abaixo e preencha os resultados.'
-          return positive
-        }
-      } else if (hb === '9<Hb<13') {
-        if (!comorbidity && !physicalmptoms) {
-          this.conductSuggestionText = 'Transfusão não recomendada. É fundamental investigar a etiologia da anemia e prosseguir com o tratamento antes da cirurgia. Solicite os exames abaixo e preencha os resultados.'
-          return positive
-        } else if (comorbidity && !physicalmptoms) {
-          this.conductSuggestionText = 'Transfusão não recomendada. É fundamental investigar a etiologia da anemia e prosseguir com o tratamento antes da cirurgia. Veja a sugestão de exames a serem coletados.'
-          return positive
-        } else if (comorbidity && physicalmptoms) {
-          this.conductSuggestionText = 'Provavelmente não deverá ser transfundido, principalmente em pacientes com anemia crônica e sem sangramento agudo. Recomendamos avaliação clínica para identificar as possíveis causas dos sintomas apresentados e tratamento adequado (laranja). Paciente de maior risco pré-operatório por apresentar comorbidade e anemia. É fundamental investigar a etiologia da anemia e prosseguir com o tratamento antes da cirurgia. Solicite os exames abaixo e preencha os resultados.'
-          return alert
-        } else if (!comorbidity && physicalmptoms) {
-          this.conductSuggestionText = 'Provavelmente não precisa de transfusão, principalmente em pacientes com anemia crônica e sem sangramento agudo. Recomendamos avaliação clínica para identificar as possíveis causas dos sintomas apresentados e tratamento adequado. Além disso, é fundamental investigar a etiologia da anemia e prosseguir com o tratamento antes da cirurgia. Solicite os exames abaixo e preencha os resultados.'
-          return positive
-        }
-      } else {
-        return '#2A3B4D'
-      }
     },
-    askFerroSerico() {
-      if (!this.isGroup2Filled || !this.saveClikedForGroup2) return false;
-      if (this.selected_vcm == "<80fl" && !this.hasTalassemia && !this.hasHemoglobinopatia && !this.hasFalciformeAnemia) return true;
-      if (this.selected_vcm == "<80-100fl" && this.selected_hcm == "<27pg" && !this.hasTalassemia && !this.hasFalciformeAnemia && !this.hasHemoglobinopatia) return true;
-      if (this.selected_hcm == "<27pg" && !this.hasTalassemia && !this.hasTalassemia && !this.hasFalciformeAnemia && !this.hasHemoglobinopatia) return true
-    },
-    askFerritine() {
-      if (!this.isGroup2Filled || !this.saveClikedForGroup2) return false;
-      if (this.selected_vcm == "<80fl" && !this.hasTalassemia && !this.hasHemoglobinopatia && !this.hasFalciformeAnemia) return true;
-      if (this.selected_vcm == "<80-100fl" && this.selected_hcm == "<27pg" && !this.hasTalassemia && !this.hasFalciformeAnemia && !this.hasHemoglobinopatia) return true;
-      if (this.selected_hcm == "<27pg" && !this.hasTalassemia && !this.hasTalassemia && !this.hasFalciformeAnemia && !this.hasHemoglobinopatia) return true
-    },
-    askFerritineSaturation() {
-      if (!this.isGroup2Filled || !this.saveClikedForGroup2) return false;
-      if (this.selected_vcm == "<80fl" && !this.hasTalassemia && !this.hasHemoglobinopatia && !this.hasFalciformeAnemia) return true;
-      if (this.selected_vcm == "<80-100fl" && this.selected_hcm == "<27pg" && !this.hasTalassemia && !this.hasFalciformeAnemia && !this.hasHemoglobinopatia) return true;
-      if (this.selected_hcm == "<27pg" && !this.hasTalassemia && !this.hasTalassemia && !this.hasFalciformeAnemia && !this.hasHemoglobinopatia) return true
-    },
-    askB12Vitamine(){
-      if (!this.isGroup2Filled || !this.saveClikedForGroup2) return false;
-      if (this.selected_vcm == "<80-100fl" && this.selected_hcm == ">32pg" && !this.hasTalassemia && !this.hasFalciformeAnemia && !this.hasHemoglobinopatia && this.selected_gloumerar == "TGF > 60 ml/min/1,73m2") return true;
-      if (this.selected_vcm == ">100fl" && this.selected_hcm == "27-32pg" && !this.hasTalassemia && !this.hasTalassemia && !this.hasFalciformeAnemia && !this.hasHemoglobinopatia && this.selected_gloumerar == "TGF > 60 ml/min/1,73m2") return true;
-      if (this.selected_vcm == ">100fl" && this.selected_hcm == ">32pg" && !this.hasTalassemia && !this.hasTalassemia && !this.hasFalciformeAnemia && !this.hasHemoglobinopatia) return true;
-    },
-    askFolicAcid() {
-      if (!this.isGroup2Filled || !this.saveClikedForGroup2) return false;
-      if (this.selected_vcm == "<80-100fl" && this.selected_hcm == ">32pg" && !this.hasTalassemia && !this.hasFalciformeAnemia && !this.hasHemoglobinopatia && this.selected_gloumerar == "TGF > 60 ml/min/1,73m2") return true;
-      if (this.selected_vcm == ">100fl" && this.selected_hcm == "27-32pg" && !this.hasTalassemia && !this.hasTalassemia && !this.hasFalciformeAnemia && !this.hasHemoglobinopatia && this.selected_gloumerar == "TGF > 60 ml/min/1,73m2") return true;
-      if (this.selected_vcm == ">100fl" && this.selected_hcm == ">32pg" && !this.hasTalassemia && !this.hasTalassemia && !this.hasFalciformeAnemia && !this.hasHemoglobinopatia) return true;
-    },
-    hasTalassemia() {
-      return this.previous_hemoglobine_value.includes("Talassemia")
-    },
-    hasHemoglobinopatia() {
-      return this.set_previous_hemoglobine_value.includes("Não")
-    },
-    hasFalciformeAnemia() {
-      return this.set_previous_hemoglobine_value.includes("Anemia falciformeão")
-    },
-    hasReveivedTransfusion() {
-      return this.selected_transfusion == "Sim"
-    },
-    hasCronicHepatopatia() {
-      return this.set_hemostasis_value.includes("Hepatopatia crônica")
-    }
   },
   methods: {
-    ...mapActions(useExamStore, ["hasSaved"]),
+    ...mapActions(useExamStore, ["hasSaved", "processExamInputsAction"]),
     registerExam() {
       this.overlay = true
       this.btn.loading = true
@@ -598,11 +458,10 @@ export default {
         )
         .then((response) => {
           if (response.status == 201) {
-            // this.overlay = false
+            window.scrollTo(0,0)
             this.snackbar = true
             this.snackBarText = 'Atualizado com sucesso'
             this.saveClikedForGroup1 = true
-
             setTimeout(() => { this.overlay = false }, 600)
 
             if (this.isGroup2Filled && this.saveClikedForGroup1) {
@@ -611,6 +470,7 @@ export default {
           }
         })
         .catch((err) => {
+          window.scrollTo(0,0)
           console.log(err)
           this.btn.loading = false
           this.snackbarColor = 'orange'
@@ -660,6 +520,7 @@ export default {
           }
         )
         .then((response) => {
+          window.scrollTo(0,0)
           if (response.status == 201) {
             this.btn.loading = false
             this.snackbar = true
@@ -669,9 +530,11 @@ export default {
             this.saveClikedForGroup2 = false
             this.clearData()
             this.dialog = false
+
           }
         })
         .catch((err) => {
+          window.scrollTo(0,0)
           console.log(err)
           this.btn.loading = false
           this.snackbarColor = 'orange'
@@ -748,21 +611,30 @@ export default {
         this.selected_transferrine_saturation = exam.selected_transferrine_saturation
         this.selected_b12_vitamine = exam.selected_b12_vitamine
         this.selected_folic_acid = exam.selected_folic_acid
+        window.scrollTo(0,0)
 
-        if (this.isGroup1Filled) {
+        console.log("-=======", );
+        const processExamInputs = this.processExamInputsAction()
+        const result = processExamInputs(this)
+        console.log("-======2=", result);
+
+        if (result.isGroup1Filled) {
           this.saveClikedForGroup1 = true
         } else {
           this.saveClikedForGroup1 = false
           this.saveClikedForGroup2 = false
         }
 
-        if (this.isGroup1Filled && this.isGroup2Filled) {
+        if (result.isGroup1Filled && result.isGroup2Filled) {
           this.saveClikedForGroup2 = true
         } else {
           this.saveClikedForGroup2 = false
         }
+
       })
       .catch((err) => {
+        window.scrollTo(0,0)
+
         if (err?.response?.status == 404) {
           this.loading = false
           return

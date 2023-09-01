@@ -34,7 +34,8 @@ import { RouterLink, RouterView } from 'vue-router'
 
         <v-list density="compact" nav>
           <RouterLink style="text-decoration: none; color: black" to="/dashboard" ><v-list-item prepend-icon="mdi-view-dashboard" title="Página inicial" value="home"></v-list-item></RouterLink>
-          <v-list-item prepend-icon="mdi-forum" title="Sobre" value="about"></v-list-item>
+          <v-list-item prepend-icon="mdi-information" title="Sobre (em construção)" value="about"></v-list-item>
+          <a style="text-decoration: none;" href="https://api.whatsapp.com/send/?phone=5511941411913" target="_blank"><v-list-item prepend-icon="mdi-whatsapp" title="Fale conosco" value="Fale conosco"></v-list-item></a>
           <v-list-item prepend-icon="mdi-logout" title="Sair" value="logout" @click="logoutAndClean"></v-list-item>
         </v-list>
 

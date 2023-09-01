@@ -85,7 +85,7 @@
             <span class="text-h5">Sobre os dados clínicos</span>
           </v-card-title>
           <v-card-text>
-            O fornecimento dos dados clínicos de forma adequada é fundamental para análise das informações e sugestão de conduta. Este sistema não substitui a avaliação médica e que o objetivo é auxiliar o profissional a tomar uma melhor decisão.
+            O fornecimento dos dados clínicos de forma adequada é fundamental para análise das informações e sugestão de conduta. Este sistema não substitui a avaliação médica, o objetivo é auxiliar o profissional a tomar uma melhor decisão.
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>

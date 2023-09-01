@@ -42,6 +42,8 @@
           <RouterLink to="/register/doctor">
             <v-btn variant="flat" :disabled="btn.disabled" color="info">Cadastrar </v-btn>
           </RouterLink>
+          <a style="margin-top: 20px; color: grey;" href="https://api.whatsapp.com/send/?phone=5511941411913" target="_blank"><v-icon style="color: green;" icon="mdi-whatsapp"></v-icon> Fale conosco</a>
+
         </v-sheet>
       </v-col>
     </v-row>
