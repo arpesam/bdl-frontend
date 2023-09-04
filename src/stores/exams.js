@@ -213,7 +213,7 @@ function processGroup2(exams, group1Suggestion) {
   let vcm = exams.selected_vcm
   let hcm = exams.selected_hcm
   let hasTalassemia = exams.previous_hemoglobine_value.includes("Talassemia")
-  let hasHemoglobinopatia = exams.previous_hemoglobine_value.length && !exams.previous_hemoglobine_value.includes("Não") && !exams.previous_hemoglobine_value.includes("Talassemia") || exams.previous_hemoglobine_value.includes("Talassemia") && exams.previous_hemoglobine_value.length > 1
+  let hasHemoglobinopatia = como1.length && !como1.includes('Talassemia') && !como1.includes('Não') || como1.length > 1 && !como1.includes('Não')
   let hasFalciformeAnemia = exams.previous_hemoglobine_value.includes("Anemia falciformeão")
   let hasReceivedTransfusion = exams.selected_transfusion == "Sim"
   let hasCronicHepatopatia = exams.set_hemostasis_value.includes("Hepatopatia crônica")
