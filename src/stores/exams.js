@@ -42,7 +42,8 @@ function processExamInputs(exams = {}) {
 
   if (!isGroup1Filled) { // check also if the button was clicked
     return {
-      conductText: 'Por favor, complete todos os dados abaixo e clique em "Salvar" para uma avalição prévia. Você pode salvar e retornar quando quiser.',
+      flow: "NO-INPUT",
+      conductText: 'Complete todos os dados abaixo e clique em "Salvar". \n A conduta será mostrada aqui. Você pode salvar e retornar quando quiser.',
       color: neutral
     }
   }
@@ -77,128 +78,66 @@ function processExamInputs(exams = {}) {
   }
 
   return {
+    flow: "NO-INPUT",
     color: '#8607ed'
   }
 }
 
 function processGroup3(exams, group2Suggestion) {
   const g2s = group2Suggestion
-  let ferroSerico = exams.selected_ferro_serico
-  let ferritine = exams.selected_ferritina
-  let ferritineSaturation = exams.selected_transferrine_saturation
-  let b12Vitamine = exams.selected_b12_vitamine
-  let folicAcid = exams.selected_folic_acid
   let hasCronicHepatopatia = exams.set_hemostasis_value.includes("Hepatopatia crônica")
-  let noConduct =  checkConductAbsense(group2Suggestion)
-
-  // cases where the conduct needs to be calculated
-  if (g2s.flow.includes('G2-7') && ferritineSaturation == '< 20%' ) {
-    return {
-      ...group2Suggestion,
-      flow: group2Suggestion.flow + '/' + 'G3-1x',
-      conductText: 'Paciente com anemia ferropriva. Inciar reposição de ferro. Sugerimos dar preferência para ferro endovenoso em caso de cirurgia próxima. [Colocar fórmula para calcular número de ampolas de sacarato de hidróxido de ferro.]',
-    }
-  }
-
-  if (g2s.flow.includes('G2-10') && (ferritineSaturation == '≥ 20% e < 30%' || ferritineSaturation == '< 20%') && (ferritine == '≥100 e < 500 mcg/L' || ferritine == '≥ 30 e < 100 mcg/L'  || ferritine == '< 30 mcg/L')) {
-    return {
-      ...group2Suggestion,
-      flow: group2Suggestion.flow + '/' + 'G3-2x',
-      conductText: 'Paciente com anemia ferropriva. Inciar reposição de ferro. Sugerimos dar preferência para ferro endovenoso em caso de cirurgia próxima. [Colocar fórmula para calcular número de ampolas de sacarato de hidróxido de ferro.]',
-    }
-  }
-
-  if (g2s.flow.includes('G2-11') && (b12Vitamine == '< 200 ng/L' || folicAcid == '< 6 ng/ml')) {
-    return {
-      ...group2Suggestion,
-      flow: group2Suggestion.flow + '/' + 'G3-2x',
-      conductText: 'Iniciar reposição de ácido fólico e vitamina B12',
-    }
-  }
-
-  if (g2s.flow.includes('G2-11') && (b12Vitamine == '< 200 ng/L' || folicAcid == '< 6 ng/ml')) {
-    return {
-      ...group2Suggestion,
-      flow: group2Suggestion.flow + '/' + 'G3-2x',
-      conductText: 'Iniciar reposição de ácido fólico e vitamina B12 se necessário',
-    }
-  }
-
-  if (g2s.flow.includes('G2-11') && b12Vitamine == '≥ 200 ng/L' && folicAcid == '≥ 6 ng/ml' && !hasCronicHepatopatia) {
-    return {
-      ...group2Suggestion,
-      flow: group2Suggestion.flow + '/' + 'G3-2x',
-      conductText: 'Considerar diagnóstico de sindrome mielodisplásica e encaminhar ao hematologista.',
-    }
-  }
-
-  if (g2s.flow.includes('G2-11') && b12Vitamine == '≥ 200 ng/L' && folicAcid == '≥ 6 ng/ml' && hasCronicHepatopatia) {
-    return {
-      ...group2Suggestion,
-      flow: group2Suggestion.flow + '/' + 'G3-2x',
-      conductText: 'Provável macrocitose pela hepatopatia. Descartar outras causas de anemia macrocítica como Hipotiroidismo. Encaminhar ao Hematologista.',
-    }
-  }
+  let leococites = exams.selected_leucocito
+  let plaquetas = exams.selected_plaquetas
 
 
-  // TODO - calcular os dados do grupo 3 na planilha, as condutas estao incorretas.
-  // normal cases
-  if (ferritineSaturation == '< 20%' && ferritine == '< 30 mcg/L') {
+  if (g2s.flow.includes('G2-5') && leococites == "≥4000" && plaquetas == "<100") {
     return {
       ...group2Suggestion,
       flow: group2Suggestion.flow + '/' + 'G3-1',
-      conductText: 'Paciente com anemia ferropriva. Inciar reposição de ferro. Sugerimos dar preferência para ferro endovenoso em caso de cirurgia próxima. [Colocar fórmula para calcular número de ampolas de sacarato de hidróxido de ferro.]',
+      conductText: "Encaminhar ao Hematologista para investigação de anemia e plaquetopenia.",
     }
   }
-  if (noConduct && ferritineSaturation == '< 20%' && ferritine == '≥ 30 e < 100 mcg/L') {
+
+  if (g2s.flow.includes('G2-5') && leococites == "<4000" && plaquetas == "≥100") {
     return {
       ...group2Suggestion,
       flow: group2Suggestion.flow + '/' + 'G3-2',
-      conductText: 'Provavél deficiência de ferro se paciente com doença inflamatória crônica e/ou PCR aumentado',
+      conductText: "Encaminhar ao Hematologista para investigação de anemia e leucopenia."
     }
   }
-  if (noConduct && ferritineSaturation == '< 20%' && ferritine == '≥100 e < 500 mcg/L') {
+
+  if (g2s.flow.includes('G2-5') && leococites == "<4000" && plaquetas == "<100" && hasCronicHepatopatia) {
     return {
       ...group2Suggestion,
       flow: group2Suggestion.flow + '/' + 'G3-3',
-      conductText: 'Deficiência de ferro possível se paciente com doença inflamatória crônica e causa evidente de ferropenia ou com DRC em uso de EPO ± diálise ou com insuficiência cardíaca. Avaliar contexto clínico e  considerar teste terapêutico com ferro.  Neste caso, iniciar reposição e reavaliar Hb e perfil de ferro em 10 dias.',
+      conductText: "Paciente com provável anemia da inflamação e plaquetopenia por hiperesplenismo se paciente com esplenomegalia e cirrose. Neste contexto, a contagem de plaquetas costuma se apresentar entre 30.000 e 50.000. Geralmente não há  necessidade de transfusão de CP para procedimentos cirúrgicos menores. Discutir com médico hemoteraPêuta a necessidade de transfusão de CP a depnder do procedimento cirúrgico."
     }
   }
-  if (noConduct && ferritineSaturation == '< 20%' && ferritine == '≥ 500 mcg/L') {
+
+  if (g2s.flow.includes('G2-5') && leococites == "<4000" && plaquetas == "<100" && !hasCronicHepatopatia) {
     return {
       ...group2Suggestion,
       flow: group2Suggestion.flow + '/' + 'G3-4',
-      conductText: 'Provável anemia por doença crônica, sem necessidade de reposição com ferro.',
+      conductText: "Encaminhar ao Hematologista para investigação de pancitopenia."
     }
   }
-  if (noConduct && ferritineSaturation == '≥ 20% e < 30%' && (ferritine == '≥100 e < 500 mcg/L' || ferritine == '≥ 30 e < 100 mcg/L')) {
+
+  if (g2s.flow.includes('G2-5') && leococites == "≥4000" && plaquetas == "≥100" && hasCronicHepatopatia) {
     return {
       ...group2Suggestion,
       flow: group2Suggestion.flow + '/' + 'G3-5',
-      conductText: 'Deficiência de ferro possível se paciente com DRC em uso de EPO (PS: lembrar que já temos esta informação sobre DRC e TFG). Se ausência de DRC, ausência de deficiência de ferro. Possível talasssemia se VCM < 80 ou HCM < 27*',
+      conductText: "Paciente com provável anemia da inflamção secundária a hepatopatia crônica. Solicitar perfil de ferro em caso de sangramento crônico de TGI."
     }
   }
-  if (noConduct && ferritineSaturation == '≥ 20% e < 30%' && ferritine == '≥ 500 mcg/L') {
+
+  if (g2s.flow.includes('G2-5') && leococites == "≥4000" && plaquetas == "≥100" && !hasCronicHepatopatia) {
     return {
       ...group2Suggestion,
-      flow: group2Suggestion.flow + '/' + 'G3-6',
-      conductText: 'Sem necessidade de reposição com ferro.  TGF < 60 iniciar EPO se Hb < 10g/dl  e encaminhar ao nefrologista. Se TGF > 60: se leucocito < 4000 ou plaq < 100.000: encaminhar ao hematologista para investigação de bicitopenia. Se leucócito < 4000 + plaq < 100.000 : paciente com pancitopenia. Anemia megaloblástica?Solicitar dosagem de B12 e acido fólico. Se normais, encaminhar ao hematologista para investigação.',
+      flow: group2Suggestion.flow + '/' + 'G3-5',
+      conductText: "Encaminhar ao hematologista. Possível mielodisplasia."
     }
   }
-  if (noConduct && ferritineSaturation == '≥ 30%') {
-    return {
-      ...group2Suggestion,
-      flow: group2Suggestion.flow + '/' + 'G3-7',
-      conductText: 'Ausência de deficiência de ferro. TGF < 60 iniciar EPO se Hb < 10g/dl  e encaminhar ao nefrologista. Se TGF > 60: se leucocito < 4000 ou plaq < 100.000: encaminhar ao hematologista para investigação de bicitopenia. Se leucócito < 4000 + plaq < 100.000 : paciente com pancitopenia. Anemia megaloblástica?Solicitar dosagem de B12 e acido fólico. Se normais, encaminhar ao hematologista para investigação.',
-    }
-  }
-  if (ferritine == '< 30 mcg/L') {
-    return {
-      ...group2Suggestion,
-      flow: group2Suggestion.flow + '/' + 'G3-8',
-      conductText: 'anemia ferropriva. Inciar reposição de ferro. Sugerimos dar preferência para fero endovenoso em caso de cirurgia próxima. Colocar fórmula para calcular número de ampolas de sacarato de hidróxido de ferro',
-    }
-  }
+
 
   return {
     ...group2Suggestion,
@@ -209,29 +148,24 @@ function processGroup3(exams, group2Suggestion) {
 }
 
 function processGroup2(exams, group1Suggestion) {
-  let hb = exams.selected_hb
   let vcm = exams.selected_vcm
   let hcm = exams.selected_hcm
-  let hasTalassemia = exams.previous_hemoglobine_value.includes("Talassemia")
-  let hasHemoglobinopatia = exams.length && !exams.includes('Talassemia') && !exams.includes('Não') || exams.length > 1 && !exams.includes('Não')
-  let hasFalciformeAnemia = exams.previous_hemoglobine_value.includes("Anemia falciformeão")
-  let hasReceivedTransfusion = exams.selected_transfusion == "Sim"
-  let hasCronicHepatopatia = exams.set_hemostasis_value.includes("Hepatopatia crônica")
+  let hasHemoglobinopatia = exams.length && !exams.includes('Não')
 
-  let tgf = exams.selected_gloumerar
-  let plaquetas = exams.selected_plaquetas
+  let VCM_LT_80 = vcm == '<80fl'
+  let VCM_80_100 = vcm == '80-100fl'
+  let VCM_GT_80 = vcm == "80-100fl" || vcm == ">100fl"
+  let VCM_GT_100 = vcm == ">100fl"
 
-  const result = {
-    askFerroSerico: true,
-    askFerritine: true,
-    askFolicAcid: true,
-    askB12Vitamine: true,
-    askFerritineSaturation: true,
-  }
+  let HCM_LT_32 = hcm == "<27pg" || hcm == "27-32pg"
+  let HCM_LT_27 = hcm == "<27pg"
+  let HCM_GT_27 = hcm == "27-32pg" || hcm == ">32pg"
+
+  let TFG_LT_60 = exams.selected_gloumerar == "TFG < 60 ml/min/1,73m2"
+  let TFG_GT_60 = exams.selected_gloumerar == "TFG > 60 ml/min/1,73m2"
 
   // flow1
-  // debugger
-  if (vcm == '<80fl' && !hasFalciformeAnemia && !hasHemoglobinopatia) {
+  if (VCM_LT_80 && TFG_GT_60 && !hasHemoglobinopatia) {
     return {
       ...group1Suggestion,
       flow: group1Suggestion.flow + '/' + 'G2-1',
@@ -241,28 +175,28 @@ function processGroup2(exams, group1Suggestion) {
     }
   }
 
-  // conduta flow2
-  if (vcm == '<80fl' && hasTalassemia && hasReceivedTransfusion ) {
+  if (VCM_80_100 && HCM_LT_32 && TFG_LT_60 && !hasHemoglobinopatia) {
     return {
       ...group1Suggestion,
       flow: group1Suggestion.flow + '/' + 'G2-2',
-      conductText: 'Se paciente em programa de transfusão regular, será necessário avaliação do hematologista e programar reserva cirurgica com CH fenotipado. Comunicar Serviço de Hemoterapia.',
-      color: info,
+      askFerroSerico: true,
+      askFerritine: true,
+      askFerritineSaturation: true,
     }
   }
 
-  // conduta flow3
-  if (vcm == '<80fl' && hasTalassemia && !hasHemoglobinopatia && !hasReceivedTransfusion) {
+  if (VCM_GT_80 && HCM_LT_27 && TFG_GT_60 && !hasHemoglobinopatia) {
     return {
       ...group1Suggestion,
       flow: group1Suggestion.flow + '/' + 'G2-3',
-      conductText: 'Provavél talassemia menor se paciente com anemia leve e sem necessidade transfusionar. Solicitar avaliação do Hematologista.',
-      color: info,
+      askFerroSerico: true,
+      askFerritine: true,
+      askFerritineSaturation: true,
     }
   }
 
-  // flow4
-  if (vcm == '80-100fl' && hcm == '<27pg' && !hasTalassemia && !hasFalciformeAnemia && !hasHemoglobinopatia) {
+
+  if (VCM_GT_80 && HCM_LT_32 && TFG_LT_60 && !hasHemoglobinopatia) {
     return {
       ...group1Suggestion,
       flow: group1Suggestion.flow + '/' + 'G2-4',
@@ -272,111 +206,31 @@ function processGroup2(exams, group1Suggestion) {
     }
   }
 
-  // flow5
-  if (vcm == '80-100fl' && hcm == '27-32pg' && !hasTalassemia && !hasFalciformeAnemia && !hasHemoglobinopatia) {
+
+  if (VCM_GT_100 && HCM_GT_27 && !hasHemoglobinopatia) {
     return {
       ...group1Suggestion,
       flow: group1Suggestion.flow + '/' + 'G2-5',
-      askFerroSerico: true,
-      askFerritine: true,
-      askFerritineSaturation: true,
+      askB12Vitamine: true,
+      askFolicAcid: true
     }
   }
 
-  // flow6
-  if (vcm == '80-100fl' && hcm == '>32pg' && !hasTalassemia && !hasFalciformeAnemia && !hasHemoglobinopatia && tgf == 'TGF > 60 ml/min/1,73m2') {
+  if (hasHemoglobinopatia) {
     return {
-      ...group1Suggestion,
+      conductText: "Encaminhar ao Hematologista para orientações perioperatórias e avisar o Serviço de Transfusão sobre o diagnóstico de Hemoglobinopatia para reserva cirúrgica adequada.",
       flow: group1Suggestion.flow + '/' + 'G2-6',
-      askB12Vitamine: true,
-      askFolicAcid: true,
-    }
-  }
-
-  // flow7
-  if (vcm == '80-100fl' && hcm == '>32pg' && !hasTalassemia && !hasFalciformeAnemia && !hasHemoglobinopatia && tgf == 'TGF < 60 ml/min/1,73m2' && (hb == '7<Hb<9' || hb == 'Hb<7')) {
-    return {
-      ...group1Suggestion,
-      flow: group1Suggestion.flow + '/' + 'G2-7',
-      askFerroSerico: true,
-      askFerritine: true,
-      askFerritineSaturation: true,
-    }
-  }
-
-  // flow8
-  if (hcm == '<27pg' && !hasTalassemia && !hasFalciformeAnemia && !hasHemoglobinopatia) {
-    return {
-      ...group1Suggestion,
-      flow: group1Suggestion.flow + '/' + 'G2-8',
-      askFerroSerico: true,
-      askFerritine: true,
-      askFerritineSaturation: true,
-    }
-  }
-
-  // flow9
-  if (vcm == '>100fl' && hcm == '27-32pg' && !hasTalassemia && !hasFalciformeAnemia && !hasHemoglobinopatia && tgf == 'TGF > 60 ml/min/1,73m2') {
-    return {
-      ...group1Suggestion,
-      flow: group1Suggestion.flow + '/' + 'G2-9',
-      askB12Vitamine: true,
-      askFolicAcid: true,
-    }
-  }
-
-  // flow10
-  if (vcm == '>100fl' && hcm == '27-32pg' && !hasTalassemia && !hasFalciformeAnemia && !hasHemoglobinopatia && tgf == 'TGF < 60 ml/min/1,73m2' && (hb == '7<Hb<9' || hb == 'Hb<7')) {
-    return {
-      ...group1Suggestion,
-      flow: group1Suggestion.flow + '/' + 'G2-10',
-      askFerroSerico: true,
-      askFerritine: true,
-      askFerritineSaturation: true,
-    }
-  }
-
-  // flow11
-  if (vcm == '>100fl' && hcm == '>32pg' && !hasTalassemia && !hasFalciformeAnemia && !hasHemoglobinopatia) {
-    return {
-      ...group1Suggestion,
-      flow: group1Suggestion.flow + ''/' + G2-11',
-      askB12Vitamine: true,
-      askFolicAcid: true,
-    }
-  }
-
-  // conduta flow12
-  if (hasTalassemia && !hasHemoglobinopatia && hasReceivedTransfusion) {
-    return {
-      ...group1Suggestion,
-      flow: group1Suggestion.flow + ''/' + G2-12',
-      conductText: 'Se paciente em programa de transfusão regular, será necessário avaliação do hematologista e programar reserva cirurgica com CH fenotipado. Comunicar Serviço de Hemoterapia.',
-      color: info,
-    }
-  }
-
-  if ((vcm == '>100fl' || hcm == '>32pg') && plaquetas == '<100' && !hasCronicHepatopatia) {
-    return {
-      ...group1Suggestion,
-      flow: group1Suggestion.flow + ''/' + G2-13',
-      askB12Vitamine: true,
-      askFolicAcid: true,
-    }
-  }
-
-  // conduta
-  if ((vcm == '>100fl' || hcm == '>32pg') && plaquetas == '<100' && hasCronicHepatopatia) {
-    return {
-      ...group1Suggestion,
-      flow: group1Suggestion.flow + ''/' + G2-14',
-      conductText: 'Provável plaquetopenia por hiperesplenismo se paciente com esplenomegalia e cirrose. Neste contexto, a contagem de plaquetas costuma se apresentar entre 30.000 e 50.000. Geralmente não há  necessidade de transfusão de CP para procedimentos cirúrgicos menores. Discutir com médico hemoteraPêuta a necessidade de transfusão de CP a depnder do procedimento cirúrgico.',
     }
   }
 
   return {
     ...group1Suggestion,
-    flow: group1Suggestion.flow + '/' + 'G2-00'
+    flow: group1Suggestion.flow + '/' + 'G2-00',
+    askFerroSerico: true,
+    askFerritine: true,
+    askFerritineSaturation: true,
+    askB12Vitamine: true,
+    askFolicAcid: true
   }
 }
 
@@ -417,7 +271,7 @@ function processGroup1(exams) {
     }
   }
 
-  if (hb === '7<Hb<9' && !comorbidity && !physicalSymptoms) {
+  if (hb === '7<Hb<8' && !comorbidity && !physicalSymptoms) {
     return {
       flow: 'G1-5',
       conductText: 'Transfusão não recomendada. É fundamental investigar a etiologia da anemia e prosseguir com o tratamento antes da cirurgia. Solicite os exames abaixo e preencha os resultados.',
@@ -425,7 +279,7 @@ function processGroup1(exams) {
     }
   }
 
-  if (hb === '7<Hb<9' && comorbidity && !physicalSymptoms) {
+  if (hb === '7<Hb<8' && comorbidity && !physicalSymptoms) {
     return {
       flow: 'G1-6',
       conductText: 'Provavelmente não deverá ser transfundido por não apresentar repercussão clínica da anemia. Paciente de maior risco pré-operatório por apresentar comorbidade  e anemia. É fundamental investigar a etiologia da anemia e prosseguir com o tratamento antes da cirurgia. Solicite os exames abaixo e preencha os resultados.',
@@ -433,7 +287,7 @@ function processGroup1(exams) {
     }
   }
 
-  if (hb === '7<Hb<9' && comorbidity && physicalSymptoms) {
+  if (hb === '7<Hb<8' && comorbidity && physicalSymptoms) {
     return {
       flow: 'G1-7',
       conductText: 'Pode precisar de transfusão, mas é necessário fazer uma avaliação clínica para investigar se os sintomas estão relacionados a outras causas além da anemia, como infecção, distúrbios metabólicos, principalmente em pacientes com anemia crônica e sem sangramento agudo (laranja). Paciente de maior risco pré-operatório por apresentar comorbidade e anemia. É fundamental investigar a etiologia da anemia e prosseguir com o tratamento antes da cirurgia. Solicite os exames abaixo e preencha os resultados.',
@@ -441,7 +295,7 @@ function processGroup1(exams) {
     }
   }
 
-  if (hb === '7<Hb<9' && !comorbidity && physicalSymptoms) {
+  if (hb === '7<Hb<8' && !comorbidity && physicalSymptoms) {
     return {
       flow: 'G1-8',
       conductText: 'Provavelmente não precisa de transfusão, principalmente em pacientes com anemia crônica e sem sangramento agudo. Recomendamos avaliação clínica para identificar as possíveis causas dos sintomas apresentados e tratamento adequado. É fundamental investigar a etiologia da anemia e prosseguir com o tratamento antes da cirurgia. Solicite os exames abaixo e preencha os resultados.',
@@ -449,7 +303,7 @@ function processGroup1(exams) {
     }
   }
 
-  if (hb === '9<Hb<13' && !comorbidity && !physicalSymptoms) {
+  if (hb === '8<Hb<13' && !comorbidity && !physicalSymptoms) {
     return {
       flow: 'G1-9',
       conductText: 'Transfusão não recomendada. É fundamental investigar a etiologia da anemia e prosseguir com o tratamento antes da cirurgia. Solicite os exames abaixo e preencha os resultados.',
@@ -457,7 +311,7 @@ function processGroup1(exams) {
     }
   }
 
-  if (hb === '9<Hb<13' && comorbidity && !physicalSymptoms) {
+  if (hb === '8<Hb<13' && comorbidity && !physicalSymptoms) {
     return {
       flow: 'G1-10',
       conductText: 'Transfusão não recomendada. É fundamental investigar a etiologia da anemia e prosseguir com o tratamento antes da cirurgia. Solicite os exames abaixo e preencha os resultados.',
@@ -465,7 +319,7 @@ function processGroup1(exams) {
     }
   }
 
-  if (hb === '9<Hb<13' && comorbidity && physicalSymptoms) {
+  if (hb === '8<Hb<13' && comorbidity && physicalSymptoms) {
     return {
       flow: 'G1-11',
       conductText: 'Provavelmente não deverá ser transfundido, principalmente em pacientes com anemia crônica e sem sangramento agudo. Recomendamos avaliação clínica para identificar as possíveis causas dos sintomas apresentados e tratamento adequado (laranja). Paciente de maior risco pré-operatório por apresentar comorbidade e anemia. É fundamental investigar a etiologia da anemia e prosseguir com o tratamento antes da cirurgia. Solicite os exames abaixo e preencha os resultados.',
@@ -473,7 +327,7 @@ function processGroup1(exams) {
     }
   }
 
-  if (hb === '9<Hb<13' && !comorbidity && physicalSymptoms) {
+  if (hb === '8<Hb<13' && !comorbidity && physicalSymptoms) {
     return {
       flow: 'G1-12',
       conductText: 'Provavelmente não precisa de transfusão, principalmente em pacientes com anemia crônica e sem sangramento agudo. Recomendamos avaliação clínica para identificar as possíveis causas dos sintomas apresentados e tratamento adequado. Além disso, é fundamental investigar a etiologia da anemia e prosseguir com o tratamento antes da cirurgia. Solicite os exames abaixo e preencha os resultados.',
@@ -516,7 +370,6 @@ function testProcessExamsInputG1() {
         selected_hb: 'Hb<7',
         comorbities: ['Hypertension'],
         selected_physical_exam: ['Não'],
-
       },
       expected: {
         flow: 'G1-2',
@@ -558,7 +411,7 @@ function testProcessExamsInputG1() {
     {
       input: {
         ...exams,
-        selected_hb: '7<Hb<9',
+        selected_hb: '7<Hb<8',
         comorbities: ['Não'],
         selected_physical_exam: ['Não'],
 
@@ -573,7 +426,7 @@ function testProcessExamsInputG1() {
     {
       input: {
         ...exams,
-        selected_hb: '7<Hb<9',
+        selected_hb: '7<Hb<8',
         comorbities: ['Hypertension'],
         selected_physical_exam: ['Não'],
 
@@ -588,7 +441,7 @@ function testProcessExamsInputG1() {
     {
       input: {
         ...exams,
-        selected_hb: '7<Hb<9',
+        selected_hb: '7<Hb<8',
         comorbities: ['Hypertension'],
         selected_physical_exam: ['Fever'],
 
@@ -603,7 +456,7 @@ function testProcessExamsInputG1() {
     {
       input: {
         ...exams,
-        selected_hb: '7<Hb<9',
+        selected_hb: '7<Hb<8',
         comorbities: ['Não'],
         selected_physical_exam: ['Fever'],
 
@@ -618,7 +471,7 @@ function testProcessExamsInputG1() {
     {
       input: {
         ...exams,
-        selected_hb: '9<Hb<13',
+        selected_hb: '8<Hb<13',
         comorbities: ['Não'],
         selected_physical_exam: ['Não'],
 
@@ -633,7 +486,7 @@ function testProcessExamsInputG1() {
     {
       input: {
         ...exams,
-        selected_hb: '9<Hb<13',
+        selected_hb: '8<Hb<13',
         comorbities: ['Hypertension'],
         selected_physical_exam: ['Não'],
 
@@ -648,7 +501,7 @@ function testProcessExamsInputG1() {
     {
       input: {
         ...exams,
-        selected_hb: '9<Hb<13',
+        selected_hb: '8<Hb<13',
         comorbities: ['Hypertension'],
         selected_physical_exam: ['Fever'],
 
@@ -663,7 +516,7 @@ function testProcessExamsInputG1() {
     {
       input: {
         ...exams,
-        selected_hb: '9<Hb<13',
+        selected_hb: '8<Hb<13',
         comorbities: ['Não'],
         selected_physical_exam: ['Fever'],
 

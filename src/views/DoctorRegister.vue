@@ -138,6 +138,8 @@
 <script>
 import axios from 'axios'
 import Alert from '@/components/Alert.vue'
+import { useUserStore } from '@/stores/user'
+import { mapActions, mapState, mapWritableState } from 'pinia'
 
 export default {
   components: {
@@ -175,6 +177,7 @@ export default {
     }
   },
   computed: {
+    ...mapWritableState(useUserStore, ["isLoggedIn"]),
     enableBtn() {
       return (
         this.user.terms_and_conditions &&
@@ -203,6 +206,7 @@ export default {
         })
         .then((response) => {
           if (response.status == 201) {
+            this.isLoggedIn = true
             this.btn.loading = false
             this.successAlert = 'Usuário cadastrado com sucesso!'
             setTimeout(() => {

@@ -1,12 +1,5 @@
 <template>
-  <!-- <v-container> -->
-  <Alert :successAlert="successAlert" :warningAlert="warningAlert" />
-  <!-- <v-row v-if="loading">
-    <v-col justify-center>
-      <LoadingComponent :loading="loading" />
-    </v-col>
-  </v-row> -->
-
+  <Alert :warningAlert="warningAlert" />
 <!-- CONDUTA -->
 <v-alert
   v-if="!overlay && !warningAlert"
@@ -71,7 +64,7 @@
 </div>
 
 <!-- GRUPO 2 -->
-<div calss="group2" v-if="isGroup1Filled && !overlay">
+<div calss="group2" v-if="isGroup1Filled && !overlay && saveClikedForGroup1">
   <InputPanel title="VCM:" :value="selected_vcm">
     <v-radio-group v-model="selected_vcm">
       <v-radio label="< 80 fl" value="<80fl"></v-radio>
@@ -91,21 +84,21 @@
   <InputPanel title="Leucócito:" :value="selected_leucocito">
     <v-radio-group v-model="selected_leucocito">
       <v-radio label="< 4000 x 109/L" value="<4000"></v-radio>
-      <v-radio label="> 4000 x 109/L" value=">4000"></v-radio>
+      <v-radio label="≥ 4000 x 109/L" value="≥4000"></v-radio>
     </v-radio-group>
   </InputPanel>
 
   <InputPanel title="Plaquetas:" :value="selected_plaquetas">
     <v-radio-group v-model="selected_plaquetas">
       <v-radio label="< 100 x 109/L" value="<100"></v-radio>
-      <v-radio label="> 100 x 109/L" value=">100"></v-radio>
+      <v-radio label="≥ 100 x 109/L" value="≥100"></v-radio>
     </v-radio-group>
   </InputPanel>
 
   <InputPanel title="Taxa de filtração glomerular:" :value="selected_gloumerar">
     <v-radio-group v-model="selected_gloumerar" inline>
-      <v-radio label="TGF < 60 ml/min/1,73m2" value="TGF < 60 ml/min/1,73m2"></v-radio>
-      <v-radio label="TGF > 60 ml/min/1,73m2" value="TGF > 60 ml/min/1,73m2"></v-radio>
+      <v-radio label="TFG < 60 ml/min/1,73m2" value="TFG < 60 ml/min/1,73m2"></v-radio>
+      <v-radio label="TFG > 60 ml/min/1,73m2" value="TFG > 60 ml/min/1,73m2"></v-radio>
     </v-radio-group>
   </InputPanel>
 </div>
@@ -115,8 +108,8 @@
   <InputPanel title="Valor de Hemoglobina:" :value="selected_hb">
     <v-radio-group v-model="selected_hb">
       <v-radio label="Hb < 7 g/dl" value="Hb<7"></v-radio>
-      <v-radio label="Hb > 7 e Hb < 9 g/dl" value="7<Hb<9"></v-radio>
-      <v-radio label="Hb > 9 e < 13 g/dl" value="9<Hb<13"></v-radio>
+      <v-radio label="Hb > 7 e Hb < 8 g/dl" value="7<Hb<8"></v-radio>
+      <v-radio label="Hb > 8 e < 13 g/dl" value="8<Hb<13"></v-radio>
     </v-radio-group>
   </InputPanel>
 
@@ -189,7 +182,6 @@
 <!-- BUTTONS -->
 <v-row class="mt-5">
   <v-sheet>
-    <!-- <v-form v-model="isFormValid"> -->
       <v-btn
         fab
         fixed
@@ -202,27 +194,15 @@
       >
       Salvar
       </v-btn>
-      <v-btn class="ml-8 pl-4 pr-4" variant="flat" color="warning" @click="dialog = true" :disabled="overlay">
+      <v-btn class="ml-8 pl-4 pr-4" variant="flat" color="warning" @click="resetDialog = true" :disabled="overlay">
         Resetar valores
       </v-btn>
-      <!-- <v-btn class="ml-10" variant="flat" color="#038C8C" @click="registerExam" :disabled="overlay" style="color: white;">
-        Salvar
-      </v-btn> -->
-    <!-- </v-form> -->
   </v-sheet>
 </v-row>
 
-<!-- SNACKBAR -->
-<v-snackbar v-if="!overlay" :timeout="600" v-model="snackbar">
-  {{ snackBarText }}
-  <!-- <template v-slot:actions>
-    <v-btn :color="snackbarColor" variant="text" @click="snackbar = false"> Fechar </v-btn>
-  </template> -->
-</v-snackbar>
-
-<!-- DIALOG -->
+<!-- RESET DIALOG -->
 <v-row justify="center">
-    <v-dialog v-model="dialog" width="800">
+    <v-dialog v-model="resetDialog" width="800">
       <v-card>
         <v-card-title>
           <span class="text-h5">Atenção!</span>
@@ -232,7 +212,7 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="red-darken-1" variant="outlined" @click="dialog = false" :disabled="overlay" v-if="!overlay">
+          <v-btn color="red-darken-1" variant="outlined" @click="resetDialog = false" :disabled="overlay" v-if="!overlay">
             Cancelar
           </v-btn>
           <v-btn color="green-darken-1" variant="outlined" @click="resetAllValues" :disabled="overlay" :loading="overlay">
@@ -243,6 +223,7 @@
     </v-dialog>
 </v-row>
 
+
 <!-- OVERLAY -->
 <v-row justify="center">
     <v-dialog v-model="overlay" width="300">
@@ -250,12 +231,38 @@
         <v-card-title>
           <span class="text-h5">Processando, aguarde</span>
         </v-card-title>
-        <v-card-text>
-          <LoadingComponent :loading="overlay" height="50px" width="50px"/>
+        <v-card-text class="d-flex justify-center">
+          <v-icon v-if="successIcon" color="success" icon="mdi-check-circle-outline" size="50" ></v-icon>
+          <v-icon v-if="errorIcon" color="warning" icon="mdi-alert-circle-outline" size="50" ></v-icon>
+          <LoadingComponent  :loading="overlay && !successIcon && !errorIcon" height="50px" width="50px"/>
         </v-card-text>
       </v-card>
     </v-dialog>
 </v-row>
+
+<!-- SUGESTAO DE CONDUTA -->
+<v-row justify="center">
+    <v-dialog v-model="conductDialogFunc">
+      <v-card>
+        <v-card-title>
+          <span class="text-h5">Sugestão de conduta</span>
+        </v-card-title>
+        <v-card-text>
+          <!-- <LoadingComponent :loading="overlay" height="50px" width="50px"/> -->
+          <p>{{ getConductSuggestionText }}</p>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+
+          <v-btn
+            text="Fechar"
+            @click="closeConductDialog"
+          ></v-btn>
+      </v-card-actions>
+      </v-card>
+    </v-dialog>
+</v-row>
+
 
 <template>
   <div class="text-center">
@@ -273,6 +280,11 @@ import InputPanel from '@/components/InputPanel.vue'
 import { mapActions, mapState, mapWritableState } from 'pinia'
 import { useExamStore } from '@/stores/exams'
 
+const statusEnum = {
+  START: "START",
+  STOP: "STOP",
+  STOP_WITH_ERROR: "STOP_WITH_ERROR"
+}
 
 export default {
   components: {
@@ -288,19 +300,14 @@ export default {
       flow: '',
       saveClikedForGroup1: false,
       saveClikedForGroup2: false,
-      dialog: false,
+      resetDialog: false,
       overlay: false,
+      successIcon: false,
+      errorIcon: false,
       APIbasePath: import.meta.env.VITE_API_URL,
-      isFormValid: false,
-      successAlert: '',
       warningAlert: '',
-      loading: false,
-      snackbar: false,
-      snackBarText: '',
-      snackbarColor: 'green',
-      btn: {
-        loading: false
-      },
+      conductDialog: false,
+      isMounting: true,
 
       conductSuggestionText: 'Por favor, complete os dados abaixo',
       conductSuggestionColor: '#2A3B4D',
@@ -335,10 +342,25 @@ export default {
       selected_transferrine_saturation: null,
       selected_b12_vitamine: null,
       selected_folic_acid: null,
-
     }
   },
   computed: {
+    getConductSuggestionText() {
+      if (this.conductDialog) {
+        return this.conductSuggestionText.replace('Solicite os exames abaixo e preencha os resultados.', 'Solicite os exames no topo da lista e preencha os resultados.')
+      }
+      return this.conductSuggestionText
+    },
+    conductDialogFunc: {
+      get() {
+        console.log("!this.overlay && this.conductDialog", !this.overlay, this.conductDialog);
+        return !this.overlay && !this.isMounting && this.conductDialog
+      },
+      set(v) {
+        this.conductDialog = v
+        return !this.overlay && this.conductDialog
+      }
+    },
     set_comorbities: {
       get() {
         return this.comorbities
@@ -417,12 +439,60 @@ export default {
   },
   methods: {
     ...mapActions(useExamStore, ["hasSaved", "processExamInputsAction"]),
+    closeConductDialog() {
+      this.conductDialog = false
+    },
+    setLoading(status, error) {
+      window.scrollTo(0,0)
+      if (status == statusEnum.START) {
+        this.resetDialog = false
+        this.successIcon = false
+        this.errorIcon = false
+        this.overlay = true
+        this.warningAlert = ''
+        return
+      }
+
+      if (status == statusEnum.STOP) {
+        setTimeout(() => { this.successIcon = true }, 300)
+        setTimeout(() => {
+          this.overlay = false
+          if (this.flow != 'NO-INPUT') {
+            console.log("-----------------", );
+            this.conductDialog = true
+          }
+        }, 800)
+      }
+
+      if (status == statusEnum.STOP_WITH_ERROR) {
+        this.warningAlert = 'Occorreu um erro ou não foi possível os dados clínicos, experimente sair e entrar novamente. Erro: ' +
+          error?.response?.data?.message
+          setTimeout(() => { this.errorIcon = true }, 300)
+          setTimeout(() => {
+            this.overlay = false
+            if (this.flow != 'NO-INPUT') {
+              this.conductDialog = true
+            }
+          }, 800)
+
+        if (error?.response?.status == 401) {
+          setTimeout(() => {
+            this.warningAlert = "Sua seção expirou, redirecionando para a página de login"
+            this.$router.push(`/`)
+          }, 3000);
+
+          this.$router.push({
+            name: 'home'
+          })
+        }
+
+
+      }
+    },
     registerExam() {
-      this.overlay = true
-      this.btn.loading = true
-      this.btn.disabled = true
-      this.successAlert = ''
-      this.warningAlert = ''
+      window.scrollTo(0,0)
+      this.setLoading(statusEnum.START)
+      this.isMounting = false
       axios
         .post(
           `${this.APIbasePath}/patient/${this.id}/exam`,
@@ -459,11 +529,8 @@ export default {
         )
         .then((response) => {
           if (response.status == 201) {
-            window.scrollTo(0,0)
-            this.snackbar = true
-            this.snackBarText = 'Atualizado com sucesso'
             this.saveClikedForGroup1 = true
-            setTimeout(() => { this.overlay = false }, 600)
+            this.setLoading(statusEnum.STOP)
 
             if (this.isGroup2Filled && this.saveClikedForGroup1) {
               this.saveClikedForGroup2 = true
@@ -471,20 +538,14 @@ export default {
           }
         })
         .catch((err) => {
-          window.scrollTo(0,0)
           console.log(err)
-          this.btn.loading = false
-          this.snackbarColor = 'orange'
-          this.snackbar = true
-          this.snackBarText = err?.response?.data?.message || 'Erro desconhecido'
+          this.setLoading(statusEnum.STOP_WITH_ERROR, err)
         })
     },
     resetAllValues() {
-      this.btn.loading = true
-      this.btn.disabled = true
-      this.successAlert = ''
-      this.warningAlert = ''
-      console.log("id", this.id);
+      window.scrollTo(0,0)
+      this.setLoading(statusEnum.START)
+      this.isMounting = false
       axios
         .post(
           `${this.APIbasePath}/patient/${this.id}/exam`,
@@ -521,27 +582,16 @@ export default {
           }
         )
         .then((response) => {
-          window.scrollTo(0,0)
           if (response.status == 201) {
-            this.btn.loading = false
-            this.snackbar = true
-            this.snackBarText = 'Dados clínicos restaurados com sucesso!'
-            this.btn.loading = false
             this.saveClikedForGroup1 = false
             this.saveClikedForGroup2 = false
             this.clearData()
-            this.dialog = false
-
+            this.setLoading(statusEnum.STOP)
           }
         })
         .catch((err) => {
-          window.scrollTo(0,0)
           console.log(err)
-          this.btn.loading = false
-          this.snackbarColor = 'orange'
-          this.snackbar = true
-          this.snackBarText = err?.response?.data?.message || 'Erro desconhecido'
-          this.dialog = false
+          this.setLoading(statusEnum.STOP_WITH_ERROR, err)
         })
     },
     clearData() {
@@ -569,16 +619,10 @@ export default {
       this.selected_folic_acid = null
     },
   },
-  watch: {
-    overlay(val) {
-      val && setTimeout(() => {
-        this.overlay = false
-      }, 600)
-    },
-  },
   mounted() {
-    this.overlay = true
-    this.loading = true
+    this.isMounting = true
+    window.scrollTo(0,0)
+    this.setLoading(statusEnum.START)
     axios
       .get(`${this.APIbasePath}/patient/${this.id}/exam`, {
         headers: {
@@ -612,7 +656,6 @@ export default {
         this.selected_transferrine_saturation = exam.selected_transferrine_saturation
         this.selected_b12_vitamine = exam.selected_b12_vitamine
         this.selected_folic_acid = exam.selected_folic_acid
-        window.scrollTo(0,0)
 
         const processExamInputs = this.processExamInputsAction()
         const result = processExamInputs(this)
@@ -631,28 +674,17 @@ export default {
           this.saveClikedForGroup2 = false
         }
 
+        this.setLoading(statusEnum.STOP)
       })
       .catch((err) => {
-        window.scrollTo(0,0)
-
         if (err?.response?.status == 404) {
-          this.loading = false
+          // TODO fix this
+          this.setLoading(statusEnum.STOP)
           return
         }
-
-        this.warningAlert =
-          'Occorreu um erro ou não foi possível os dados clínicos, experimente sair e entrar novamente. Erro: ' +
-          err?.response?.data?.message
-        if (err?.response?.status == 401) {
-          setTimeout(() => {
-            this.warningAlert = "Sua seção expirou, redirecionando para a página de login"
-            this.$router.push(`/`)
-          }, 3000);
-
-          this.$router.push({
-            name: 'home'
-          })
-        }
+        // debugger
+        console.log(err);
+        this.setLoading(statusEnum.STOP_WITH_ERROR, err)
       })
   }
 }
