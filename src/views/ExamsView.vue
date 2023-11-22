@@ -1,275 +1,240 @@
 <template>
-  <Alert :warningAlert="warningAlert" />
-<!-- CONDUTA -->
-<v-alert
-  v-if="!overlay && !warningAlert"
-  class="mt-1 mb-3"
-  icon="$info"
-  :title="`Sugestão de conduta [${flow}]`"
-  style="color: white;"
-  :text="conductSuggestionText"
-  :color="needTransfusion"
-></v-alert>
-<!-- <div style="color: black;">
-  askFerroSerico: {{ askFerroSerico }}  <br/>
-  askFerritine: {{ askFerritine }}  <br/>
-  askFerritineSaturation: {{ askFerritineSaturation }}  <br/>
-  askB12Vitamine: {{ askB12Vitamine }}  <br/>
-  askFolicAcid: {{ askFolicAcid }} <br/><br/>
-  isGroup1Filled: {{isGroup1Filled}} <br/>
-  isGroup2Filled: {{isGroup2Filled}} <br/>
-  isGroup3Filled: {{isGroup3Filled}} <br/>
+  <!-- CONDUTA -->
+  <v-card
+    v-if="!warningAlert"
+    class="conduct-box" :elevation="0"
+    :color="needTransfusion"
+    ref="conductdiv"
+    @click="showConduct = !showConduct"
+  >
+        <v-card-item style="padding-bottom: 0 !important; margin: 0;">
+          <v-card-title style="font-size: 17px; ">{{ `Sugestão de conduta [${flow}]` }}</v-card-title>
+        </v-card-item>
 
-</div> -->
-<!-- GRUPO 3 -->
-<div v-if="isGroup2Filled && !overlay">
-<!-- <div v-if="isGroup2Filled"> -->
-  <InputPanel v-if="askFerroSerico" title="Ferro sérico:" :value="selected_ferro_serico">
-    <v-radio-group v-model="selected_ferro_serico">
-      <v-radio label="< 60 mcg/dl" value="< 60 mcg/dl"></v-radio>
-      <v-radio label="≥ 60 mcg/dl" value="≥ 60 mcg/dl"></v-radio>
-    </v-radio-group>
-  </InputPanel>
-
-  <InputPanel v-if="askFerritine" title="Ferritina:" :value="selected_ferritina">
-    <v-radio-group v-model="selected_ferritina">
-      <v-radio label="< 30 mcg/L" value="< 30 mcg/L"></v-radio>
-      <v-radio label="≥ 30 e < 100 mcg/L" value="≥ 30 e < 100 mcg/L"></v-radio>
-      <v-radio label="≥100 e < 500 mcg/L" value="≥100 e < 500 mcg/L"></v-radio>
-      <v-radio label="≥ 500 mcg/L" value="≥ 500 mcg/L"></v-radio>
-    </v-radio-group>
-  </InputPanel>
-
-  <InputPanel v-if="askFerritineSaturation" title="Saturação transferrina:" :value="selected_transferrine_saturation">
-    <v-radio-group v-model="selected_transferrine_saturation">
-      <v-radio label="< 20%" value="< 20%"></v-radio>
-      <v-radio label="≥ 20% e < 30%" value="≥ 20% e < 30%"></v-radio>
-      <v-radio label="≥ 30%" value="≥ 30%"></v-radio>
-    </v-radio-group>
-  </InputPanel>
-
-  <InputPanel v-if="askB12Vitamine" title="Vatamina B12:" :value="selected_b12_vitamine">
-    <v-radio-group v-model="selected_b12_vitamine">
-      <v-radio label="< 200 ng/L" value="< 200 ng/L"></v-radio>
-      <v-radio label="≥ 200 ng/L" value="≥ 200 ng/L"></v-radio>
-    </v-radio-group>
-  </InputPanel>
-
-  <InputPanel v-if="askFolicAcid" title="Ácido fólico:" :value="selected_folic_acid">
-    <v-radio-group v-model="selected_folic_acid">
-      <v-radio label="< 6 ng/ml" value="< 6 ng/ml"></v-radio>
-      <v-radio label="≥ 6 ng/ml" value="≥ 6 ng/ml"></v-radio>
-    </v-radio-group>
-  </InputPanel>
-</div>
-
-<!-- GRUPO 2 -->
-<div calss="group2" v-if="isGroup1Filled && !overlay && saveClikedForGroup1">
-  <InputPanel title="VCM:" :value="selected_vcm">
-    <v-radio-group v-model="selected_vcm">
-      <v-radio label="< 80 fl" value="<80fl"></v-radio>
-      <v-radio label="80-100 fl" value="80-100fl"></v-radio>
-      <v-radio label="> 100 fl" value=">100fl"></v-radio>
-    </v-radio-group>
-  </InputPanel>
-
-  <InputPanel title="HCM:" :value="selected_hcm">
-    <v-radio-group v-model="selected_hcm">
-      <v-radio label="< 27 pg" value="<27pg"></v-radio>
-      <v-radio label="27-32 pg" value="27-32pg"></v-radio>
-      <v-radio label="> 32 pg" value=">32pg"></v-radio>
-    </v-radio-group>
-  </InputPanel>
-
-  <InputPanel title="Leucócito:" :value="selected_leucocito">
-    <v-radio-group v-model="selected_leucocito">
-      <v-radio label="< 4000 x 109/L" value="<4000"></v-radio>
-      <v-radio label="≥ 4000 x 109/L" value="≥4000"></v-radio>
-    </v-radio-group>
-  </InputPanel>
-
-  <InputPanel title="Plaquetas:" :value="selected_plaquetas">
-    <v-radio-group v-model="selected_plaquetas">
-      <v-radio label="< 100 x 109/L" value="<100"></v-radio>
-      <v-radio label="≥ 100 x 109/L" value="≥100"></v-radio>
-    </v-radio-group>
-  </InputPanel>
-
-  <InputPanel title="Taxa de filtração glomerular:" :value="selected_gloumerar">
-    <v-radio-group v-model="selected_gloumerar" inline>
-      <v-radio label="TFG < 60 ml/min/1,73m2" value="TFG < 60 ml/min/1,73m2"></v-radio>
-      <v-radio label="TFG > 60 ml/min/1,73m2" value="TFG > 60 ml/min/1,73m2"></v-radio>
-    </v-radio-group>
-  </InputPanel>
-</div>
-
-<!-- GRUPO 1 -->
-<div class="group1">
-  <InputPanel title="Valor de Hemoglobina:" :value="selected_hb">
-    <v-radio-group v-model="selected_hb">
-      <v-radio label="Hb < 7 g/dl" value="Hb<7"></v-radio>
-      <v-radio label="Hb > 7 e Hb < 8 g/dl" value="7<Hb<8"></v-radio>
-      <v-radio label="Hb > 8 e < 13 g/dl" value="8<Hb<13"></v-radio>
-    </v-radio-group>
-  </InputPanel>
-
-  <InputPanel title="Presença de comorbidades?" :value="comorbities">
-    <div>
-      <v-checkbox v-model="set_comorbities" label="Coronariopatia Isquêmica" value="Coronariopatia Isquêmica"></v-checkbox>
-      <v-checkbox v-model="set_comorbities" label="Insuficiência Cardíaca" value="Insuficiência Cardíaca"></v-checkbox>
-      <v-checkbox v-model="set_comorbities" label="DPOC" value="DPOC"></v-checkbox>
-      <v-checkbox v-model="set_comorbities" label="Doença Renal Crônica" value="Doença Renal Crônica"></v-checkbox>
-      <v-checkbox v-model="set_comorbities" label="Nenhuma das anteriores" value="Não"></v-checkbox>
-    </div>
-  </InputPanel>
-
-  <InputPanel title="Exame físico: apresenta as alterações abaixo?" :value="selected_physical_exam" >
-      <v-checkbox v-model="set_selected_physical_exam" label="Dispnéia e/ou sinais de insuficiência respiratória" value="Dispnéia e/ou sinais de insuficiência respiratória" ></v-checkbox>
-      <v-checkbox v-model="set_selected_physical_exam" label="Má perfusão tecidual" value="Má perfusão tecidual"></v-checkbox>
-      <v-checkbox v-model="set_selected_physical_exam" label="Sonolência e/ou alteração do nível da consciência" value="Sonolência e/ou alteração do nível da consciência" ></v-checkbox>
-      <v-checkbox v-model="set_selected_physical_exam" label="PAM < 70 mmHg e/ou FC > 100 bpm" value="PAM < 70 mmHg e/ou FC > 100 bpm"></v-checkbox>
-      <v-checkbox v-model="set_selected_physical_exam" label="Nenhuma das anteriores" value="Não"></v-checkbox>
-  </InputPanel>
-
-  <InputPanel title="Procedimento cirúrgico a ser realizado:" :value="selected_procedure">
-    <v-radio-group v-model="selected_procedure">
-      <v-radio label="Pequeno porte (ex: cirurgias dermatológicas, procedimentos dentários, cirurgias endoscópicas, herniorrafias, cirurgias ortopédicas e ginecológicas menores, endarterectomia, RTU)" value="Pequeno porte"></v-radio>
-      <br>
-      <v-radio label="Médio porte (ex: cirurgias intra-abdominais, angioplastia periférica, aneurisma endovascular, histerectomia, cirurgias plásticas maiores, cirurgia ortopédica de quadril ou coluna, transplante renal, neurocirurgia)" value="Médio porte"></v-radio>
-      <br>
-      <v-radio label="Grande porte (ex: cirurgia cardíaca, cirurgia vascular maior, transplante hepático ou pulmonar, cirurgia  de ressecção hepática, cirurgia duodeno-pancreática, cistectomia, pneumectomia, amputação de membro inferior, esofagectomia)" value="Grande porte"></v-radio>
-      <br>
-      <v-text-field
-        v-if="selected_procedure"
-        v-model="previous_hemoglobine_text"
-        label="Especifique"
-      ></v-text-field>
-    </v-radio-group>
-  </InputPanel>
-
-  <InputPanel title="Antecedente de hemoglobinopatia?" :value="previous_hemoglobine_value">
-      <v-checkbox v-model="set_previous_hemoglobine_value" label="Anemia falciforme" value="Anemia falciforme"></v-checkbox>
-      <v-checkbox v-model="set_previous_hemoglobine_value" label="Talassemia" value="Talassemia"></v-checkbox>
-      <v-checkbox v-model="set_previous_hemoglobine_value" label="Outro:" value="Outro"></v-checkbox>
-      <v-text-field v-if="previous_hemoglobine_value.includes('Outro')" v-model="previous_hemoglobine_text" label="Especifique" ></v-text-field>
-      <v-checkbox v-model="set_previous_hemoglobine_value" label="Não" value="Não"></v-checkbox>
-  </InputPanel>
-
-  <InputPanel title="Antecedente de alterações da hemostasia:" :value="hemostasis_value">
-      <v-checkbox v-model="set_hemostasis_value" label="Hemofilia" value="Hemofilia"></v-checkbox>
-      <v-checkbox v-model="set_hemostasis_value" label="Hepatopatia crônica" value="Hepatopatia crônica"></v-checkbox>
-      <v-checkbox v-model="set_hemostasis_value" label="Disfunção plaquetária" value="Disfunção plaquetária"></v-checkbox>
-      <v-checkbox v-model="set_hemostasis_value" label="Outro:" value="Outro"></v-checkbox>
-      <v-text-field v-if="hemostasis_value.includes('Outro')" v-model="hemostasis_text" label="Especifique" ></v-text-field>
-      <v-checkbox v-model="set_hemostasis_value" label="Não" value="Não"></v-checkbox>
-  </InputPanel>
-
-  <InputPanel title="Uso de medicações que aumentam risco de sangramento (anticoagulantes, AAS):" :value="selected_medication" >
-    <v-radio-group v-model="selected_medication" inline>
-      <v-radio label="Sim" value="Sim"></v-radio>
-      <v-radio label="Não" value="Não"></v-radio>
-    </v-radio-group>
-  </InputPanel>
-
-  <InputPanel title="Recebeu transfusão nos últimos 3 meses?" :value="selected_transfusion">
-    <v-radio-group v-model="selected_transfusion" inline>
-      <v-radio label="Sim" value="Sim"></v-radio>
-      <v-radio label="Não" value="Não"></v-radio>
-    </v-radio-group>
-  </InputPanel>
-</div>
-
-<!-- BUTTONS -->
-<v-row class="mt-5">
-  <v-sheet>
-      <v-btn
-        fab
-        fixed
-        size="x-large"
-        color="#038C8C"
-        style="color: white"
-        :disabled="overlay"
-        :style="{ position: 'fixed', bottom: '0.6rem', right: '0.6rem', zIndex: 1 }"
-        @click="registerExam"
-      >
-      Salvar
-      </v-btn>
-      <v-btn class="ml-8 pl-4 pr-4" variant="flat" color="warning" @click="resetDialog = true" :disabled="overlay">
-        Resetar valores
-      </v-btn>
-  </v-sheet>
-</v-row>
-
-<!-- RESET DIALOG -->
-<v-row justify="center">
-    <v-dialog v-model="resetDialog" width="800">
-      <v-card>
-        <v-card-title>
-          <span class="text-h5">Atenção!</span>
-        </v-card-title>
-        <v-card-text>
-          Ao continuar, todos os dados clínicos deste paciente serão apagados. Deseja continuar?
+        <v-card-text v-if="showConduct && !overlay" style="margin-bottom: 30px;">
+          {{getConductSuggestionText}}
         </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="red-darken-1" variant="outlined" @click="resetDialog = false" :disabled="overlay" v-if="!overlay">
-            Cancelar
-          </v-btn>
-          <v-btn color="green-darken-1" variant="outlined" @click="resetAllValues" :disabled="overlay" :loading="overlay">
-            Sim, apagar
-          </v-btn>
+        <v-card-text v-if="overlay" style="margin-bottom: 30px;">
+          <LoadingComponent  :loading="overlay" height="50px" width="50px"/>
+        </v-card-text>
+        <v-card-actions
+
+          style="maring: 0; min-height: 10px !important; position: absolute; bottom: 0; left: 0; right: 0;"
+          class="d-flex justify-center"
+        >
+            <v-btn style="margin: 0;" rounded="0" block :icon="getExpandIcon" size="x-medium"></v-btn>
         </v-card-actions>
-      </v-card>
-    </v-dialog>
-</v-row>
+  </v-card>
+  <Alert :warningAlert="warningAlert" />
 
+  <!-- GRUPO 3 -->
+  <div v-if="isGroup2Filled && !overlay && saveButtonClicked2" >
+  <!-- <div v-if="isGroup2Filled"> -->
+    <InputPanel v-if="askFerroSerico" title="Ferro sérico:" :value="selected_ferro_serico">
+      <v-radio-group v-model="selected_ferro_serico">
+        <v-radio label="< 60 mcg/dl" value="< 60 mcg/dl"></v-radio>
+        <v-radio label="≥ 60 mcg/dl" value="≥ 60 mcg/dl"></v-radio>
+      </v-radio-group>
+    </InputPanel>
 
-<!-- OVERLAY -->
-<v-row justify="center">
-    <v-dialog v-model="overlay" width="300">
-      <v-card>
-        <v-card-title>
-          <span class="text-h5">Processando, aguarde</span>
-        </v-card-title>
-        <v-card-text class="d-flex justify-center">
-          <v-icon v-if="successIcon" color="success" icon="mdi-check-circle-outline" size="50" ></v-icon>
-          <v-icon v-if="errorIcon" color="warning" icon="mdi-alert-circle-outline" size="50" ></v-icon>
-          <LoadingComponent  :loading="overlay && !successIcon && !errorIcon" height="50px" width="50px"/>
-        </v-card-text>
-      </v-card>
-    </v-dialog>
-</v-row>
+    <InputPanel v-if="askFerritine" title="Ferritina:" :value="selected_ferritina">
+      <v-radio-group v-model="selected_ferritina">
+        <v-radio label="< 30 mcg/L" value="< 30 mcg/L"></v-radio>
+        <v-radio label="≥ 30 e < 100 mcg/L" value="≥ 30 e < 100 mcg/L"></v-radio>
+        <v-radio label="≥100 e < 500 mcg/L" value="≥100 e < 500 mcg/L"></v-radio>
+        <v-radio label="≥ 500 mcg/L" value="≥ 500 mcg/L"></v-radio>
+      </v-radio-group>
+    </InputPanel>
 
-<!-- SUGESTAO DE CONDUTA -->
-<v-row justify="center">
-    <v-dialog v-model="conductDialogFunc">
-      <v-card>
-        <v-card-title>
-          <span class="text-h5">Sugestão de conduta</span>
-        </v-card-title>
-        <v-card-text>
-          <!-- <LoadingComponent :loading="overlay" height="50px" width="50px"/> -->
-          <p>{{ getConductSuggestionText }}</p>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
+    <InputPanel v-if="askFerritineSaturation" title="Saturação transferrina:" :value="selected_transferrine_saturation">
+      <v-radio-group v-model="selected_transferrine_saturation">
+        <v-radio label="< 20%" value="< 20%"></v-radio>
+        <v-radio label="≥ 20% e < 30%" value="≥ 20% e < 30%"></v-radio>
+        <v-radio label="≥ 30%" value="≥ 30%"></v-radio>
+      </v-radio-group>
+    </InputPanel>
 
-          <v-btn
-            text="Fechar"
-            @click="closeConductDialog"
-          ></v-btn>
-      </v-card-actions>
-      </v-card>
-    </v-dialog>
-</v-row>
+    <InputPanel v-if="askB12Vitamine" title="Vatamina B12:" :value="selected_b12_vitamine">
+      <v-radio-group v-model="selected_b12_vitamine">
+        <v-radio label="< 200 ng/L" value="< 200 ng/L"></v-radio>
+        <v-radio label="≥ 200 ng/L" value="≥ 200 ng/L"></v-radio>
+      </v-radio-group>
+    </InputPanel>
 
-
-<template>
-  <div class="text-center">
-    <v-overlay v-model="overlay"></v-overlay>
+    <InputPanel v-if="askFolicAcid" title="Ácido fólico:" :value="selected_folic_acid">
+      <v-radio-group v-model="selected_folic_acid">
+        <v-radio label="< 6 ng/ml" value="< 6 ng/ml"></v-radio>
+        <v-radio label="≥ 6 ng/ml" value="≥ 6 ng/ml"></v-radio>
+      </v-radio-group>
+    </InputPanel>
   </div>
-</template>
 
+  <!-- GRUPO 2 -->
+  <div calss="group2" v-if="isGroup1Filled && !overlay && saveButtonClicked == 1">
+    <InputPanel title="VCM:" :value="selected_vcm">
+      <v-radio-group v-model="selected_vcm">
+        <v-radio label="< 80 fl" value="<80fl"></v-radio>
+        <v-radio label="80-100 fl" value="80-100fl"></v-radio>
+        <v-radio label="> 100 fl" value=">100fl"></v-radio>
+      </v-radio-group>
+    </InputPanel>
+
+    <InputPanel title="HCM:" :value="selected_hcm">
+      <v-radio-group v-model="selected_hcm">
+        <v-radio label="< 27 pg" value="<27pg"></v-radio>
+        <v-radio label="27-32 pg" value="27-32pg"></v-radio>
+        <v-radio label="> 32 pg" value=">32pg"></v-radio>
+      </v-radio-group>
+    </InputPanel>
+
+    <InputPanel title="Leucócito:" :value="selected_leucocito">
+      <v-radio-group v-model="selected_leucocito">
+        <v-radio label="< 4000 x 109/L" value="<4000"></v-radio>
+        <v-radio label="≥ 4000 x 109/L" value="≥4000"></v-radio>
+      </v-radio-group>
+    </InputPanel>
+
+    <InputPanel title="Plaquetas:" :value="selected_plaquetas">
+      <v-radio-group v-model="selected_plaquetas">
+        <v-radio label="< 100 x 109/L" value="<100"></v-radio>
+        <v-radio label="≥ 100 x 109/L" value="≥100"></v-radio>
+      </v-radio-group>
+    </InputPanel>
+
+    <InputPanel title="Taxa de filtração glomerular:" :value="selected_gloumerar">
+      <v-radio-group v-model="selected_gloumerar" inline>
+        <v-radio label="TFG < 60 ml/min/1,73m2" value="TFG < 60 ml/min/1,73m2"></v-radio>
+        <v-radio label="TFG > 60 ml/min/1,73m2" value="TFG > 60 ml/min/1,73m2"></v-radio>
+      </v-radio-group>
+    </InputPanel>
+  </div>
+
+  <!-- GRUPO 1 -->
+  <div class="group1">
+    <InputPanel title="Valor de Hemoglobina:" :value="selected_hb">
+      <v-radio-group v-model="selected_hb">
+        <v-radio label="Hb < 7 g/dl" value="Hb<7"></v-radio>
+        <v-radio label="Hb > 7 e Hb < 8 g/dl" value="7<Hb<8"></v-radio>
+        <v-radio label="Hb > 8 e < 13 g/dl" value="8<Hb<13"></v-radio>
+      </v-radio-group>
+    </InputPanel>
+
+    <InputPanel title="Presença de comorbidades?" :value="comorbities">
+      <div>
+        <v-checkbox v-model="set_comorbities" label="Coronariopatia Isquêmica" value="Coronariopatia Isquêmica"></v-checkbox>
+        <v-checkbox v-model="set_comorbities" label="Insuficiência Cardíaca" value="Insuficiência Cardíaca"></v-checkbox>
+        <v-checkbox v-model="set_comorbities" label="DPOC" value="DPOC"></v-checkbox>
+        <v-checkbox v-model="set_comorbities" label="Doença Renal Crônica" value="Doença Renal Crônica"></v-checkbox>
+        <v-checkbox v-model="set_comorbities" label="Nenhuma das anteriores" value="Não"></v-checkbox>
+      </div>
+    </InputPanel>
+
+    <InputPanel title="Exame físico: apresenta as alterações abaixo?" :value="selected_physical_exam" >
+        <v-checkbox v-model="set_selected_physical_exam" label="Dispnéia e/ou sinais de insuficiência respiratória" value="Dispnéia e/ou sinais de insuficiência respiratória" ></v-checkbox>
+        <v-checkbox v-model="set_selected_physical_exam" label="Má perfusão tecidual" value="Má perfusão tecidual"></v-checkbox>
+        <v-checkbox v-model="set_selected_physical_exam" label="Sonolência e/ou alteração do nível da consciência" value="Sonolência e/ou alteração do nível da consciência" ></v-checkbox>
+        <v-checkbox v-model="set_selected_physical_exam" label="PAM < 70 mmHg e/ou FC > 100 bpm" value="PAM < 70 mmHg e/ou FC > 100 bpm"></v-checkbox>
+        <v-checkbox v-model="set_selected_physical_exam" label="Nenhuma das anteriores" value="Não"></v-checkbox>
+    </InputPanel>
+
+    <InputPanel title="Procedimento cirúrgico a ser realizado:" :value="selected_procedure">
+      <v-radio-group v-model="selected_procedure">
+        <v-radio label="Pequeno porte (ex: cirurgias dermatológicas, procedimentos dentários, cirurgias endoscópicas, herniorrafias, cirurgias ortopédicas e ginecológicas menores, endarterectomia, RTU)" value="Pequeno porte"></v-radio>
+        <br>
+        <v-radio label="Médio porte (ex: cirurgias intra-abdominais, angioplastia periférica, aneurisma endovascular, histerectomia, cirurgias plásticas maiores, cirurgia ortopédica de quadril ou coluna, transplante renal, neurocirurgia)" value="Médio porte"></v-radio>
+        <br>
+        <v-radio label="Grande porte (ex: cirurgia cardíaca, cirurgia vascular maior, transplante hepático ou pulmonar, cirurgia  de ressecção hepática, cirurgia duodeno-pancreática, cistectomia, pneumectomia, amputação de membro inferior, esofagectomia)" value="Grande porte"></v-radio>
+        <br>
+        <v-text-field
+          v-if="selected_procedure"
+          v-model="previous_hemoglobine_text"
+          label="Especifique"
+        ></v-text-field>
+      </v-radio-group>
+    </InputPanel>
+
+    <InputPanel title="Antecedente de hemoglobinopatia?" :value="previous_hemoglobine_value">
+        <v-checkbox v-model="set_previous_hemoglobine_value" label="Anemia falciforme" value="Anemia falciforme"></v-checkbox>
+        <v-checkbox v-model="set_previous_hemoglobine_value" label="Talassemia" value="Talassemia"></v-checkbox>
+        <v-checkbox v-model="set_previous_hemoglobine_value" label="Outro:" value="Outro"></v-checkbox>
+        <v-text-field v-if="previous_hemoglobine_value.includes('Outro')" v-model="previous_hemoglobine_text" label="Especifique" ></v-text-field>
+        <v-checkbox v-model="set_previous_hemoglobine_value" label="Não" value="Não"></v-checkbox>
+    </InputPanel>
+
+    <InputPanel title="Antecedente de alterações da hemostasia:" :value="hemostasis_value">
+        <v-checkbox v-model="set_hemostasis_value" label="Hemofilia" value="Hemofilia"></v-checkbox>
+        <v-checkbox v-model="set_hemostasis_value" label="Hepatopatia crônica" value="Hepatopatia crônica"></v-checkbox>
+        <v-checkbox v-model="set_hemostasis_value" label="Disfunção plaquetária" value="Disfunção plaquetária"></v-checkbox>
+        <v-checkbox v-model="set_hemostasis_value" label="Outro:" value="Outro"></v-checkbox>
+        <v-text-field v-if="hemostasis_value.includes('Outro')" v-model="hemostasis_text" label="Especifique" ></v-text-field>
+        <v-checkbox v-model="set_hemostasis_value" label="Não" value="Não"></v-checkbox>
+    </InputPanel>
+
+    <InputPanel title="Uso de medicações que aumentam risco de sangramento (anticoagulantes, AAS):" :value="selected_medication" >
+      <v-radio-group v-model="selected_medication" inline>
+        <v-radio label="Sim" value="Sim"></v-radio>
+        <v-radio label="Não" value="Não"></v-radio>
+      </v-radio-group>
+    </InputPanel>
+
+    <InputPanel title="Recebeu transfusão nos últimos 3 meses?" :value="selected_transfusion">
+      <v-radio-group v-model="selected_transfusion" inline>
+        <v-radio label="Sim" value="Sim"></v-radio>
+        <v-radio label="Não" value="Não"></v-radio>
+      </v-radio-group>
+    </InputPanel>
+  </div>
+
+  <!-- BUTTONS -->
+  <v-row class="mt-5">
+    <v-sheet>
+        <v-btn
+          fab
+          fixed
+          size="x-large"
+          color="#038C8C"
+          style="color: white"
+          :disabled="overlay"
+          :style="{ position: 'fixed', bottom: '0.6rem', right: '0.6rem', zIndex: 1 }"
+          @click="registerExam"
+          :loading="overlay"
+        >
+        Salvar
+        </v-btn>
+        <v-btn class="ml-8 pl-4 pr-4" variant="flat" color="warning" @click="resetDialog = true" :disabled="overlay">
+          Resetar valores
+        </v-btn>
+    </v-sheet>
+  </v-row>
+
+  <!-- RESET DIALOG -->
+  <v-row justify="center">
+      <v-dialog v-model="resetDialog" width="800">
+        <v-card>
+          <v-card-title>
+            <span class="text-h5">Atenção!</span>
+          </v-card-title>
+          <v-card-text>
+            Ao continuar, todos os dados clínicos deste paciente serão apagados. Deseja continuar?
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="red-darken-1" variant="outlined" @click="resetDialog = false" :disabled="overlay" v-if="!overlay">
+              Cancelar
+            </v-btn>
+            <v-btn color="green-darken-1" variant="outlined" @click="resetAllValues" :disabled="overlay" :loading="overlay">
+              Sim, apagar
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+  </v-row>
+
+  <template>
+    <div class="text-center">
+      <v-overlay v-model="overlay"></v-overlay>
+    </div>
+  </template>
 </template>
 
 <script>
@@ -277,14 +242,8 @@ import axios from 'axios'
 import Alert from '@/components/Alert.vue'
 import LoadingComponent from '@/components/Loading.vue'
 import InputPanel from '@/components/InputPanel.vue'
-import { mapActions, mapState, mapWritableState } from 'pinia'
+import { mapActions, mapWritableState } from 'pinia'
 import { useExamStore } from '@/stores/exams'
-
-const statusEnum = {
-  START: "START",
-  STOP: "STOP",
-  STOP_WITH_ERROR: "STOP_WITH_ERROR"
-}
 
 export default {
   components: {
@@ -297,17 +256,13 @@ export default {
   },
   data() {
     return {
+      showConduct: true,
       flow: '',
-      saveClikedForGroup1: false,
-      saveClikedForGroup2: false,
       resetDialog: false,
-      overlay: false,
-      successIcon: false,
-      errorIcon: false,
+      overlay: true,
       APIbasePath: import.meta.env.VITE_API_URL,
       warningAlert: '',
       conductDialog: false,
-      isMounting: true,
 
       conductSuggestionText: 'Por favor, complete os dados abaixo',
       conductSuggestionColor: '#2A3B4D',
@@ -345,21 +300,13 @@ export default {
     }
   },
   computed: {
+    ...mapWritableState(useExamStore, ["saveButtonClicked", "saveButtonClicked2", "saveButtonClicked3"]),
     getConductSuggestionText() {
-      if (this.conductDialog) {
-        return this.conductSuggestionText.replace('Solicite os exames abaixo e preencha os resultados.', 'Solicite os exames no topo da lista e preencha os resultados.')
-      }
+      this.overlay = true
+      setTimeout(() => {
+        this.overlay = false
+      }, 400);
       return this.conductSuggestionText
-    },
-    conductDialogFunc: {
-      get() {
-        console.log("!this.overlay && this.conductDialog", !this.overlay, this.conductDialog);
-        return !this.overlay && !this.isMounting && this.conductDialog
-      },
-      set(v) {
-        this.conductDialog = v
-        return !this.overlay && this.conductDialog
-      }
     },
     set_comorbities: {
       get() {
@@ -417,10 +364,12 @@ export default {
         this.selected_physical_exam = v.filter((item) => item !== "Não");
       }
     },
+    getExpandIcon() {
+      return !!this.showConduct ? 'mdi-chevron-up' : 'mdi-chevron-down'
+    },
     needTransfusion() {
         const processExamInputs = this.processExamInputsAction()
         const result = processExamInputs(this)
-        console.log("result", result);
         this.conductSuggestionText = result.conductText
         this.conductSuggestionColor = result.color
         this.askFerroSerico = result.askFerroSerico
@@ -433,66 +382,24 @@ export default {
         this.isGroup3Filled = result.isGroup3Filled
         this.flow = result.flow
 
-        return this.conductSuggestionColor
+        if (!this.isGroup1Filled) {
+          this.saveButtonClicked = 0
+        }
 
+        if (this.$refs.conductdiv) {
+          this.spacerHeight = this.$refs.conductdiv.$el.clientHeight + 'px';
+        }
+
+        return this.conductSuggestionColor
     },
   },
   methods: {
     ...mapActions(useExamStore, ["hasSaved", "processExamInputsAction"]),
-    closeConductDialog() {
-      this.conductDialog = false
-    },
-    setLoading(status, error) {
-      window.scrollTo(0,0)
-      if (status == statusEnum.START) {
-        this.resetDialog = false
-        this.successIcon = false
-        this.errorIcon = false
-        this.overlay = true
-        this.warningAlert = ''
-        return
-      }
-
-      if (status == statusEnum.STOP) {
-        setTimeout(() => { this.successIcon = true }, 300)
-        setTimeout(() => {
-          this.overlay = false
-          if (this.flow != 'NO-INPUT') {
-            console.log("-----------------", );
-            this.conductDialog = true
-          }
-        }, 800)
-      }
-
-      if (status == statusEnum.STOP_WITH_ERROR) {
-        this.warningAlert = 'Occorreu um erro ou não foi possível os dados clínicos, experimente sair e entrar novamente. Erro: ' +
-          error?.response?.data?.message
-          setTimeout(() => { this.errorIcon = true }, 300)
-          setTimeout(() => {
-            this.overlay = false
-            if (this.flow != 'NO-INPUT') {
-              this.conductDialog = true
-            }
-          }, 800)
-
-        if (error?.response?.status == 401) {
-          setTimeout(() => {
-            this.warningAlert = "Sua seção expirou, redirecionando para a página de login"
-            this.$router.push(`/`)
-          }, 3000);
-
-          this.$router.push({
-            name: 'home'
-          })
-        }
-
-
-      }
-    },
     registerExam() {
       window.scrollTo(0,0)
-      this.setLoading(statusEnum.START)
-      this.isMounting = false
+      this.overlay = true
+      this.warningAlert = ''
+
       axios
         .post(
           `${this.APIbasePath}/patient/${this.id}/exam`,
@@ -529,23 +436,37 @@ export default {
         )
         .then((response) => {
           if (response.status == 201) {
-            this.saveClikedForGroup1 = true
-            this.setLoading(statusEnum.STOP)
+            this.saveButtonClicked = 1
 
-            if (this.isGroup2Filled && this.saveClikedForGroup1) {
-              this.saveClikedForGroup2 = true
+            const processExamInputs = this.processExamInputsAction()
+
+            let result = processExamInputs(this)
+
+            this.conductSuggestionText = result.conductText
+            if (this.$refs.conductdiv) {
+              this.spacerHeight = this.$refs.conductdiv.$el.clientHeight + 'px';
             }
+
+            if (this.isGroup2Filled && this.saveButtonClicked == 1) {
+              this.saveButtonClicked2 = 1
+            }
+
+            if (this.isGroup1Filled) {
+              console.log("group 1 filled after exams register");
+              this.saveButtonClicked = 1
+            }
+
+            this.showConduct = true
+            this.overlay = false
+            console.log("exams registered");
           }
         })
-        .catch((err) => {
-          console.log(err)
-          this.setLoading(statusEnum.STOP_WITH_ERROR, err)
-        })
+        .catch(this.handleErrors)
     },
     resetAllValues() {
       window.scrollTo(0,0)
-      this.setLoading(statusEnum.START)
-      this.isMounting = false
+      this.overlay = true
+      this.warningAlert = ''
       axios
         .post(
           `${this.APIbasePath}/patient/${this.id}/exam`,
@@ -583,16 +504,36 @@ export default {
         )
         .then((response) => {
           if (response.status == 201) {
-            this.saveClikedForGroup1 = false
-            this.saveClikedForGroup2 = false
+            this.saveButtonClicked = 0
+            this.saveButtonClicked2 = 0
             this.clearData()
-            this.setLoading(statusEnum.STOP)
+            this.showConduct = true
+            this.overlay = false
+            this.resetDialog = false
           }
         })
-        .catch((err) => {
-          console.log(err)
-          this.setLoading(statusEnum.STOP_WITH_ERROR, err)
+        .catch(this.handleErrors)
+    },
+    handleErrors(err) {
+      console.log(err)
+      this.overlay = false
+      this.resetDialog = false
+
+      if (err?.response?.status == 404) {
+        return
+      }
+
+      if (err?.response?.status == 401) {
+        setTimeout(() => {
+          this.warningAlert = "Sua seção expirou, redirecionando para a página de login"
+          this.$router.push(`/`)
+        }, 3000);
+
+        this.$router.push({
+          name: 'home'
         })
+      }
+      this.warningAlert = err.message
     },
     clearData() {
       this.comorbities = []
@@ -620,9 +561,10 @@ export default {
     },
   },
   mounted() {
-    this.isMounting = true
     window.scrollTo(0,0)
-    this.setLoading(statusEnum.START)
+    this.warningAlert = ''
+
+    this.overlay = true
     axios
       .get(`${this.APIbasePath}/patient/${this.id}/exam`, {
         headers: {
@@ -661,31 +603,27 @@ export default {
         const result = processExamInputs(this)
         this.flow = result.flow
 
+        console.log("mounting - results", result);
         if (result.isGroup1Filled) {
-          this.saveClikedForGroup1 = true
+          console.log("settin save button 1 to 1", );
+          this.saveButtonClicked = 1
         } else {
-          this.saveClikedForGroup1 = false
-          this.saveClikedForGroup2 = false
+          console.log("group 1 is not filled in mounting", );
+          this.saveButtonClicked = 0
+          this.saveButtonClicked2 = 0
         }
 
         if (result.isGroup1Filled && result.isGroup2Filled) {
-          this.saveClikedForGroup2 = true
+          this.saveButtonClicked2 = 1
         } else {
-          this.saveClikedForGroup2 = false
+          this.saveButtonClicked2 = 0
         }
 
-        this.setLoading(statusEnum.STOP)
+        this.showConduct = true
+        this.overlay = false
+
       })
-      .catch((err) => {
-        if (err?.response?.status == 404) {
-          // TODO fix this
-          this.setLoading(statusEnum.STOP)
-          return
-        }
-        // debugger
-        console.log(err);
-        this.setLoading(statusEnum.STOP_WITH_ERROR, err)
-      })
+      .catch(this.handleErrors)
   }
 }
 </script>
@@ -709,6 +647,17 @@ label{
 .v-checkbox .v-selection-control {
     min-height: 0;
     max-height: 15px;
+}
+
+.conduct-box {
+  border-radius: 0px;
+  position: sticky;
+  top: 48px;
+  right: 0;
+  left: 0;
+  z-index: 2;
+  min-height: 70px;
+  color: white
 }
 
 </style>

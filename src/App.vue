@@ -8,7 +8,7 @@ import { RouterLink, RouterView } from 'vue-router'
     </div> -->
     <v-layout>
       <!-- NAVBAR -->
-      <v-app-bar color="#038C8C" density="compact" v-if="isLoggedIn && $route.name != 'Login' && $route.name != 'Cadastro'" style="color: white">
+      <v-app-bar :elevation="0" color="#038C8C" density="compact" v-if="isLoggedIn && $route.name != 'Login' && $route.name != 'Cadastro'" style="color: white">
         <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
         <v-app-bar-title>{{ $route.name }}</v-app-bar-title>
         <!-- <v-spacer></v-spacer> -->

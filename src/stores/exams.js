@@ -6,7 +6,11 @@ const APIbasePath = import.meta.env.VITE_API_URL
 
 export const useExamStore = defineStore('examStore', {
   state: () => ({
+    saveButtonClicked: 0,
+    saveButtonClicked2: 0,
+    saveButtonClicked3: 0,
   }),
+  persist: true,
   getters: {
     getPatientByID: (state) => (id) => {
       return state.patients.find((pt) => pt._id === id);
@@ -38,36 +42,67 @@ function processExamInputs(exams = {}) {
   let isGroup1Filled = checkGroup1Filled(exams)
   // console.log("isGroup1Filled", isGroup1Filled);
   // console.log("isGroup2Filled", isGroup2Filled);
+  const examStore = useExamStore()
 
+  // Access the saveButtonClicked state
+  const saveButtonClicked = examStore.saveButtonClicked
 
-  if (!isGroup1Filled) { // check also if the button was clicked
-    return {
+  console.log("saveButtonClicked", saveButtonClicked);
+
+  let isGroup2Filled = checkGroup2Filled(exams)
+  if (!isGroup1Filled || saveButtonClicked == 0) { // check also if the button was clicked
+    let resp = {
       flow: "NO-INPUT",
       conductText: 'Complete todos os dados abaixo e clique em "Salvar". \n A conduta será mostrada aqui. Você pode salvar e retornar quando quiser.',
       color: neutral
     }
+
+    if (isGroup1Filled) {
+      resp.isGroup1Filled = true
+    }
+
+    if (isGroup2Filled) {
+      resp.isGroup2Filled = true
+    }
+    return resp
   }
 
+  const saveButtonClicked2 = examStore.saveButtonClicked2
+  console.log("group 1 filled and save button clicked", );
   const  group1Suggestion =  processGroup1(exams)
-  let isGroup2Filled = checkGroup2Filled(exams, group1Suggestion)
+  isGroup2Filled = checkGroup2Filled(exams)
 
+  console.log("saveButtonClicked2", saveButtonClicked2);
   if (isGroup1Filled && !isGroup2Filled) {
     group1Suggestion.isGroup1Filled = isGroup1Filled
     group1Suggestion.isGroup2Filled = isGroup2Filled
+    console.log("group 2 not filled, returning group 1 suggestion", );
     return group1Suggestion
   }
 
-  // debugger
+  console.log("processing group 2", );
   const group2Suggestion = processGroup2(exams, group1Suggestion)
-  console.log("group2Suggestion", group2Suggestion);
+
+
+  if (isGroup1Filled && isGroup2Filled && saveButtonClicked2 == 0) {
+    group1Suggestion.isGroup1Filled = isGroup1Filled
+    group1Suggestion.isGroup2Filled = isGroup2Filled
+    console.log("group 1 and 2 filled, button not clicked", );
+    return group1Suggestion
+  }
+
+  // console.log("group2Suggestion", group2Suggestion);
   let isGroup3Filled = checkGroup3Filled(exams, group2Suggestion)
 
+  console.log("isGroup1Filled && isGroup2Filled && !isGroup3Filled", isGroup1Filled, isGroup2Filled, isGroup3Filled);
   if (isGroup1Filled && isGroup2Filled && !isGroup3Filled) {
     group2Suggestion.isGroup1Filled = isGroup1Filled
     group2Suggestion.isGroup2Filled = isGroup2Filled
+    console.log("group 3 not filled, returning group 2 suggestion", );
     return group2Suggestion
   }
 
+  console.log("processing group 3", );
   const group3Suggestion = processGroup3(exams, group2Suggestion)
   group1Suggestion.isGroup3Filled = isGroup3Filled
 
@@ -88,12 +123,191 @@ function processGroup3(exams, group2Suggestion) {
   let hasCronicHepatopatia = exams.set_hemostasis_value.includes("Hepatopatia crônica")
   let leococites = exams.selected_leucocito
   let plaquetas = exams.selected_plaquetas
+  let ferro = exams.selected_ferro_serico
+  let ferritine = exams.selected_ferritina
+  let sat_transferrina = exams.selected_transferrine_saturation
+  let b12 = exams.selected_b12_vitamine
+  let folic_acid = exams.selected_folic_acid
+
+  if (g2s.flow.includes('G2-6')) {
+    return {
+      ...group2Suggestion,
+      color: info,
+      flow: group2Suggestion.flow + '/' + 'G3-1',
+      conductText: "Encaminhar ao Hematologista para orientações perioperatórias e avisar o Serviço de Transfusão sobre o diagnóstico de Hemoglobinopatia para reserva cirúrgica adequada.",
+    }
+  }
+
+  if (g2s.flow.includes('G2-4') && ferritine == "< 30 mcg/L" && sat_transferrina == "< 20%") {
+    return {
+      ...group2Suggestion,
+      color: info,
+      flow: group2Suggestion.flow + '/' + 'G3-2',
+      conductText: "Anemia ferropriva e anemia da doença renal crônica. Inciar reposição de ferro. Sugerimos dar preferência para fero endovenoso em caso de cirurgia próxima. Para calculo da dose total de hidróxifo de ferro: (13-Hb) X 2,4 X peso + 500.  Após tratamento, encaminhar ao nefrologista para avaliar inicio de EPO."
+    }
+  }
+
+  if (g2s.flow.includes('G2-4') && ferritine.trim() != "" && ferritine != "≥ 500 mcg/L" && sat_transferrina.trim() != "" && sat_transferrina != "≥ 30%") {
+    return {
+      ...group2Suggestion,
+      color: info,
+      flow: group2Suggestion.flow + '/' + 'G3-3',
+      conductText: "Anemia da doença renal cronica. Encaminhar ao nefrologista para avaliar inicio de EPO e ferro endovenoso."
+    }
+  }
+
+  if (g2s.flow.includes('G2-4') && sat_transferrina == "≥ 30%") {
+    return {
+      ...group2Suggestion,
+      color: info,
+      flow: group2Suggestion.flow + '/' + 'G3-4',
+      conductText: "Anemia da doença renal cronica. Encaminhar ao nefrologista para avaliar inicio de EPO."
+    }
+  }
+
+  if (g2s.flow.includes('G2-4') && ferritine == "≥ 500 mcg/L") {
+    return {
+      ...group2Suggestion,
+      color: info,
+      flow: group2Suggestion.flow + '/' + 'G3-5',
+      conductText: "Anemia da doença renal cronica. Encaminhar ao nefrologista para avaliar inicio de EPO."
+    }
+  }
+
+  if (g2s.flow.includes('G2-3') && ferritine == "≥100 e < 500 mcg/L" && sat_transferrina == "< 20%") {
+    return {
+      ...group2Suggestion,
+      color: info,
+      flow: group2Suggestion.flow + '/' + 'G3-6',
+      conductText: "Deficiência de ferro possível se paciente com doença inflamatória crônica e causa evidente de ferropenia ou com DRC em uso de EPO ± diálise ou com insuficiência cardíaca. Avaliar contexto clínico e  considerar teste terapêutico com ferro."
+    }
+  }
+
+  if (g2s.flow.includes('G2-3') && ferritine == "≥ 30 e < 100 mcg/L" && sat_transferrina == "< 20%") {
+    return {
+      ...group2Suggestion,
+      color: info,
+      flow: group2Suggestion.flow + '/' + 'G3-7',
+      conductText: "Provavél deficiência de ferro se paciente com doença inflamatória crônica e/ou PCR aumentado. Realizar reposição e reavaliar resposta com HMG e novo perfil de ferro."
+    }
+  }
+
+  if (g2s.flow.includes('G2-3') && ferritine == "< 30 mcg/L" && sat_transferrina == "< 20%") {
+    return {
+      ...group2Suggestion,
+      color: info,
+      flow: group2Suggestion.flow + '/' + 'G3-8',
+      conductText: "Anemia ferropriva. Inciar reposição de ferro. Sugerimos dar preferência para fero endovenoso em caso de cirurgia próxima. Para calculo da dose total de hidróxifo de ferro: (13-Hb) X 2,4 X peso + 500"
+    }
+  }
+
+  if (g2s.flow.includes('G2-3') && ferritine == "≥ 500 mcg/L") {
+    return {
+      ...group2Suggestion,
+      color: info,
+      flow: group2Suggestion.flow + '/' + 'G3-9',
+      conductText: "Anemia por doença crônica, sem necessidade de reposição com ferro."
+    }
+  }
+
+  if (g2s.flow.includes('G2-3') && (sat_transferrina == "≥ 20% e < 30%" || sat_transferrina == "≥ 30%")) {
+    return {
+      ...group2Suggestion,
+      color: info,
+      flow: group2Suggestion.flow + '/' + 'G3-10',
+      conductText: "Sem necessidade de reposição com ferro, possivel talasemia. Encaminhar ao Hematologista."
+    }
+  }
 
 
+  if (g2s.flow.includes('G2-2') && ferritine == "< 30 mcg/L" && sat_transferrina == "< 20%") {
+    return {
+      ...group2Suggestion,
+      color: info,
+      flow: group2Suggestion.flow + '/' + 'G3-11',
+      conductText: "Anemia ferropriva + anemia da doença renal crônica. Inciar reposição de ferro. Sugerimos dar preferência para fero endovenoso em caso de cirurgia próxima. Para calculo da dose total de hidróxifo de ferro: (13-Hb) X 2,4 X peso + 500.  Após tratamento, encaminhar ao nefrologista para avaliar inicio de EPO."
+    }
+  }
+
+  if (g2s.flow.includes('G2-2') && ferritine.trim() != "" && ferritine != "≥ 500 mcg/L" && sat_transferrina.trim() != "" && sat_transferrina != "≥ 30%") {
+    return {
+      ...group2Suggestion,
+      color: info,
+      flow: group2Suggestion.flow + '/' + 'G3-12',
+      conductText: "Anemia da doença renal cronica. Encaminhar ao nefrologista para avaliar inicio de EPO e ferro endovenoso."
+    }
+  }
+
+  if (g2s.flow.includes('G2-2') && sat_transferrina == "≥ 30%") {
+    return {
+      ...group2Suggestion,
+      color: info,
+      flow: group2Suggestion.flow + '/' + 'G3-13',
+      conductText: "Anemia da doença renal cronica. Encaminhar ao nefrologista para avaliar inicio de EPO."
+    }
+  }
+
+  if (g2s.flow.includes('G2-2') && ferritine == "≥ 500 mcg/L") {
+    return {
+      ...group2Suggestion,
+      color: info,
+      flow: group2Suggestion.flow + '/' + 'G3-14',
+      conductText: "Anemia da doença renal cronica. Encaminhar ao nefrologista para avaliar inicio de EPO."
+    }
+  }
+
+
+  if (g2s.flow.includes('G2-1') && (sat_transferrina == "≥ 20% e < 30%" || sat_transferrina == "≥ 30%")) {
+    return {
+      ...group2Suggestion,
+      color: info,
+      flow: group2Suggestion.flow + '/' + 'G3-15',
+      conductText: "Sem necessidade de reposição com ferro, possivel talasemia. Encaminhar ao Hematologista."
+    }
+  }
+
+  if (g2s.flow.includes('G2-1') && ferritine == "≥100 e < 500 mcg/L" && sat_transferrina == "< 20%") {
+    return {
+      ...group2Suggestion,
+      color: info,
+      flow: group2Suggestion.flow + '/' + 'G3-16',
+      conductText: "Deficiência de ferro possível se paciente com doença inflamatória crônica e causa evidente de ferropenia ou com DRC em uso de EPO ± diálise ou com insuficiência cardíaca. Avaliar contexto clínico e  considerar teste terapêutico com ferro."
+    }
+  }
+
+  if (g2s.flow.includes('G2-1') && ferritine == "≥ 30 e < 100 mcg/L" && sat_transferrina == "< 20%") {
+    return {
+      ...group2Suggestion,
+      color: info,
+      flow: group2Suggestion.flow + '/' + 'G3-17',
+      conductText: "Provavél deficiência de ferro se paciente com doença inflamatória crônica e/ou PCR aumentado. Realizar reposição e reavaliar resposta com HMG e novo perfil de ferro."
+    }
+  }
+
+  if (g2s.flow.includes('G2-1') && ferritine == "< 30 mcg/L" && sat_transferrina == "< 20%") {
+    return {
+      ...group2Suggestion,
+      color: info,
+      flow: group2Suggestion.flow + '/' + 'G3-18',
+      conductText: "Anemia ferropriva. Inciar reposição de ferro. Sugerimos dar preferência para fero endovenoso em caso de cirurgia próxima. Para calculo da dose total de hidróxifo de ferro: (13-Hb) X 2,4 X peso + 500",
+    }
+  }
+
+  if (g2s.flow.includes('G2-1') && ferritine == "≥ 500 mcg/L") {
+    return {
+      ...group2Suggestion,
+      color: info,
+      flow: group2Suggestion.flow + '/' + 'G3-19',
+      conductText: "Anemia por doença crônica, sem necessidade de reposição com ferro."
+    }
+  }
+
+
+  // $$$$$$$$$$$$$$$$$$$
   if (g2s.flow.includes('G2-5') && leococites == "≥4000" && plaquetas == "<100") {
     return {
       ...group2Suggestion,
-      flow: group2Suggestion.flow + '/' + 'G3-1',
+      flow: group2Suggestion.flow + '/' + 'G3-20',
       conductText: "Encaminhar ao Hematologista para investigação de anemia e plaquetopenia.",
     }
   }
@@ -101,7 +315,7 @@ function processGroup3(exams, group2Suggestion) {
   if (g2s.flow.includes('G2-5') && leococites == "<4000" && plaquetas == "≥100") {
     return {
       ...group2Suggestion,
-      flow: group2Suggestion.flow + '/' + 'G3-2',
+      flow: group2Suggestion.flow + '/' + 'G3-21',
       conductText: "Encaminhar ao Hematologista para investigação de anemia e leucopenia."
     }
   }
@@ -109,7 +323,7 @@ function processGroup3(exams, group2Suggestion) {
   if (g2s.flow.includes('G2-5') && leococites == "<4000" && plaquetas == "<100" && hasCronicHepatopatia) {
     return {
       ...group2Suggestion,
-      flow: group2Suggestion.flow + '/' + 'G3-3',
+      flow: group2Suggestion.flow + '/' + 'G3-22',
       conductText: "Paciente com provável anemia da inflamação e plaquetopenia por hiperesplenismo se paciente com esplenomegalia e cirrose. Neste contexto, a contagem de plaquetas costuma se apresentar entre 30.000 e 50.000. Geralmente não há  necessidade de transfusão de CP para procedimentos cirúrgicos menores. Discutir com médico hemoteraPêuta a necessidade de transfusão de CP a depnder do procedimento cirúrgico."
     }
   }
@@ -117,7 +331,7 @@ function processGroup3(exams, group2Suggestion) {
   if (g2s.flow.includes('G2-5') && leococites == "<4000" && plaquetas == "<100" && !hasCronicHepatopatia) {
     return {
       ...group2Suggestion,
-      flow: group2Suggestion.flow + '/' + 'G3-4',
+      flow: group2Suggestion.flow + '/' + 'G3-23',
       conductText: "Encaminhar ao Hematologista para investigação de pancitopenia."
     }
   }
@@ -125,7 +339,7 @@ function processGroup3(exams, group2Suggestion) {
   if (g2s.flow.includes('G2-5') && leococites == "≥4000" && plaquetas == "≥100" && hasCronicHepatopatia) {
     return {
       ...group2Suggestion,
-      flow: group2Suggestion.flow + '/' + 'G3-5',
+      flow: group2Suggestion.flow + '/' + 'G3-24',
       conductText: "Paciente com provável anemia da inflamção secundária a hepatopatia crônica. Solicitar perfil de ferro em caso de sangramento crônico de TGI."
     }
   }
@@ -133,11 +347,10 @@ function processGroup3(exams, group2Suggestion) {
   if (g2s.flow.includes('G2-5') && leococites == "≥4000" && plaquetas == "≥100" && !hasCronicHepatopatia) {
     return {
       ...group2Suggestion,
-      flow: group2Suggestion.flow + '/' + 'G3-5',
+      flow: group2Suggestion.flow + '/' + 'G3-25',
       conductText: "Encaminhar ao hematologista. Possível mielodisplasia."
     }
   }
-
 
   return {
     ...group2Suggestion,
@@ -150,8 +363,9 @@ function processGroup3(exams, group2Suggestion) {
 function processGroup2(exams, group1Suggestion) {
   let vcm = exams.selected_vcm
   let hcm = exams.selected_hcm
-  let hasHemoglobinopatia = exams.length && !exams.includes('Não')
+  let hasHemoglobinopatia = exams.previous_hemoglobine_value.length && !exams.previous_hemoglobine_value.includes('Não')
 
+  // debugger
   let VCM_LT_80 = vcm == '<80fl'
   let VCM_80_100 = vcm == '80-100fl'
   let VCM_GT_80 = vcm == "80-100fl" || vcm == ">100fl"
@@ -163,6 +377,16 @@ function processGroup2(exams, group1Suggestion) {
 
   let TFG_LT_60 = exams.selected_gloumerar == "TFG < 60 ml/min/1,73m2"
   let TFG_GT_60 = exams.selected_gloumerar == "TFG > 60 ml/min/1,73m2"
+
+  // debugger
+  if (hasHemoglobinopatia) {
+    return {
+      conductText: "Encaminhar ao Hematologista para orientações perioperatórias e avisar o Serviço de Transfusão sobre o diagnóstico de Hemoglobinopatia para reserva cirúrgica adequada.",
+      flow: group1Suggestion.flow + '/' + 'G2-6',
+      color: info,
+    }
+  }
+
 
   // flow1
   if (VCM_LT_80 && TFG_GT_60 && !hasHemoglobinopatia) {
@@ -216,12 +440,6 @@ function processGroup2(exams, group1Suggestion) {
     }
   }
 
-  if (hasHemoglobinopatia) {
-    return {
-      conductText: "Encaminhar ao Hematologista para orientações perioperatórias e avisar o Serviço de Transfusão sobre o diagnóstico de Hemoglobinopatia para reserva cirúrgica adequada.",
-      flow: group1Suggestion.flow + '/' + 'G2-6',
-    }
-  }
 
   return {
     ...group1Suggestion,
@@ -338,262 +556,6 @@ function processGroup1(exams) {
   return {}
 }
 
-function testProcessExamsInputG1() {
-  const exams = {}
-  exams.selected_hb = 'xx'
-  exams.comorbities = ['xx']
-  exams.selected_physical_exam = ['xx']
-  exams.selected_procedure = 'xx',
-  exams.previous_hemoglobine_value = ['xx']
-  exams.hemostasis_value = ['xx']
-  exams.selected_medication = 'xx'
-  exams.selected_transfusion = 'xx'
-  const testCases = [
-    {
-      input: {
-        ...exams,
-        selected_hb: 'Hb<7',
-        comorbities: ['Não'],
-        selected_physical_exam: ['Não'],
-
-      },
-      expected: {
-        flow: 'G1-1',
-        conductText:
-          'A transfusão não é recomendada neste caso, mas é fundamental investigar a etiologia da anemia e prosseguir com o tratamento antes da cirurgia. Solicite os exames abaixo e preencha os resultados.',
-        color: positive
-      },
-    },
-    {
-      input: {
-        ...exams,
-        selected_hb: 'Hb<7',
-        comorbities: ['Hypertension'],
-        selected_physical_exam: ['Não'],
-      },
-      expected: {
-        flow: 'G1-2',
-        conductText:
-          'Provavelmente não deverá ser transfundido por não apresentar repercussão clínica da anemia. Paciente de maior risco pré-operatório por apresentar comorbidade  e anemia. É fundamental investigar a etiologia da anemia e prosseguir com o tratamento antes da cirurgia. Solicite os exames abaixo e preencha os resultados.',
-        color: alert
-      },
-    },
-    {
-      input: {
-        ...exams,
-        selected_hb: 'Hb<7',
-        comorbities: ['Hypertension'],
-        selected_physical_exam: ['Fever'],
-
-      },
-      expected: {
-        flow: 'G1-3',
-        conductText:
-          'Provavelmente se beneficiará com a transfusão. Porém é fundamental investigar a etiologia da anemia e prosseguir com o tratamento antes da cirurgia. Este é um paciente de maior risco pré-operatório. Solicite os exames abaixo e preencha os resultados.',
-        color: danger
-      },
-    },
-    {
-      input: {
-        ...exams,
-        selected_hb: 'Hb<7',
-        comorbities: ['Não'],
-        selected_physical_exam: ['Fever'],
-
-      },
-      expected: {
-        flow: 'G1-4',
-        conductText:
-          'Pode precisar de transfusão, mas é necessário fazer uma avaliação clínica para investigar se os sintomas estão relacionados a outras causas além da anemia, como infecção, distúrbios metabólicos, principalmente em pacientes com anemia crônica e sem sangramento agudo. Além disso, é fundamental investigar a etiologia da anemia e prosseguir com o tratamento antes da cirurgia. Solicite os exames abaixo e preencha os resultados.',
-        color: alert
-      },
-    },
-    {
-      input: {
-        ...exams,
-        selected_hb: '7<Hb<8',
-        comorbities: ['Não'],
-        selected_physical_exam: ['Não'],
-
-      },
-      expected: {
-        flow: 'G1-5',
-        conductText:
-          'Transfusão não recomendada. É fundamental investigar a etiologia da anemia e prosseguir com o tratamento antes da cirurgia. Solicite os exames abaixo e preencha os resultados.',
-        color: positive
-      },
-    },
-    {
-      input: {
-        ...exams,
-        selected_hb: '7<Hb<8',
-        comorbities: ['Hypertension'],
-        selected_physical_exam: ['Não'],
-
-      },
-      expected: {
-        flow: 'G1-6',
-        conductText:
-          'Provavelmente não deverá ser transfundido por não apresentar repercussão clínica da anemia. Paciente de maior risco pré-operatório por apresentar comorbidade  e anemia. É fundamental investigar a etiologia da anemia e prosseguir com o tratamento antes da cirurgia. Solicite os exames abaixo e preencha os resultados.',
-        color: alert
-      },
-    },
-    {
-      input: {
-        ...exams,
-        selected_hb: '7<Hb<8',
-        comorbities: ['Hypertension'],
-        selected_physical_exam: ['Fever'],
-
-      },
-      expected: {
-        flow: 'G1-7',
-        conductText:
-          'Pode precisar de transfusão, mas é necessário fazer uma avaliação clínica para investigar se os sintomas estão relacionados a outras causas além da anemia, como infecção, distúrbios metabólicos, principalmente em pacientes com anemia crônica e sem sangramento agudo (laranja). Paciente de maior risco pré-operatório por apresentar comorbidade e anemia. É fundamental investigar a etiologia da anemia e prosseguir com o tratamento antes da cirurgia. Solicite os exames abaixo e preencha os resultados.',
-        color: danger
-      },
-    },
-    {
-      input: {
-        ...exams,
-        selected_hb: '7<Hb<8',
-        comorbities: ['Não'],
-        selected_physical_exam: ['Fever'],
-
-      },
-      expected: {
-        flow: 'G1-8',
-        conductText:
-        'Provavelmente não precisa de transfusão, principalmente em pacientes com anemia crônica e sem sangramento agudo. Recomendamos avaliação clínica para identificar as possíveis causas dos sintomas apresentados e tratamento adequado. É fundamental investigar a etiologia da anemia e prosseguir com o tratamento antes da cirurgia. Solicite os exames abaixo e preencha os resultados.',
-        color: positive
-      },
-    },
-    {
-      input: {
-        ...exams,
-        selected_hb: '8<Hb<13',
-        comorbities: ['Não'],
-        selected_physical_exam: ['Não'],
-
-      },
-      expected: {
-        flow: 'G1-9',
-        conductText:
-          'Transfusão não recomendada. É fundamental investigar a etiologia da anemia e prosseguir com o tratamento antes da cirurgia. Solicite os exames abaixo e preencha os resultados.',
-        color: positive
-      },
-    },
-    {
-      input: {
-        ...exams,
-        selected_hb: '8<Hb<13',
-        comorbities: ['Hypertension'],
-        selected_physical_exam: ['Não'],
-
-      },
-      expected: {
-        flow: 'G1-10',
-        conductText:
-          'Transfusão não recomendada. É fundamental investigar a etiologia da anemia e prosseguir com o tratamento antes da cirurgia. Veja a sugestão de exames a serem coletados.',
-        color: positive
-      },
-    },
-    {
-      input: {
-        ...exams,
-        selected_hb: '8<Hb<13',
-        comorbities: ['Hypertension'],
-        selected_physical_exam: ['Fever'],
-
-      },
-      expected: {
-        flow: 'G1-11',
-        conductText:
-          'Provavelmente não deverá ser transfundido, principalmente em pacientes com anemia crônica e sem sangramento agudo. Recomendamos avaliação clínica para identificar as possíveis causas dos sintomas apresentados e tratamento adequado (laranja). Paciente de maior risco pré-operatório por apresentar comorbidade e anemia. É fundamental investigar a etiologia da anemia e prosseguir com o tratamento antes da cirurgia. Solicite os exames abaixo e preencha os resultados.',
-        color: alert
-      },
-    },
-    {
-      input: {
-        ...exams,
-        selected_hb: '8<Hb<13',
-        comorbities: ['Não'],
-        selected_physical_exam: ['Fever'],
-
-      },
-      expected: {
-        flow: 'G1-12',
-        conductText:
-          'Provavelmente não precisa de transfusão, principalmente em pacientes com anemia crônica e sem sangramento agudo. Recomendamos avaliação clínica para identificar as possíveis causas dos sintomas apresentados e tratamento adequado. Além disso, é fundamental investigar a etiologia da anemia e prosseguir com o tratamento antes da cirurgia. Solicite os exames abaixo e preencha os resultados.',
-        color: positive
-      },
-    },
-  ];
-
-  for (const testCase of testCases) {
-    const result = processExamInputs(testCase.input);
-
-    // console.log("result", result.flow == );
-    if (
-      result.conductText !== testCase.expected.conductText ||
-      result.color !== testCase.expected.color ||
-      result.flow != testCase.expected.flow
-    ) {
-      console.error(`Test failed for input:`, testCase.input);
-      console.error(`Expected output:`, testCase.expected);
-      console.error(`Actual output:`, result);
-    } else {
-      console.log(`Test passed`);
-    }
-  }
-}
-
-function testProcessExamsInput() {
-  const exams = {}
-  exams.selected_hb = 'xx'
-  exams.comorbities = ['xx']
-  exams.selected_physical_exam = ['xx']
-  exams.selected_procedure = 'xx',
-  exams.previous_hemoglobine_value = ['xx']
-  exams.hemostasis_value = ['xx']
-  exams.selected_medication = 'xx'
-  exams.selected_transfusion = 'xx'
-  const testCases = [
-    {
-      input: {
-        ...exams,
-        selected_hb: 'Hb<7',
-        comorbities: ['Não'],
-        selected_physical_exam: ['Não'],
-
-      },
-      expected: {
-        flow: 'G1-1',
-        conductText:
-          'A transfusão não é recomendada neste caso, mas é fundamental investigar a etiologia da anemia e prosseguir com o tratamento antes da cirurgia. Solicite os exames abaixo e preencha os resultados.',
-        color: positive
-      },
-    },
-  ];
-
-  for (const testCase of testCases) {
-    const result = processExamInputs(testCase.input);
-
-    // console.log("result", result.flow == );
-    if (
-      result.conductText !== testCase.expected.conductText ||
-      result.color !== testCase.expected.color ||
-      result.flow != testCase.expected.flow
-    ) {
-      console.error(`Test failed for input:`, testCase.input);
-      console.error(`Expected output:`, testCase.expected);
-      console.error(`Actual output:`, result);
-    } else {
-      console.log(`Test passed`);
-    }
-  }
-}
-
 function checkGroup1Filled(exams) {
   // console.log("!!exams.selected_hb &&", !!exams.selected_hb);
   // console.log("!!exams.comorbities.length &&", !!exams.comorbities.length);
@@ -615,7 +577,16 @@ function checkGroup1Filled(exams) {
   )
 }
 
-function checkGroup2Filled(exams) { return (
+function checkGroup2Filled(exams) {
+  console.log("checking group2", (
+    !!checkGroup1Filled(exams) &&
+    !!exams.selected_vcm &&
+    !!exams.selected_hcm &&
+    !!exams.selected_leucocito &&
+    !!exams.selected_plaquetas &&
+    !!exams.selected_gloumerar
+  ));
+  return (
     !!checkGroup1Filled(exams) &&
     !!exams.selected_vcm &&
     !!exams.selected_hcm &&
@@ -627,9 +598,10 @@ function checkGroup2Filled(exams) { return (
 
 function checkGroup3Filled(exams, group2Suggestion = {}) {
   // debugger
-  console.log("group2", group2Suggestion);
+  // console.log("group2", group2Suggestion);
   // ensure group2 is returning something
   if (!group2Suggestion.flow) {
+    console.log("no flow found for group 2", );
     return false
   }
 
@@ -639,7 +611,14 @@ function checkGroup3Filled(exams, group2Suggestion = {}) {
   let folicAcid = group2Suggestion.askFolicAcid ? !!exams.selected_folic_acid : true
   let ferritine = group2Suggestion.askFerritine ? !!exams.selected_ferritina : true
   let ferroSerico = group2Suggestion.askFerroSerico ? !!exams.selected_ferro_serico : true
+  console.log("ferritineSaturation", ferritineSaturation);
+  console.log("b12Vitamine", b12Vitamine);
+  console.log("folicAcid", folicAcid);
+  console.log("ferritine", ferritine);
+  console.log("ferroSerico", ferroSerico);
 
+
+  console.log("group 3 filled", );
   return (
     !!checkGroup2Filled(exams) &&
     ferritineSaturation &&
