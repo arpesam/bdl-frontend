@@ -19,7 +19,7 @@
         </v-card-text>
         <v-card-actions
 
-          style="maring: 0; min-height: 10px !important; position: absolute; bottom: 0; left: 0; right: 0;"
+          style="margin: 0; min-height: 10px !important; position: absolute; bottom: 0; left: 0; right: 0;"
           class="d-flex justify-center"
         >
             <v-btn style="margin: 0;" rounded="0" block :icon="getExpandIcon" size="x-medium"></v-btn>
