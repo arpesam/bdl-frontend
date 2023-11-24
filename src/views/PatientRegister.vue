@@ -37,7 +37,9 @@
           v-model="patient.height"
         ></v-text-field>
         <!-- <br /> -->
-        <DateInput @input="handleInput" :rules="rules.birth" :value="patient.birth_date" style="width: 250px; "/>
+        <DateInput3 @input="(v) => handleInput(v)" :rules="rules.birth" :value="patient.birth_date" style="width: 250px;"  placeholder="dd/mm/aaaa" />
+
+
         <v-select
           :items="patient.items"
           label="Etnia"
@@ -69,12 +71,14 @@
 import axios from 'axios'
 import Alert from '@/components/Alert.vue'
 import DateInput from '@/components/DateInput.vue'
+import DateInput3 from '@/components/Datepicker3.vue'
 
 
 export default {
   components: {
     Alert,
     DateInput,
+    DateInput3,
   },
   data() {
     return {
@@ -114,7 +118,7 @@ export default {
             let yyyy = value.slice(6,10)
             let currentYear = new Date().getFullYear()
             if (dd > 31 || mm > 12 || yyyy > currentYear || (currentYear - yyyy) > 130) {
-              return 'Data inválida'
+              return 'Data inválida ou muito antiga'
             }
             return true
           }
@@ -145,9 +149,30 @@ export default {
   },
   methods: {
     handleInput(v) {
-      if (v?.target?.value) {
-        this.patient.birth_date = v.target.value
+      v.preventDefault()
+      console.log("v.targets", v);
+      let bd = this.patient.birth_date
+      if (v.inputType == "deleteContentBackward" || v.inputType == "deleteContentForward") {
+        bd = bd.substring(0, bd.length - 1);
+        this.patient.birth_date = bd
+        return
       }
+
+      const positiveIntegerRegex = /^\d+$/;
+
+      console.log("bd.lenght", bd.length);
+      if (!positiveIntegerRegex.test(v.data) || !v?.data || bd.length == 10) {
+        return
+      }
+
+      console.log("v.inputType", v.inputType);
+      let val = v.data
+      if (bd.length == 1 || bd.length == 4) {
+        val += "/"
+      }
+      bd = bd + val
+
+      this.patient.birth_date = bd
     },
     register() {
       this.btn.loading = true
