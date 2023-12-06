@@ -147,7 +147,7 @@ function processGroup3(exams, group2Suggestion) {
     }
   }
 
-  if (g2s.flow.includes('G2-4') && ferritine.trim() != "" && ferritine != "≥ 500 mcg/L" && sat_transferrina.trim() != "" && sat_transferrina != "≥ 30%") {
+  if (g2s.flow.includes('G2-4') && ferritine.trim() != "" && ferritine != "≥ 500 mcg/L" && sat_transferrina.trim() != "" && sat_transferrina == "≥ 20% e < 30%") {
     return {
       ...group2Suggestion,
       color: info,
@@ -174,6 +174,62 @@ function processGroup3(exams, group2Suggestion) {
     }
   }
 
+  if (g2s.flow.includes('G2-4') && ferritine == "≥ 30 e < 100 mcg/L" && sat_transferrina == "< 20%") {
+    return {
+      ...group2Suggestion,
+      color: info,
+      flow: group2Suggestion.flow + '/' + 'G3-26',
+      conductText: "Anemia ferropriva + anemia da doença renal crônica. Inciar reposição de ferro. Sugerimos dar preferência para ferro endovenoso em caso de cirurgia próxima. Para calculo da dose total de hidróxifo de ferro: (13-Hb) X 2,4 X peso + 500.  Após tratamento, encaminhar ao nefrologista para avaliar inicio de EPO."
+    }
+  }
+
+
+  if (g2s.flow.includes('G2-7') && ferritine == "< 30 mcg/L" && sat_transferrina == "< 20%") {
+    return {
+      ...group2Suggestion,
+      color: info,
+      flow: group2Suggestion.flow + '/' + 'G3-27',
+      conductText: "Anemia ferropriva e anemia da doença renal crônica. Inciar reposição de ferro. Sugerimos dar preferência para fero endovenoso em caso de cirurgia próxima. Para calculo da dose total de hidróxifo de ferro: (13-Hb) X 2,4 X peso + 500.  Após tratamento, encaminhar ao nefrologista para avaliar inicio de EPO."
+    }
+  }
+
+  if (g2s.flow.includes('G2-7') && ferritine.trim() != "" && ferritine != "≥ 500 mcg/L" && sat_transferrina.trim() != "" && sat_transferrina == "≥ 20% e < 30%") {
+    console.log("-----------xxxx-----------", ferritine, sat_transferrina);
+    return {
+      ...group2Suggestion,
+      color: info,
+      flow: group2Suggestion.flow + '/' + 'G3-28',
+      conductText: "Anemia da doença renal cronica. Encaminhar ao nefrologista para avaliar inicio de EPO e ferro endovenoso."
+    }
+  }
+
+  if (g2s.flow.includes('G2-7') && sat_transferrina == "≥ 30%") {
+    return {
+      ...group2Suggestion,
+      color: info,
+      flow: group2Suggestion.flow + '/' + 'G3-29',
+      conductText: "Anemia da doença renal cronica. Encaminhar ao nefrologista para avaliar inicio de EPO."
+    }
+  }
+
+  if (g2s.flow.includes('G2-7') && ferritine == "≥ 500 mcg/L") {
+    return {
+      ...group2Suggestion,
+      color: info,
+      flow: group2Suggestion.flow + '/' + 'G3-30',
+      conductText: "Anemia da doença renal cronica. Encaminhar ao nefrologista para avaliar inicio de EPO."
+    }
+  }
+
+  if (g2s.flow.includes('G2-7') && ferritine == "≥ 30 e < 100 mcg/L" && sat_transferrina == "< 20%") {
+    return {
+      ...group2Suggestion,
+      color: info,
+      flow: group2Suggestion.flow + '/' + 'G3-31',
+      conductText: "Anemia ferropriva + anemia da doença renal crônica. Inciar reposição de ferro. Sugerimos dar preferência para ferro endovenoso em caso de cirurgia próxima. Para calculo da dose total de hidróxifo de ferro: (13-Hb) X 2,4 X peso + 500.  Após tratamento, encaminhar ao nefrologista para avaliar inicio de EPO."
+    }
+  }
+
   if (g2s.flow.includes('G2-3') && ferritine == "≥100 e < 500 mcg/L" && sat_transferrina == "< 20%") {
     return {
       ...group2Suggestion,
@@ -197,7 +253,7 @@ function processGroup3(exams, group2Suggestion) {
       ...group2Suggestion,
       color: info,
       flow: group2Suggestion.flow + '/' + 'G3-8',
-      conductText: "Anemia ferropriva. Inciar reposição de ferro. Sugerimos dar preferência para fero endovenoso em caso de cirurgia próxima. Para calculo da dose total de hidróxifo de ferro: (13-Hb) X 2,4 X peso + 500"
+      conductText: "Anemia ferropriva. Inciar reposição de ferro. Sugerimos dar preferência para fero endovenoso em caso de cirurgia próxima. Para calculo da dose total de hidróxifo de ferro: (13-Hb) X 2,4 X peso + 500. Exemplo: 13-7 X 2,4 X 70 + 500 = 1508. Administrar dose total de 15 ampolas. Prescrição sugerida: 2 ampolas + SF 0,9% 250 ml ev em 30 minutos, 2 a 3 vezes por semana com intervalo mínimo de 1 dia entre as aplicações."
     }
   }
 
@@ -234,7 +290,7 @@ function processGroup3(exams, group2Suggestion) {
       ...group2Suggestion,
       color: info,
       flow: group2Suggestion.flow + '/' + 'G3-12',
-      conductText: "Anemia da doença renal cronica. Encaminhar ao nefrologista para avaliar inicio de EPO e ferro endovenoso."
+      conductText: "Anemia ferropriva e anemia da doença renal crônica. Inciar reposição de ferro. Sugerimos dar preferência para fero endovenoso em caso de cirurgia próxima. Para calculo da dose total de hidróxifo de ferro: (13-Hb) X 2,4 X peso + 500.  Após tratamento, encaminhar ao nefrologista para avaliar inicio de EPO."
     }
   }
 
@@ -289,10 +345,10 @@ function processGroup3(exams, group2Suggestion) {
       ...group2Suggestion,
       color: info,
       flow: group2Suggestion.flow + '/' + 'G3-18',
-      conductText: "Anemia ferropriva. Inciar reposição de ferro. Sugerimos dar preferência para fero endovenoso em caso de cirurgia próxima. Para calculo da dose total de hidróxifo de ferro: (13-Hb) X 2,4 X peso + 500",
+      conductText: "Anemia ferropriva. Inciar reposição de ferro. Sugerimos dar preferência para fero endovenoso em caso de cirurgia próxima. Para calculo da dose total de hidróxifo de ferro: (13-Hb) X 2,4 X peso + 500. Exemplo: 13-7 X 2,4 X 70 + 500 = 1508. Administrar dose total de 15 ampolas. Prescrição sugerida: 2 ampolas + SF 0,9% 250 ml ev em 30 minutos, 2 a 3 vezes por semana com intervalo mínimo de 1 dia entre as aplicações.",
     }
   }
-
+  // G1-6/ G2-00/ G3-00
   if (g2s.flow.includes('G2-1') && ferritine == "≥ 500 mcg/L") {
     return {
       ...group2Suggestion,
@@ -359,7 +415,7 @@ function processGroup3(exams, group2Suggestion) {
   }
 
 }
-
+// G1-6/ G2-00/ G3-00
 function processGroup2(exams, group1Suggestion) {
   let vcm = exams.selected_vcm
   let hcm = exams.selected_hcm
@@ -440,6 +496,15 @@ function processGroup2(exams, group1Suggestion) {
     }
   }
 
+  if (VCM_LT_80 && TFG_LT_60 && !hasHemoglobinopatia) {
+    return {
+      ...group1Suggestion,
+      flow: group1Suggestion.flow + '/' + 'G2-7',
+      askFerroSerico: true,
+      askFerritine: true,
+      askFerritineSaturation: true,
+    }
+  }
 
   return {
     ...group1Suggestion,
@@ -447,8 +512,8 @@ function processGroup2(exams, group1Suggestion) {
     askFerroSerico: true,
     askFerritine: true,
     askFerritineSaturation: true,
-    askB12Vitamine: true,
-    askFolicAcid: true
+    // askB12Vitamine: true,
+    // askFolicAcid: true
   }
 }
 
@@ -508,7 +573,7 @@ function processGroup1(exams) {
   if (hb === '7<Hb<8' && comorbidity && physicalSymptoms) {
     return {
       flow: 'G1-7',
-      conductText: 'Pode precisar de transfusão, mas é necessário fazer uma avaliação clínica para investigar se os sintomas estão relacionados a outras causas além da anemia, como infecção, distúrbios metabólicos, principalmente em pacientes com anemia crônica e sem sangramento agudo (laranja). Paciente de maior risco pré-operatório por apresentar comorbidade e anemia. É fundamental investigar a etiologia da anemia e prosseguir com o tratamento antes da cirurgia. Solicite os exames abaixo e preencha os resultados.',
+      conductText: 'Pode precisar de transfusão, mas é necessário fazer uma avaliação clínica para investigar se os sintomas estão relacionados a outras causas além da anemia, como infecção, distúrbios metabólicos, principalmente em pacientes com anemia crônica e sem sangramento agudo. Paciente de maior risco pré-operatório por apresentar comorbidade e anemia. É fundamental investigar a etiologia da anemia e prosseguir com o tratamento antes da cirurgia. Solicite os exames abaixo e preencha os resultados.',
       color: danger
     }
   }
@@ -540,7 +605,7 @@ function processGroup1(exams) {
   if (hb === '8<Hb<13' && comorbidity && physicalSymptoms) {
     return {
       flow: 'G1-11',
-      conductText: 'Provavelmente não deverá ser transfundido, principalmente em pacientes com anemia crônica e sem sangramento agudo. Recomendamos avaliação clínica para identificar as possíveis causas dos sintomas apresentados e tratamento adequado (laranja). Paciente de maior risco pré-operatório por apresentar comorbidade e anemia. É fundamental investigar a etiologia da anemia e prosseguir com o tratamento antes da cirurgia. Solicite os exames abaixo e preencha os resultados.',
+      conductText: 'Provavelmente não deverá ser transfundido, principalmente em pacientes com anemia crônica e sem sangramento agudo. Recomendamos avaliação clínica para identificar as possíveis causas dos sintomas apresentados e tratamento adequado. Paciente de maior risco pré-operatório por apresentar comorbidade e anemia. É fundamental investigar a etiologia da anemia e prosseguir com o tratamento antes da cirurgia. Solicite os exames abaixo e preencha os resultados.',
       color: alert,
     }
   }

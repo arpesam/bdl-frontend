@@ -54,7 +54,7 @@
       </v-radio-group>
     </InputPanel>
 
-    <InputPanel v-if="askB12Vitamine" title="Vatamina B12:" :value="selected_b12_vitamine">
+    <InputPanel v-if="askB12Vitamine" title="Vitamina B12:" :value="selected_b12_vitamine">
       <v-radio-group v-model="selected_b12_vitamine">
         <v-radio label="< 200 ng/L" value="< 200 ng/L"></v-radio>
         <v-radio label="≥ 200 ng/L" value="≥ 200 ng/L"></v-radio>
