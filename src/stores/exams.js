@@ -64,7 +64,7 @@ function processExamInputs(exams = {}) {
     if (isGroup2Filled) {
       resp.isGroup2Filled = true
     }
-    return resp
+    return returnMiddleware(resp, exams)
   }
 
   const saveButtonClicked2 = examStore.saveButtonClicked2
@@ -77,7 +77,7 @@ function processExamInputs(exams = {}) {
     group1Suggestion.isGroup1Filled = isGroup1Filled
     group1Suggestion.isGroup2Filled = isGroup2Filled
     console.log("group 2 not filled, returning group 1 suggestion", );
-    return group1Suggestion
+    return returnMiddleware(group1Suggestion, exams)
   }
 
   console.log("processing group 2", );
@@ -88,7 +88,7 @@ function processExamInputs(exams = {}) {
     group1Suggestion.isGroup1Filled = isGroup1Filled
     group1Suggestion.isGroup2Filled = isGroup2Filled
     console.log("group 1 and 2 filled, button not clicked", );
-    return group1Suggestion
+    return returnMiddleware(group1Suggestion, exams)
   }
 
   // console.log("group2Suggestion", group2Suggestion);
@@ -99,7 +99,7 @@ function processExamInputs(exams = {}) {
     group2Suggestion.isGroup1Filled = isGroup1Filled
     group2Suggestion.isGroup2Filled = isGroup2Filled
     console.log("group 3 not filled, returning group 2 suggestion", );
-    return group2Suggestion
+    return returnMiddleware(group2Suggestion, exams)
   }
 
   console.log("processing group 3", );
@@ -109,13 +109,41 @@ function processExamInputs(exams = {}) {
   if (isGroup1Filled && isGroup2Filled && isGroup3Filled) {
     group3Suggestion.isGroup1Filled = isGroup1Filled
     group3Suggestion.isGroup2Filled = isGroup2Filled
-    return group3Suggestion
+    return returnMiddleware(group3Suggestion, exams)
   }
 
   return {
     flow: "NO-INPUT",
     color: '#8607ed'
   }
+}
+
+function returnMiddleware(suggestion = {}, exams = {}) {
+  let leococites = exams.selected_leucocito
+  let plaquetas = exams.selected_plaquetas
+  let b12 = exams.selected_b12_vitamine
+  let folic_acid = exams.selected_folic_acid
+  console.log("leococites ", leococites, plaquetas);
+
+  if (leococites == "<4000" && plaquetas == "<100") {
+    suggestion.askB12Vitamine = true
+    suggestion.askFolicAcid = true
+  }
+
+  if (b12 && folic_acid) {
+    if (b12 == "< 200 ng/L" && folic_acid == "< 6 ng/ml") {
+      suggestion.conductText += " Anemia megaloblástica. Iniciar reposição de vitamina B12 e ácido fólico."
+      suggestion.flow += '/' + 'G4-1'
+    } else if (b12 == "< 200 ng/L" && folic_acid == "≥ 6 ng/ml") {
+      suggestion.conductText += " Anemia megaloblástica. Iniciar reposição de vitamina B12."
+      suggestion.flow += '/' + 'G4-2'
+    } else if (b12 == "≥ 200 ng/L" && folic_acid == "< 6 ng/ml") {
+      suggestion.conductText += " Anemia megaloblástica. Iniciar reposição de vitamina B12."
+      suggestion.flow += '/' + 'G4-3'
+    }
+  }
+
+  return suggestion
 }
 
 function processGroup3(exams, group2Suggestion) {
