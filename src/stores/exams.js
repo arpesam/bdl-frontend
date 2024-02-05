@@ -101,8 +101,10 @@ function processExamInputs(exams = {}) {
 
   console.log("+++++++++++++++++++", isGroup1Filled, isGroup2Filled, isGroup3Filled);
   if (isGroup1Filled && isGroup2Filled && isGroup3Filled) {
+    console.log(">>>> isGroup1Filled && isGroup2Filled && isGroup3Filled");
     group3Suggestion.isGroup1Filled = isGroup1Filled
     group3Suggestion.isGroup2Filled = isGroup2Filled
+    group3Suggestion.isGroup3Filled = isGroup3Filled
     return returnMiddleware(group3Suggestion, exams)
   }
 
@@ -125,26 +127,16 @@ function returnMiddleware(suggestion = {}, exams = {}) {
   }
 
   console.log(">>>> returnMiddleware", suggestion);
-
-  // TODO Verificar as condicoes abaixo apenas se b12 > 200 e acf > 6
-  if (b12 && folic_acid && suggestion.isGroup1Filled && suggestion.isGroup2Filled && suggestion.isGroup3Filled) {
-    console.log("b12 && folic_acid && suggestion.isGroup3Filled", suggestion.isGroup3Filled);
-    if (b12 == "< 200 ng/L" && folic_acid == "< 6 ng/ml") {
-      suggestion.conductText += "<<<<>>>>> Anemia megaloblástica. Iniciar reposição de vitamina B12 e ácido fólico."
-      suggestion.flow += '/' + 'G4-1'
-    } else if (b12 == "< 200 ng/L" && folic_acid == "≥ 6 ng/ml") {
-      // TODO quebrar a linha para todos os casos em que existe duas condutas
-      suggestion.conductText += "<<<<>>>>> Anemia megaloblástica. Iniciar reposição de vitamina B12."
-      suggestion.flow += '/' + 'G4-2'
-    } else if (b12 == "≥ 200 ng/L" && folic_acid == "< 6 ng/ml") {
-      suggestion.conductText += "<<<<>>>>> Realizar reposição de ácido fólico 5mg/dia VO 3x por semana."
-      // suggestion.conductText += " Anemia megaloblástica. Iniciar reposição de vitamina B12."
-      suggestion.flow += '/' + 'G4-3'
-    }
+  // G2-5 already takes care of the following logic, so we should not concatenate any othem conduct text
+  let isG2_5 = suggestion.flow.includes("G2-5")
+  if (isG2_5 || !suggestion.isGroup1Filled || !suggestion.isGroup2Filled || !suggestion.isGroup3Filled) {
+    console.log(">>>> isG2_5 || !suggestion.isGroup1Filled || !suggestion.isGroup2Filled || !suggestion.isGroup3Filled");
+    return suggestion
   }
 
   console.log("end of processing", );
-  return suggestion
+  return processGroup4(suggestion, exams)
+
 }
 
 function processGroup1(exams) {
@@ -319,12 +311,75 @@ function processGroup3(exams, group2Suggestion) {
   if (inc("G2-5") && B12_GT_200 && FOLIC_GT_6 && LEOC_GT_4000 && PLAQ_GT_100 && hasCronicHepatopatia) return defaultResp("G3-27", `Provável anemia da inflamção secundária a hepatopatia crônica. Solicitar perfil de ferro em caso de sangramento crônico de TGI. Ferritina atual:${ferritine}, saturação transferritina atual: ${sat_transferrina}.`)
   if (inc("G2-5") && B12_GT_200 && FOLIC_GT_6 && LEOC_GT_4000 && PLAQ_GT_100 && !hasCronicHepatopatia) return defaultResp("G3-28", "Encaminhar ao hematologista. Possível mielodisplasia.")
 
+  // G2-6
+  if (inc("G2-6") && FERR_LT_30 && SAT_LT_20)   return defaultResp("G3-29", "Anemia ferropriva e anemia da doença renal crônica. Inciar reposição de ferro. Sugerimos dar preferência para fero endovenoso em caso de cirurgia próxima. Para calculo da dose total de hidróxifo de ferro: (13-Hb) X 2,4 X peso + 500.  Após tratamento, encaminhar ao nefrologista para avaliar inicio de EPO.")
+  if (inc("G2-6") && FERR_30_100 && SAT_LT_20)  return defaultResp("G3-30", "Provavél deficiência de ferro se paciente com doença inflamatória crônica e/ou PCR aumentado. Realizar reposição e reavaliar resposta com HMG e novo perfil de ferro.")
+  if (inc("G2-6") && FERR_100_500 && SAT_LT_20) return defaultResp("G3-31", "Deficiência de ferro possível se paciente com doença inflamatória crônica e causa evidente de ferropenia ou com DRC em uso de EPO ± diálise ou com insuficiência cardíaca. Avaliar contexto clínico e  considerar teste terapêutico com ferro.")
+  if (inc("G2-6") && FERR_GT_500)               return defaultResp("G3-32", "Anemia por doença crônica, sem necessidade de reposição com ferro.")
+  if (inc("G2-6") && SAT_GT_20)                 return defaultResp("G3-33", "Sem necessidade de reposição com ferro.")
+  if (inc("G2-6") && B12_GT_200 && FOLIC_GT_6 && LEOC_LT_4000 && PLAQ_LT_100 && hasCronicHepatopatia) return defaultResp("G3-34", "Provável anemia da inflamação e plaquetopenia por hiperesplenismo se paciente com esplenomegalia e cirrose. Neste contexto, a contagem de plaquetas costuma se apresentar entre 30.000 e 50.000. Geralmente não há  necessidade de transfusão de CP para procedimentos cirúrgicos menores. Discutir com médico hemoterapêuta a necessidade de transfusão de CP a depnder do procedimento cirúrgico.")
+  if (inc("G2-6") && B12_GT_200 && FOLIC_GT_6 && LEOC_LT_4000 && PLAQ_LT_100 && !hasCronicHepatopatia) return defaultResp("G3-35", "Encaminhar ao Hematologista para investigação de pancitopenia.")
+  if (inc("G2-6") && B12_GT_200 && FOLIC_GT_6 && LEOC_GT_4000 && PLAQ_GT_100 && hasCronicHepatopatia) return defaultResp("G3-36", `Provável anemia da inflamção secundária a hepatopatia crônica. Solicitar perfil de ferro em caso de sangramento crônico de TGI. Ferritina atual:${ferritine}, saturação transferritina atual: ${sat_transferrina}.`)
+  if (inc("G2-6") && B12_GT_200 && FOLIC_GT_6 && LEOC_GT_4000 && PLAQ_GT_100 && !hasCronicHepatopatia) return defaultResp("G3-37", "Encaminhar ao hematologista. Possível mielodisplasia.")
+
   return {
     ...group2Suggestion,
     flow: group2Suggestion.flow + '/' + 'G3-00',
     conductText: 'Infelizmente não foi possível processar uma sugestão de conduta, a combinação de exames não foi mapeada. Verifique se os dados fornecidos estão corretos e clique em Salvar para processar novamente.'
   }
 
+}
+
+function processGroup4(suggestion, exams) {
+  let b12 = exams.selected_b12_vitamine
+  let folic_acid = exams.selected_folic_acid
+  let leococites = exams.selected_leucocito
+  let plaquetas = exams.selected_plaquetas
+
+  let B12_LT_200 = b12 == "< 200 ng/L"
+  let B12_GT_200 = b12 == "≥ 200 ng/L"
+
+  let FOLIC_LT_6 = folic_acid == "< 6 ng/ml"
+  let FOLIC_GT_6 = folic_acid == "≥ 6 ng/ml"
+
+  let LEOC_LT_4000 = leococites == "<4000"
+  let LEOC_GT_4000 = leococites == "≥4000"
+
+  let PLAQ_LT_100 = plaquetas == "<100"
+  let PLAQ_GT_100 = plaquetas == "≥100"
+
+  let isG2_6 = suggestion.flow.includes("G2-6")
+
+  if (B12_LT_200 && FOLIC_LT_6) {
+    suggestion.flow += "/G4-1"
+    suggestion.conductText2 = "* Anemia megaloblástica. Iniciar reposição de vitamina B12 e ácido fólico."
+    return suggestion
+  }
+
+  if (B12_LT_200 && FOLIC_GT_6) {
+    suggestion.flow += "/G4-2"
+    suggestion.conductText2 = "* Anemia megaloblástica. Iniciar reposição de vitamina B12."
+    return suggestion
+  }
+
+  if (B12_GT_200 && FOLIC_LT_6) {
+    suggestion.flow += "/G4-3"
+    suggestion.conductText2 = "* Iniciar reposição de ácido fólico 5mg VO/dia 3 vezes por semana."
+    return suggestion
+  }
+
+  if (isG2_6 && B12_GT_200 && FOLIC_GT_6 && LEOC_GT_4000 && PLAQ_LT_100) {
+    suggestion.flow += "/G4-4"
+    suggestion.conductText2 = "* Encaminhar ao Hematologista para investigação de anemia e plaquetopenia."
+    return suggestion
+  }
+
+  if (isG2_6 && B12_GT_200 && FOLIC_GT_6 && LEOC_LT_4000 && PLAQ_GT_100) {
+    suggestion.flow += "/G4-5"
+    suggestion.conductText2 = "* Encaminhar ao Hematologista para investigação de anemia e leucopenia."
+    return suggestion
+  }
+  return suggestion
 }
 
 function checkGroup1Filled(exams) {

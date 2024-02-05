@@ -12,6 +12,8 @@
         </v-card-item>
 
         <v-card-text v-if="showConduct && !overlay" style="margin-bottom: 30px;">
+          <div v-if="conductSuggestionText2">{{ conductSuggestionText2  }} <br/><br/></div>
+
           {{getConductSuggestionText}}
         </v-card-text>
         <v-card-text v-if="overlay" style="margin-bottom: 30px;">
@@ -265,6 +267,7 @@ export default {
       conductDialog: false,
 
       conductSuggestionText: 'Por favor, complete os dados abaixo',
+      conductSuggestionText2: '',
       conductSuggestionColor: '#2A3B4D',
       askFerroSerico: false,
       askFerritine: false,
@@ -371,6 +374,7 @@ export default {
         const processExamInputs = this.processExamInputsAction()
         const result = processExamInputs(this)
         this.conductSuggestionText = result.conductText
+        this.conductSuggestionText2 = result.conductText2
         this.conductSuggestionColor = result.color
         this.askFerroSerico = result.askFerroSerico
         this.askFerritine = result.askFerritine
@@ -443,6 +447,7 @@ export default {
             let result = processExamInputs(this)
 
             this.conductSuggestionText = result.conductText
+            this.conductSuggestionText2 = result.conductText2
             if (this.$refs.conductdiv) {
               this.spacerHeight = this.$refs.conductdiv.$el.clientHeight + 'px';
             }
