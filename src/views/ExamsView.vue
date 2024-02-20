@@ -8,7 +8,7 @@
     @click="showConduct = !showConduct"
   >
         <v-card-item style="padding-bottom: 0 !important; margin: 0;">
-          <v-card-title style="font-size: 17px; ">{{ `Sugestão de conduta [${flow}]` }}</v-card-title>
+          <v-card-title style="font-size: 13px; font-weight: bold;">{{ `Sugestão de conduta [${flow}]` }}</v-card-title>
         </v-card-item>
 
         <v-card-text v-if="showConduct && !overlay" style="margin-bottom: 30px;">

@@ -203,7 +203,7 @@ export default {
               this.$router.push(`/dashboard`)
               this.successAlert = ''
               this.btn.loading = false
-            }, 2000)
+            }, 1000)
           }
         })
         .catch((err) => {
@@ -214,7 +214,7 @@ export default {
           setTimeout(() => {
             // this.$router.push(`/`)
             this.warningAlert = ''
-          }, 5000)
+          }, 3000)
         })
     },
     clearInfo() {
