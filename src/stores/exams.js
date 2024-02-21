@@ -144,8 +144,8 @@ function processGroup1(exams) {
   let comorbidity = exams.comorbities.length > 0 && !exams.comorbities.includes('Não')
   let physicalSymptoms = exams.selected_physical_exam.length > 0 && !exams.selected_physical_exam.includes('Não')
   let HB_LT_7 = hb == 'Hb<7'
-  let HB_7_8 = hb == '7<Hb<8'
-  let HB_8_13 = hb === '8<Hb<13'
+  let HB_7_8 = hb == '7≤Hb<8'
+  let HB_8_13 = hb === '8≤Hb<13'
 
   const defaultResp = (flow, color, conductText) => ({flow: flow, color: color, conductText: conductText})
 
@@ -239,9 +239,9 @@ function processGroup3(exams, group2Suggestion) {
   let FERR_LT_500 = FERR_LT_30 || FERR_30_100 || FERR_100_500
 
   let SAT_LT_20 = sat_transferrina == "< 20%"
-  let SAT_GT_20 = sat_transferrina == "≥ 20% e < 30%" || sat_transferrina == "≥ 30%"
-  let SAT_20_30 = sat_transferrina == "≥ 20% e < 30%"
-  let SAT_GT_30 =  sat_transferrina == "≥ 30%"
+  let SAT_GT_20 = sat_transferrina == "≥ 20% e ≤ 30%" || sat_transferrina == "> 30%"
+  let SAT_20_30 = sat_transferrina == "≥ 20% e ≤ 30%"
+  let SAT_GT_30 =  sat_transferrina == "> 30%"
 
   let B12_LT_200 = b12 == "< 200 ng/L"
   let B12_GT_200 = b12 == "≥ 200 ng/L"
@@ -302,26 +302,26 @@ function processGroup3(exams, group2Suggestion) {
   if (inc("G2-4") && SAT_GT_20)                 return defaultResp("G3-19", "Sem necessidade de reposição com ferro.")
 
   // G2-5
-  if (inc("G2-5") && B12_LT_200 && FOLIC_LT_6)  return defaultResp("G3-20", "Anemia megaloblástica. Iniciar reposição de vitamina B12 e ácido fólico.")
-  if (inc("G2-5") && B12_LT_200 && FOLIC_GT_6)  return defaultResp("G3-21", "Anemia megaloblástica. Iniciar reposição de vitamina B12.")
-  if (inc("G2-5") && B12_GT_200 && FOLIC_LT_6)  return defaultResp("G3-22", "Realizar reposição de ácido fólico 5mg/dia VO 3x por semana.")
-  if (inc("G2-5") && B12_GT_200 && FOLIC_GT_6 && LEOC_GT_4000 && PLAQ_LT_100) return defaultResp("G3-23", "Encaminhar ao Hematologista para investigação de anemia e plaquetopenia.")
-  if (inc("G2-5") && B12_GT_200 && FOLIC_GT_6 && LEOC_LT_4000 && PLAQ_GT_100) return defaultResp("G3-24", "Encaminhar ao Hematologista para investigação de anemia e leucopenia.")
   if (inc("G2-5") && B12_GT_200 && FOLIC_GT_6 && LEOC_LT_4000 && PLAQ_LT_100 && hasCronicHepatopatia) return defaultResp("G3-25", "Provável anemia da inflamação e plaquetopenia por hiperesplenismo se paciente com esplenomegalia e cirrose. Neste contexto, a contagem de plaquetas costuma se apresentar entre 30.000 e 50.000. Geralmente não há  necessidade de transfusão de CP para procedimentos cirúrgicos menores. Discutir com médico hemoterapêuta a necessidade de transfusão de CP a depender do procedimento cirúrgico.")
   if (inc("G2-5") && B12_GT_200 && FOLIC_GT_6 && LEOC_LT_4000 && PLAQ_LT_100 && !hasCronicHepatopatia) return defaultResp("G3-26", "Encaminhar ao Hematologista para investigação de pancitopenia.")
   if (inc("G2-5") && B12_GT_200 && FOLIC_GT_6 && LEOC_GT_4000 && PLAQ_GT_100 && hasCronicHepatopatia) return defaultResp("G3-27", `Provável anemia da inflamção secundária a hepatopatia crônica. Solicitar perfil de ferro em caso de sangramento crônico de TGI. Ferritina atual:${ferritine}, saturação transferritina atual: ${sat_transferrina}.`)
   if (inc("G2-5") && B12_GT_200 && FOLIC_GT_6 && LEOC_GT_4000 && PLAQ_GT_100 && !hasCronicHepatopatia) return defaultResp("G3-28", "Encaminhar ao hematologista. Possível mielodisplasia.")
+  if (inc("G2-5") && B12_GT_200 && FOLIC_GT_6 && LEOC_GT_4000 && PLAQ_LT_100) return defaultResp("G3-23", "Encaminhar ao Hematologista para investigação de anemia e plaquetopenia.")
+  if (inc("G2-5") && B12_GT_200 && FOLIC_GT_6 && LEOC_LT_4000 && PLAQ_GT_100) return defaultResp("G3-24", "Encaminhar ao Hematologista para investigação de anemia e leucopenia.")
+  if (inc("G2-5") && B12_LT_200 && FOLIC_LT_6)  return defaultResp("G3-20", "Anemia megaloblástica. Iniciar reposição de vitamina B12 e ácido fólico.")
+  if (inc("G2-5") && B12_LT_200 && FOLIC_GT_6)  return defaultResp("G3-21", "Anemia megaloblástica. Iniciar reposição de vitamina B12.")
+  if (inc("G2-5") && B12_GT_200 && FOLIC_LT_6)  return defaultResp("G3-22", "Realizar reposição de ácido fólico 5mg/dia VO 3x por semana.")
 
   // G2-6
+  if (inc("G2-6") && B12_GT_200 && FOLIC_GT_6 && LEOC_LT_4000 && PLAQ_LT_100 && hasCronicHepatopatia) return defaultResp("G3-34", "Provável anemia da inflamação e plaquetopenia por hiperesplenismo se paciente com esplenomegalia e cirrose. Neste contexto, a contagem de plaquetas costuma se apresentar entre 30.000 e 50.000. Geralmente não há  necessidade de transfusão de CP para procedimentos cirúrgicos menores. Discutir com médico hemoterapêuta a necessidade de transfusão de CP a depender do procedimento cirúrgico.")
+  if (inc("G2-6") && B12_GT_200 && FOLIC_GT_6 && LEOC_LT_4000 && PLAQ_LT_100 && !hasCronicHepatopatia) return defaultResp("G3-35", "Encaminhar ao Hematologista para investigação de pancitopenia.")
+  if (inc("G2-6") && B12_GT_200 && FOLIC_GT_6 && LEOC_GT_4000 && PLAQ_GT_100 && hasCronicHepatopatia) return defaultResp("G3-36", `Provável anemia da inflamção secundária a hepatopatia crônica. Solicitar perfil de ferro em caso de sangramento crônico de TGI. Ferritina atual:${ferritine}, saturação transferritina atual: ${sat_transferrina}.`)
+  if (inc("G2-6") && B12_GT_200 && FOLIC_GT_6 && LEOC_GT_4000 && PLAQ_GT_100 && !hasCronicHepatopatia) return defaultResp("G3-37", "Encaminhar ao hematologista. Possível mielodisplasia.")
   if (inc("G2-6") && FERR_LT_30 && SAT_LT_20)   return defaultResp("G3-29", "Anemia ferropriva e anemia da doença renal crônica. Inciar reposição de ferro. Sugerimos dar preferência para fero endovenoso em caso de cirurgia próxima. Para calculo da dose total de hidróxifo de ferro: (13-Hb) X 2,4 X peso + 500.  Após tratamento, encaminhar ao nefrologista para avaliar inicio de EPO.")
   if (inc("G2-6") && FERR_30_100 && SAT_LT_20)  return defaultResp("G3-30", "Provavél deficiência de ferro se paciente com doença inflamatória crônica e/ou PCR aumentado. Realizar reposição e reavaliar resposta com HMG e novo perfil de ferro.")
   if (inc("G2-6") && FERR_100_500 && SAT_LT_20) return defaultResp("G3-31", "Possível deficiência funcional de ferro se paciente com doença inflamatória crônica e causa evidente de ferropenia ou com DRC em uso de EPO ± diálise ou com insuficiência cardíaca. Avaliar contexto clínico e  considerar teste terapêutico com ferro.")
   if (inc("G2-6") && FERR_GT_500)               return defaultResp("G3-32", "Anemia por doença crônica, sem necessidade de reposição com ferro.")
   if (inc("G2-6") && SAT_GT_20)                 return defaultResp("G3-33", "Sem necessidade de reposição com ferro.")
-  if (inc("G2-6") && B12_GT_200 && FOLIC_GT_6 && LEOC_LT_4000 && PLAQ_LT_100 && hasCronicHepatopatia) return defaultResp("G3-34", "Provável anemia da inflamação e plaquetopenia por hiperesplenismo se paciente com esplenomegalia e cirrose. Neste contexto, a contagem de plaquetas costuma se apresentar entre 30.000 e 50.000. Geralmente não há  necessidade de transfusão de CP para procedimentos cirúrgicos menores. Discutir com médico hemoterapêuta a necessidade de transfusão de CP a depender do procedimento cirúrgico.")
-  if (inc("G2-6") && B12_GT_200 && FOLIC_GT_6 && LEOC_LT_4000 && PLAQ_LT_100 && !hasCronicHepatopatia) return defaultResp("G3-35", "Encaminhar ao Hematologista para investigação de pancitopenia.")
-  if (inc("G2-6") && B12_GT_200 && FOLIC_GT_6 && LEOC_GT_4000 && PLAQ_GT_100 && hasCronicHepatopatia) return defaultResp("G3-36", `Provável anemia da inflamção secundária a hepatopatia crônica. Solicitar perfil de ferro em caso de sangramento crônico de TGI. Ferritina atual:${ferritine}, saturação transferritina atual: ${sat_transferrina}.`)
-  if (inc("G2-6") && B12_GT_200 && FOLIC_GT_6 && LEOC_GT_4000 && PLAQ_GT_100 && !hasCronicHepatopatia) return defaultResp("G3-37", "Encaminhar ao hematologista. Possível mielodisplasia.")
 
   // G2-7
   if (inc("G2-7") && FERR_LT_30 && SAT_LT_20)   return defaultResp("G3-38", "Anemia ferropriva e anemia da doença renal crônica. Inciar reposição de ferro. Sugerimos dar preferência para fero endovenoso em caso de cirurgia próxima. Para calculo da dose total de hidróxifo de ferro: (13-Hb) X 2,4 X peso + 500.  Após tratamento, encaminhar ao nefrologista para avaliar inicio de EPO.")

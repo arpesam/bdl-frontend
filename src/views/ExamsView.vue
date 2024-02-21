@@ -51,7 +51,7 @@
     <InputPanel v-if="askFerritineSaturation" title="Saturação transferrina:" :value="selected_transferrine_saturation">
       <v-radio-group v-model="selected_transferrine_saturation">
         <v-radio label="< 20%" value="< 20%"></v-radio>
-        <v-radio label="≥ 20% e < 30%" value="≥ 20% e < 30%"></v-radio>
+        <v-radio label="≥ 20% e ≤ 30%" value="≥ 20% e ≤ 30%"></v-radio>
         <v-radio label="≥ 30%" value="≥ 30%"></v-radio>
       </v-radio-group>
     </InputPanel>
@@ -116,8 +116,8 @@
     <InputPanel title="Valor de Hemoglobina:" :value="selected_hb">
       <v-radio-group v-model="selected_hb">
         <v-radio label="Hb < 7 g/dl" value="Hb<7"></v-radio>
-        <v-radio label="Hb > 7 e Hb < 8 g/dl" value="7<Hb<8"></v-radio>
-        <v-radio label="Hb > 8 e < 13 g/dl" value="8<Hb<13"></v-radio>
+        <v-radio label="Hb ≥ 7 e Hb < 8 g/dl" value="7≤Hb<8"></v-radio>
+        <v-radio label="Hb ≥ 8 e < 13 g/dl" value="8≤Hb<13"></v-radio>
       </v-radio-group>
     </InputPanel>
 
