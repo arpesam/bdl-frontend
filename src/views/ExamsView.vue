@@ -52,7 +52,7 @@
       <v-radio-group v-model="selected_transferrine_saturation">
         <v-radio label="< 20%" value="< 20%"></v-radio>
         <v-radio label="≥ 20% e ≤ 30%" value="≥ 20% e ≤ 30%"></v-radio>
-        <v-radio label="≥ 30%" value="≥ 30%"></v-radio>
+        <v-radio label="> 30%" value="> 30%"></v-radio>
       </v-radio-group>
     </InputPanel>
 
