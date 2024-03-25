@@ -13,6 +13,7 @@ export function processGroup3(exams, group2Suggestion) {
 
   let FERR_LT_30 = ferritine == '< 30 mcg/L'
   let FERR_30_100 = ferritine == '≥ 30 e < 100 mcg/L'
+  let FERR_LT_100 = FERR_LT_30 || FERR_30_100
   let FERR_100_500 = ferritine == '≥100 e < 500 mcg/L'
   let FERR_GT_500 = ferritine == '≥ 500 mcg/L'
   let FERR_LT_500 = FERR_LT_30 || FERR_30_100 || FERR_100_500
@@ -95,7 +96,7 @@ export function processGroup3(exams, group2Suggestion) {
 
   // G2-2 - verificado
   {
-    if (inc('G2-2') && FERR_LT_30 && SAT_LT_20)
+    if (inc('G2-2') && FERR_LT_100 && SAT_LT_20)
       return defaultResp(
         'G3-6',
         'Anemia ferropriva e anemia da doença renal crônica. Inciar reposição de ferro. Sugerimos dar preferência para fero endovenoso em caso de cirurgia próxima. Para calculo da dose total de hidróxifo de ferro: (13-Hb) X 2,4 X peso + 500.  Após tratamento, encaminhar ao nefrologista para avaliar inicio de EPO.'
