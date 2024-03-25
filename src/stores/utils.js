@@ -1,0 +1,5 @@
+export const neutral = '#455775'
+export const positive = 'success'
+export const info = 'info'
+export const alert = 'orange'
+export const danger = '#e64562'
