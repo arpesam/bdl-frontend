@@ -50,47 +50,10 @@ export function processGroup2(exams, group1Suggestion) {
 
   // Do not remove !hasHemoglobionpia from here,
   // keep all the conditions explicit, consider that the logic can be moved to anywhere
-  if (VCM_LT_80 && TFG_GT_60 && !hasHemoglobinopatia) return defaultResp('G2-1')
-  if (VCM_LT_100 && HCM_LT_32 && TFG_LT_60 && !hasHemoglobinopatia) return defaultResp('G2-2')
-  if (VCM_80_100 && HCM_LT_27 && TFG_GT_60 && !hasHemoglobinopatia) return defaultResp('G2-3')
-  if (VCM_80_100 && HCM_27_32 && TFG_GT_60 && !hasHemoglobinopatia) return defaultResp('G2-4')
-
-  if (VCM_GT_100 && HCM_GT_32 && LEOC_GT_4000 && PLAQ_LT_100 && !hasHemoglobinopatia)
-    return {
-      ...defaultResp('G2-16'),
-      askB12Vitamine: true,
-      askFolicAcid: true,
-      askFerroSerico: false,
-      askFerritine: false,
-      askFerritineSaturation: false
-    }
-  if (VCM_GT_100 && HCM_GT_32 && LEOC_LT_4000 && PLAQ_GT_100 && !hasHemoglobinopatia)
-    return {
-      ...defaultResp('G2-17'),
-      askB12Vitamine: true,
-      askFolicAcid: true,
-      askFerroSerico: false,
-      askFerritine: false,
-      askFerritineSaturation: false
-    }
-  if (VCM_GT_100 && HCM_GT_32 && LEOC_LT_4000 && PLAQ_LT_100 && !hasHemoglobinopatia)
-    return {
-      ...defaultResp('G2-18'),
-      askB12Vitamine: true,
-      askFolicAcid: true,
-      askFerroSerico: false,
-      askFerritine: false,
-      askFerritineSaturation: false
-    }
-  if (VCM_GT_100 && HCM_GT_32 && LEOC_GT_4000 && PLAQ_GT_100 && !hasHemoglobinopatia)
-    return {
-      ...defaultResp('G2-19'),
-      askB12Vitamine: true,
-      askFolicAcid: true,
-      askFerroSerico: false,
-      askFerritine: false,
-      askFerritineSaturation: false
-    }
+  if (VCM_LT_80 && !hasHemoglobinopatia) return defaultResp('G2-1')
+  if (VCM_LT_100 && HCM_LT_32 && !hasHemoglobinopatia) return defaultResp('G2-2')
+  if (VCM_80_100 && HCM_LT_27 && !hasHemoglobinopatia) return defaultResp('G2-3')
+  if (VCM_80_100 && HCM_27_32 && !hasHemoglobinopatia) return defaultResp('G2-4')
   if (VCM_GT_100 && HCM_GT_32 && !hasHemoglobinopatia)
     return {
       ...defaultResp('G2-5'),
@@ -100,35 +63,16 @@ export function processGroup2(exams, group1Suggestion) {
       askFerritine: false,
       askFerritineSaturation: false
     }
-  if (VCM_GT_100 && HCM_27_32 && LEOC_LT_4000 && PLAQ_LT_100 && TFG_GT_60 && !hasHemoglobinopatia)
-    return { ...defaultResp('G2-9'), askB12Vitamine: true, askFolicAcid: true }
-
-  if (VCM_GT_100 && HCM_27_32 && LEOC_LT_4000 && PLAQ_LT_100 && TFG_LT_60 && !hasHemoglobinopatia)
-    return { ...defaultResp('G2-10'), askB12Vitamine: true, askFolicAcid: true }
-
-  if (VCM_GT_100 && HCM_27_32 && LEOC_GT_4000 && PLAQ_GT_100 && TFG_GT_60 && !hasHemoglobinopatia)
-    return { ...defaultResp('G2-12'), askB12Vitamine: true, askFolicAcid: true }
-
-  if (VCM_GT_100 && HCM_27_32 && LEOC_GT_4000 && PLAQ_GT_100 && TFG_LT_60 && !hasHemoglobinopatia)
-    return { ...defaultResp('G2-13'), askB12Vitamine: true, askFolicAcid: true }
-
-  if (VCM_GT_100 && HCM_27_32 && LEOC_LT_4000 && PLAQ_LT_100 && !hasHemoglobinopatia)
-    return { ...defaultResp('G2-8'), askB12Vitamine: true, askFolicAcid: true }
-
-  if (VCM_GT_100 && HCM_27_32 && LEOC_GT_4000 && PLAQ_GT_100 && !hasHemoglobinopatia)
-    return { ...defaultResp('G2-11'), askB12Vitamine: true, askFolicAcid: true }
 
   if (VCM_GT_100 && HCM_27_32 && !hasHemoglobinopatia)
-    return { ...defaultResp('G2-6'), askB12Vitamine: true, askFolicAcid: true }
-
-  if (VCM_80_100 && HCM_GT_32 && TFG_GT_60 && !hasHemoglobinopatia)
-    return { ...defaultResp('G2-14'), askB12Vitamine: true, askFolicAcid: true }
-
-  if (VCM_80_100 && HCM_GT_32 && TFG_LT_60 && !hasHemoglobinopatia)
-    return { ...defaultResp('G2-15'), askB12Vitamine: true, askFolicAcid: true }
-
-  if (VCM_80_100 && HCM_GT_32 && !hasHemoglobinopatia)
-    return { ...defaultResp('G2-7'), askB12Vitamine: true, askFolicAcid: true }
+    return {
+      ...defaultResp('G2-6'),
+      askB12Vitamine: true,
+      askFolicAcid: true,
+      askFerroSerico: true,
+      askFerritine: true,
+      askFerritineSaturation: true
+    }
 
   return {
     ...group1Suggestion,
