@@ -2,8 +2,10 @@ import { neutral, positive, info, alert, danger } from './utils'
 
 export function processGroup4(suggestion, exams) {
   let isG2_6 = suggestion.flow.includes('G2-6')
+  let isG2_7 = suggestion.flow.includes('G2-6')
 
-  if (!isG2_6) {
+  if (!isG2_6 || !isG2_7) {
+    console.log('--------------not g2-6 or g2-7 returningn ', suggestion)
     return suggestion
   }
 

@@ -3,8 +3,7 @@ import { neutral, positive, info, alert, danger } from './utils'
 export function processGroup2(exams, group1Suggestion) {
   let vcm = exams.selected_vcm
   let hcm = exams.selected_hcm
-  let hasHemoglobinopatia =
-    exams.previous_hemoglobine_value.length && !exams.previous_hemoglobine_value.includes('Não')
+  let hasHemoglobinopatia = exams.previous_hemoglobine_value.length && !exams.previous_hemoglobine_value.includes('Não')
   let leococites = exams.selected_leucocito
   let plaquetas = exams.selected_plaquetas
 
@@ -41,8 +40,7 @@ export function processGroup2(exams, group1Suggestion) {
 
   if (hasHemoglobinopatia) {
     return {
-      conductText:
-        'Encaminhar ao Hematologista para orientações perioperatórias e avisar o Serviço de Transfusão sobre o diagnóstico de Hemoglobinopatia para reserva cirúrgica adequada.',
+      conductText: 'Encaminhar ao Hematologista para orientações perioperatórias e avisar o Serviço de Transfusão sobre o diagnóstico de Hemoglobinopatia para reserva cirúrgica adequada.',
       flow: group1Suggestion.flow + '/' + 'G2-20',
       color: info
     }
@@ -50,10 +48,10 @@ export function processGroup2(exams, group1Suggestion) {
 
   // Do not remove !hasHemoglobionpia from here,
   // keep all the conditions explicit, consider that the logic can be moved to anywhere
-  if (VCM_LT_80 && !hasHemoglobinopatia) return defaultResp('G2-1')
-  if (VCM_LT_100 && HCM_LT_32 && !hasHemoglobinopatia) return defaultResp('G2-2')
-  if (VCM_80_100 && HCM_LT_27 && !hasHemoglobinopatia) return defaultResp('G2-3')
-  if (VCM_80_100 && HCM_27_32 && !hasHemoglobinopatia) return defaultResp('G2-4')
+  if (VCM_LT_80 && TFG_GT_60 && !hasHemoglobinopatia) return defaultResp('G2-1')
+  if (VCM_LT_100 && TFG_LT_60 && HCM_LT_32 && !hasHemoglobinopatia) return defaultResp('G2-2')
+  if (VCM_80_100 && TFG_GT_60 && HCM_LT_27 && !hasHemoglobinopatia) return defaultResp('G2-3')
+  if (VCM_80_100 && TFG_GT_60 && HCM_27_32 && !hasHemoglobinopatia) return defaultResp('G2-4')
   if (VCM_GT_100 && HCM_GT_32 && !hasHemoglobinopatia)
     return {
       ...defaultResp('G2-5'),
@@ -64,9 +62,19 @@ export function processGroup2(exams, group1Suggestion) {
       askFerritineSaturation: false
     }
 
-  if (VCM_GT_100 && HCM_27_32 && !hasHemoglobinopatia)
+  if (VCM_GT_100 && TFG_GT_60 && HCM_27_32 && !hasHemoglobinopatia)
     return {
       ...defaultResp('G2-6'),
+      askB12Vitamine: true,
+      askFolicAcid: true,
+      askFerroSerico: true,
+      askFerritine: true,
+      askFerritineSaturation: true
+    }
+
+  if (VCM_GT_100 && TFG_LT_60 && HCM_27_32 && !hasHemoglobinopatia)
+    return {
+      ...defaultResp('G2-7'),
       askB12Vitamine: true,
       askFolicAcid: true,
       askFerroSerico: true,

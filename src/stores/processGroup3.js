@@ -316,28 +316,30 @@ export function processGroup3(exams, group2Suggestion) {
     if (inc('G2-6') && TFG_GT_60 && SAT_GT_20)
       return defaultResp('G3-35', 'Sem necessidade de reposição com ferro.')
     //==========================
-
-    if (inc('G2-6') && TFG_LT_60 && FERR_LT_100 && SAT_LT_20)
+  }
+  // G2-7
+  {
+    if (inc('G2-7') && TFG_LT_60 && FERR_LT_100 && SAT_LT_20)
       return defaultResp(
         'G3-36',
         'Anemia ferropriva e anemia da doença renal crônica. Inciar reposição de ferro. Sugerimos dar preferência para fero endovenoso em caso de cirurgia próxima. Para calculo da dose total de hidróxifo de ferro: (13-Hb) X 2,4 X peso + 500.  Após tratamento, encaminhar ao nefrologista para avaliar inicio de EPO.'
       )
-    if (inc('G2-6') && TFG_LT_60 && FERR_100_500 && SAT_LT_20)
+    if (inc('G2-7') && TFG_LT_60 && FERR_100_500 && SAT_LT_20)
       return defaultResp(
         'G3-37',
         'Anemia da doença renal cronica. Encaminhar ao nefrologista para avaliar inicio de EPO e ferro endovenoso.'
       )
-    if (inc('G2-6') && TFG_LT_60 && FERR_GT_500)
+    if (inc('G2-7') && TFG_LT_60 && FERR_GT_500)
       return defaultResp(
         'G3-38',
         'Anemia da doença renal cronica. Encaminhar ao nefrologista para avaliar inicio de EPO.'
       )
-    if (inc('G2-6') && TFG_LT_60 && FERR_LT_500 && SAT_20_30)
+    if (inc('G2-7') && TFG_LT_60 && FERR_LT_500 && SAT_20_30)
       return defaultResp(
         'G3-39',
         'Anemia da doença renal cronica. Encaminhar ao nefrologista para avaliar inicio de EPO e ferro endovenoso.'
       )
-    if (inc('G2-6') && TFG_LT_60 && SAT_GT_30)
+    if (inc('G2-7') && TFG_LT_60 && SAT_GT_30)
       return defaultResp(
         'G3-40',
         'Anemia da doença renal cronica. Encaminhar ao nefrologista para avaliar inicio de EPO.'
