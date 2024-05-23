@@ -32,6 +32,7 @@ const router = createRouter({
       name: 'Add paciente',
       component: PatientRegister,
       beforeEnter: (to, from, next) => {
+        console.log("'/register/patient'");
         const token = localStorage.getItem('token')
         if (!token) {
           next('/')
@@ -45,6 +46,7 @@ const router = createRouter({
       component: PatientEdit,
       props: true,
       beforeEnter: (to, from, next) => {
+        console.log("/patient/:id");
         const token = localStorage.getItem('token')
         if (!token) {
           next('/')
@@ -58,6 +60,7 @@ const router = createRouter({
       component: ExamsView,
       props: true,
       beforeEnter: (to, from, next) => {
+        console.log("'/patient/:id/exams'", );
         const token = localStorage.getItem('token')
         if (!token) {
           next('/')
