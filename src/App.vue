@@ -15,7 +15,7 @@ import { RouterLink, RouterView } from 'vue-router'
         <template v-slot:append v-if="$route.name == 'Pacientes'">
           ---------
           <RouterLink to="/register/patient" :user="user">
-            <v-btn icon="mdi-account-multiple-plus" color="white" size="x-large"></v-btn>
+            <v-btn icon="mdi-account-multiple-plus" @click="goTo" color="white" size="x-large"></v-btn>
           </RouterLink>
         </template>
         {{ $route.name  }} {{ $route.name == "Pacientes" }}
@@ -76,6 +76,10 @@ export default {
       localStorage.removeItem('token')
       this.$router.push(`/`)
       this.logout()
+    },
+    goTo() {
+      console.log("--- go to ---");
+      this.$router.push(`/register/patient`)
     }
   },
   computed: {
