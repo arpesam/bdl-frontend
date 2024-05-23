@@ -4,7 +4,7 @@ import { processGroup2 } from './processGroup2'
 import { processGroup3 } from './processGroup3'
 import { processGroup4 } from './processGroup4'
 
-import { neutral, positive, info, alert, danger } from './utils'
+import { neutral } from './utils'
 
 export const useExamStore = defineStore('examStore', {
   state: () => ({

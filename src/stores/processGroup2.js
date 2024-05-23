@@ -82,6 +82,26 @@ export function processGroup2(exams, group1Suggestion) {
       askFerritineSaturation: true
     }
 
+  if (VCM_80_100 && TFG_GT_60 && HCM_GT_32 && !hasHemoglobinopatia)
+    return {
+      ...defaultResp('G2-8'),
+      askB12Vitamine: true,
+      askFolicAcid: true,
+      askFerroSerico: true,
+      askFerritine: true,
+      askFerritineSaturation: true
+    }
+
+  if (VCM_80_100 && TFG_LT_60 && HCM_GT_32 && !hasHemoglobinopatia)
+    return {
+      ...defaultResp('G2-9'),
+      askB12Vitamine: true,
+      askFolicAcid: true,
+      askFerroSerico: true,
+      askFerritine: true,
+      askFerritineSaturation: true
+    }
+
   return {
     ...group1Suggestion,
     flow: group1Suggestion.flow + '/' + 'G2-00',

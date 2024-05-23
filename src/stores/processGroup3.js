@@ -346,6 +346,62 @@ export function processGroup3(exams, group2Suggestion) {
       )
   }
 
+  // G2-8
+  {
+    if (inc('G2-8') && TFG_GT_60 && FERR_LT_30 && SAT_LT_20)
+      return defaultResp(
+        'G3-41',
+        'Anemia ferropriva. Inciar reposição de ferro. Sugerimos dar preferência para fero endovenoso em caso de cirurgia próxima. Para calculo da dose total de hidróxifo de ferro: (13-Hb) X 2,4 X peso + 500.'
+      )
+    if (inc('G2-8') && TFG_GT_60 && FERR_30_100 && SAT_LT_20)
+      return defaultResp(
+        'G3-42',
+        'Provavél deficiência de ferro se paciente com doença inflamatória crônica e/ou PCR aumentado. Realizar reposição e reavaliar resposta com HMG e novo perfil de ferro.'
+      )
+    if (inc('G2-8') && TFG_GT_60 && FERR_100_500 && SAT_LT_20)
+      return defaultResp(
+        'G3-43',
+        'Deficiência de ferro possível se paciente com doença inflamatória crônica e causa evidente de ferropenia ou com DRC em uso de EPO ± diálise ou com insuficiência cardíaca. Avaliar contexto clínico e  considerar teste terapêutico com ferro.'
+      )
+    if (inc('G2-8') && TFG_GT_60 && FERR_GT_500)
+      return defaultResp(
+        'G3-44',
+        'Provável anemia por doença crônica, sem necessidade de reposição com ferro.'
+      )
+    if (inc('G2-8') && TFG_GT_60 && SAT_GT_20)
+      return defaultResp('G3-45', 'Sem necessidade de reposição com ferro.')
+    //==========================
+  }
+
+  // G2-9
+  {
+    if (inc('G2-9') && TFG_LT_60 && FERR_LT_100 && SAT_LT_20)
+      return defaultResp(
+        'G3-46',
+        'Anemia ferropriva e anemia da doença renal crônica. Inciar reposição de ferro. Sugerimos dar preferência para fero endovenoso em caso de cirurgia próxima. Para calculo da dose total de hidróxifo de ferro: (13-Hb) X 2,4 X peso + 500.  Após tratamento, encaminhar ao nefrologista para avaliar inicio de EPO.'
+      )
+    if (inc('G2-9') && TFG_LT_60 && FERR_100_500 && SAT_LT_20)
+      return defaultResp(
+        'G3-47',
+        'Anemia da doença renal cronica. Encaminhar ao nefrologista para avaliar inicio de EPO e ferro endovenoso.'
+      )
+    if (inc('G2-9') && TFG_LT_60 && FERR_GT_500)
+      return defaultResp(
+        'G3-48',
+        'Anemia da doença renal cronica. Encaminhar ao nefrologista para avaliar inicio de EPO.'
+      )
+    if (inc('G2-9') && TFG_LT_60 && FERR_LT_500 && SAT_20_30)
+      return defaultResp(
+        'G3-49',
+        'Anemia da doença renal cronica. Encaminhar ao nefrologista para avaliar inicio de EPO e ferro endovenoso.'
+      )
+    if (inc('G2-9') && TFG_LT_60 && SAT_GT_30)
+      return defaultResp(
+        'G3-50',
+        'Anemia da doença renal cronica. Encaminhar ao nefrologista para avaliar inicio de EPO.'
+      )
+  }
+
   return {
     ...group2Suggestion,
     flow: group2Suggestion.flow + '/' + 'G3-00',
