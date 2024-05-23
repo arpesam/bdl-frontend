@@ -13,11 +13,12 @@ import { RouterLink, RouterView } from 'vue-router'
         <v-app-bar-title>{{ $route.name }}</v-app-bar-title>
         <!-- <v-spacer></v-spacer> -->
         <template v-slot:append v-if="$route.name == 'Pacientes'">
+          ---------
           <RouterLink to="/register/patient" :user="user">
             <v-btn icon="mdi-account-multiple-plus" color="white" size="x-large"></v-btn>
           </RouterLink>
         </template>
-        {{ $route.name  }}
+        {{ $route.name  }} {{ $route.name == "Pacientes" }}
         <template v-slot:append v-if="$route.name == 'Dados clínicos' || $route.name == 'Editar paciente' || $route.name == 'Add paciente' || $route.name == 'Minha conta'">
           <RouterLink to="/dashboard">
             <v-btn icon="mdi-arrow-left" color="white" size="x-large"></v-btn>
