@@ -3,9 +3,6 @@ import { RouterLink, RouterView } from 'vue-router'
 </script>
 
 <template>
-    <!-- <div style="position: absolute;">
-      <img src="./assets/login-background-img.png" alt="" srcset="" style="opacity: 0.3; object-fit: cover;">
-    </div> -->
     <v-layout>
       <!-- NAVBAR -->
       <v-app-bar :elevation="0" color="#038C8C" density="compact" v-if="isLoggedIn && $route.name != 'Login' && $route.name != 'Cadastro'" style="color: white">
