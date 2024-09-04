@@ -44,8 +44,7 @@ function processExamInputs(exams = {}) {
     console.log('>>>> !isGroup1Filled || saveButtonClicked == 0')
     let resp = {
       flow: 'NO-INPUT',
-      conductText:
-        'Complete todos os dados abaixo e clique em "Salvar". \n A conduta será mostrada aqui. Você pode salvar e retornar quando quiser.',
+      conductText: 'Complete todos os dados abaixo e clique em "Salvar". \n A conduta será mostrada aqui. Você pode salvar e retornar quando quiser.',
       color: neutral
     }
 
@@ -161,14 +160,7 @@ function checkGroup1Filled(exams) {
 }
 
 function checkGroup2Filled(exams) {
-  return (
-    !!checkGroup1Filled(exams) &&
-    !!exams.selected_vcm &&
-    !!exams.selected_hcm &&
-    !!exams.selected_leucocito &&
-    !!exams.selected_plaquetas &&
-    !!exams.selected_gloumerar
-  )
+  return !!checkGroup1Filled(exams) && !!exams.selected_vcm && !!exams.selected_hcm && !!exams.selected_leucocito && !!exams.selected_plaquetas && !!exams.selected_gloumerar
 }
 
 function checkGroup3Filled(exams, group2Suggestion = {}) {
@@ -178,20 +170,11 @@ function checkGroup3Filled(exams, group2Suggestion = {}) {
   }
 
   // if it is asked, it should be filled
-  let ferritineSaturation = group2Suggestion.askFerritineSaturation
-    ? !!exams.selected_transferrine_saturation
-    : true
+  let ferritineSaturation = group2Suggestion.askFerritineSaturation ? !!exams.selected_transferrine_saturation : true
   let b12Vitamine = group2Suggestion.askB12Vitamine ? !!exams.selected_b12_vitamine : true
   let folicAcid = group2Suggestion.askFolicAcid ? !!exams.selected_folic_acid : true
   let ferritine = group2Suggestion.askFerritine ? !!exams.selected_ferritina : true
   let ferroSerico = group2Suggestion.askFerroSerico ? !!exams.selected_ferro_serico : true
 
-  return (
-    !!checkGroup2Filled(exams) &&
-    ferritineSaturation &&
-    b12Vitamine &&
-    folicAcid &&
-    ferritine &&
-    ferroSerico
-  )
+  return !!checkGroup2Filled(exams) && ferritineSaturation && b12Vitamine && folicAcid && ferritine && ferroSerico
 }

@@ -132,10 +132,14 @@
     </InputPanel>
 
     <InputPanel title="Exame físico: apresenta as alterações abaixo?" :value="selected_physical_exam" >
-        <v-checkbox v-model="set_selected_physical_exam" label="Dispnéia e/ou sinais de insuficiência respiratória" value="Dispnéia e/ou sinais de insuficiência respiratória" ></v-checkbox>
+        <!-- <v-checkbox v-model="set_selected_physical_exam" label="Dispnéia e/ou sinais de insuficiência respiratória" value="Dispnéia e/ou sinais de insuficiência respiratória" ></v-checkbox>
         <v-checkbox v-model="set_selected_physical_exam" label="Má perfusão tecidual" value="Má perfusão tecidual"></v-checkbox>
         <v-checkbox v-model="set_selected_physical_exam" label="Sonolência e/ou alteração do nível da consciência" value="Sonolência e/ou alteração do nível da consciência" ></v-checkbox>
         <v-checkbox v-model="set_selected_physical_exam" label="PAM < 70 mmHg e/ou FC > 100 bpm" value="PAM < 70 mmHg e/ou FC > 100 bpm"></v-checkbox>
+        <v-checkbox v-model="set_selected_physical_exam" label="Nenhuma das anteriores" value="Não"></v-checkbox> -->
+        <v-checkbox v-model="set_selected_physical_exam" label="Sinais de insuficiência respiratória aguda" value="Sinais de insuficiência respiratória aguda"></v-checkbox>
+        <v-checkbox v-model="set_selected_physical_exam" label="Alteração do nível da consciência" value="Alteração do nível da consciência"></v-checkbox>
+        <v-checkbox v-model="set_selected_physical_exam" label="PAM < 70 mmHg e FC > 100 bpm" value="PAM < 70 mmHg e FC > 100 bpm"></v-checkbox>
         <v-checkbox v-model="set_selected_physical_exam" label="Nenhuma das anteriores" value="Não"></v-checkbox>
     </InputPanel>
 
