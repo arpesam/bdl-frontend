@@ -138,7 +138,7 @@
         <v-checkbox v-model="set_selected_physical_exam" label="PAM < 70 mmHg e/ou FC > 100 bpm" value="PAM < 70 mmHg e/ou FC > 100 bpm"></v-checkbox>
         <v-checkbox v-model="set_selected_physical_exam" label="Nenhuma das anteriores" value="Não"></v-checkbox> -->
         <v-checkbox v-model="set_selected_physical_exam" label="Sinais de insuficiência respiratória aguda" value="Sinais de insuficiência respiratória aguda"></v-checkbox>
-        <v-checkbox v-model="set_selected_physical_exam" label="Alteração do nível da consciência" value="Alteração do nível da consciência"></v-checkbox>
+        <v-checkbox v-model="set_selected_physical_exam" label="Alteração do nível de consciência" value="Alteração do nível de consciência"></v-checkbox>
         <v-checkbox v-model="set_selected_physical_exam" label="PAM < 70 mmHg e FC > 100 bpm" value="PAM < 70 mmHg e FC > 100 bpm"></v-checkbox>
         <v-checkbox v-model="set_selected_physical_exam" label="Nenhuma das anteriores" value="Não"></v-checkbox>
     </InputPanel>
