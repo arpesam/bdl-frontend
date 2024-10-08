@@ -13,7 +13,6 @@
 
         <v-card-text v-if="showConduct && !overlay" style="margin-bottom: 30px;">
           <div v-if="conductSuggestionText2">{{ conductSuggestionText2  }} <br/><br/></div>
-
           {{getConductSuggestionText}}
         </v-card-text>
         <v-card-text v-if="overlay" style="margin-bottom: 30px;">
@@ -26,6 +25,17 @@
         >
             <v-btn style="margin: 0;" rounded="0" block :icon="getExpandIcon" size="x-medium"></v-btn>
         </v-card-actions>
+  </v-card>
+
+  <v-card
+    v-if="!warningAlert && showConduct && hasPBMLinkPage"
+    class="conduct-pbm" :elevation="0"
+    color="info"
+    ref="conductdiv"
+  >
+        <RouterLink target="_blank" :to="`/pbm/pages#page${PBMPage}`">
+          <v-btn prepend-icon="mdi-launch" variant="text" style="width: 100%;" class="pbm-btn" > Veja a página <strong>{{PBMPage}}</strong> do protocolo de tratamento farmacológico da anemia</v-btn>
+        </RouterLink>
   </v-card>
   <Alert :warningAlert="warningAlert" />
 
@@ -89,17 +99,17 @@
       </v-radio-group>
     </InputPanel>
 
-    <InputPanel title="Leucócito:" :value="selected_leucocito">
+    <InputPanel title="Leucócitos:" :value="selected_leucocito">
       <v-radio-group v-model="selected_leucocito">
-        <v-radio label="< 4000 x 109/L" value="<4000"></v-radio>
-        <v-radio label="≥ 4000 x 109/L" value="≥4000"></v-radio>
+        <v-radio label="< 4000/mm³" value="<4000"></v-radio>
+        <v-radio label="≥ 4000/mm³" value="≥4000"></v-radio>
       </v-radio-group>
     </InputPanel>
 
     <InputPanel title="Plaquetas:" :value="selected_plaquetas">
       <v-radio-group v-model="selected_plaquetas">
-        <v-radio label="< 100 x 109/L" value="<100"></v-radio>
-        <v-radio label="≥ 100 x 109/L" value="≥100"></v-radio>
+        <v-radio label="< 100 x 10³/mm³" value="<100"></v-radio>
+        <v-radio label="≥ 100 x 10³/mm³" value="≥100"></v-radio>
       </v-radio-group>
     </InputPanel>
 
@@ -308,6 +318,45 @@ export default {
   },
   computed: {
     ...mapWritableState(useExamStore, ["saveButtonClicked", "saveButtonClicked2", "saveButtonClicked3"]),
+    hasPBMLinkPage() {
+      return (
+        this.flow.includes('G3-1') ||
+        this.flow.includes('G3-2') ||
+        this.flow.includes('G3-6') ||
+        this.flow.includes('G3-10') ||
+        this.flow.includes('G3-11') ||
+        this.flow.includes('G3-15') ||
+        this.flow.includes('G3-16') ||
+        this.flow.includes('G3-20') ||
+        this.flow.includes('G3-21')
+      )
+    },
+    PBMPage() {
+     let page4 = (
+      this.flow.includes('G3-1') ||
+      this.flow.includes('G3-2') ||
+      this.flow.includes('G3-6') ||
+      this.flow.includes('G3-10') ||
+      this.flow.includes('G3-11') ||
+      this.flow.includes('G3-15') ||
+      this.flow.includes('G3-16')
+     )
+
+     let page3 = (
+      this.flow.includes('G3-20') ||
+      this.flow.includes('G3-21')
+      )
+
+      if (page4) {
+        return 4
+      }
+
+      if (page3) {
+        return 3
+      }
+
+      return 1
+    },
     getConductSuggestionText() {
       this.overlay = true
       setTimeout(() => {
@@ -667,6 +716,23 @@ label{
   z-index: 2;
   min-height: 70px;
   color: white
+}
+
+.conduct-pbm{
+  border-radius: 0px;
+  display: flex;
+  justify-content: center;
+  color: white !important;
+  /* border: 1px solid red; */
+}
+
+.pbm-btn {
+  color: white;
+  width: 100%;
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: none;
+  letter-spacing: 0.0178571429em;
 }
 
 </style>

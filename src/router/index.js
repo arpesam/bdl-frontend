@@ -8,6 +8,7 @@ import ExamsView from '../views/ExamsView.vue'
 import Dashboard from '../views/Dashboard.vue'
 import TermsAndConditions from '../views/TermsAndConditions.vue'
 import Test from '../views/Test.vue'
+import PbmPages from '../views/PBMPages.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -20,7 +21,7 @@ const router = createRouter({
     {
       path: '/register/doctor',
       name: 'Cadastro',
-      component: DoctorRegister,
+      component: DoctorRegister
     },
     {
       path: '/edit/doctor',
@@ -32,7 +33,7 @@ const router = createRouter({
       name: 'Add paciente',
       component: PatientRegister,
       beforeEnter: (to, from, next) => {
-        console.log("'/register/patient'");
+        console.log("'/register/patient'")
         const token = localStorage.getItem('token')
         if (!token) {
           next('/')
@@ -46,7 +47,7 @@ const router = createRouter({
       component: PatientEdit,
       props: true,
       beforeEnter: (to, from, next) => {
-        console.log("/patient/:id");
+        console.log('/patient/:id')
         const token = localStorage.getItem('token')
         if (!token) {
           next('/')
@@ -60,7 +61,7 @@ const router = createRouter({
       component: ExamsView,
       props: true,
       beforeEnter: (to, from, next) => {
-        console.log("'/patient/:id/exams'", );
+        console.log("'/patient/:id/exams'")
         const token = localStorage.getItem('token')
         if (!token) {
           next('/')
@@ -83,7 +84,7 @@ const router = createRouter({
     {
       path: '/terms-and-conditions',
       name: 'Termos',
-      component: TermsAndConditions,
+      component: TermsAndConditions
     },
     {
       path: '/about',
@@ -96,7 +97,12 @@ const router = createRouter({
     {
       path: '/test',
       name: 'Teste',
-      component: Test,
+      component: Test
+    },
+    {
+      path: '/pbm/pages',
+      name: 'PROTOCOLO DE TRATAMENTO DA ANEMIA',
+      component: PbmPages
     }
   ]
 })
