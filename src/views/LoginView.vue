@@ -7,7 +7,8 @@
           <!-- <img src="../assets/logo-2.png" alt="" srcset="../assets/logo-2.png" style="width: 50px" /> -->
           <!-- <img src="../assets/logo-3.png" alt="" srcset="../assets/logo-3.png" style="width: 50px" /> -->
           <img src="../assets/logo-4.png" alt="" srcset="../assets/logo-4.png" style="width: 50px" />
-          <br />
+          <h1 class="sitename">PeopAssist</h1>
+          <p class="welcome">Olá, digite abaixo o seu e-mail e senha ou cadastre-se</p>
           <v-alert v-if="showAlert" title="Opps!" :text="error" type="warning"></v-alert>
           <br />
           <v-form v-model="isFormValid">
@@ -40,7 +41,7 @@
             Entrar
           </v-btn>
           <RouterLink to="/register/doctor">
-            <v-btn variant="flat" :disabled="btn.disabled" color="info">Cadastrar </v-btn>
+            <v-btn variant="flat" :disabled="btn.disabled" color="info">Criar conta </v-btn>
           </RouterLink>
           <a style="margin-top: 20px; color: grey;" href="https://api.whatsapp.com/send/?phone=5511941411913" target="_blank"><v-icon style="color: green;" icon="mdi-whatsapp"></v-icon> Fale conosco</a>
 
@@ -133,6 +134,24 @@ export default {
 
 .v-progress-linear__bar, .v-progress-linear__bar__determinate {
   transition: none;
+}
+
+.sitename {
+  font-family: "Roboto", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-size: 30px;
+  font-weight: 400;
+  color: #2c465e;
+  letter-spacing: 0.05cap;
+  margin: 0;
+}
+
+.welcome{
+  font-family: "Roboto", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  margin: 0;
+  /* font-size: 30px; */
+  /* font-weight: 400; */
+  color: #2c465e;
+  letter-spacing: 0.05cap;
 }
 
 </style>
