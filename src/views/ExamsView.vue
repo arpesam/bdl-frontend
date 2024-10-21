@@ -34,7 +34,7 @@
     ref="conductdiv"
   >
         <RouterLink target="_blank" :to="`/pbm/pages#page${PBMPage}`">
-          <v-btn prepend-icon="mdi-launch" variant="text" style="width: 100%;" class="pbm-btn" > Veja a página <strong>{{PBMPage}}</strong> do protocolo de tratamento farmacológico da anemia</v-btn>
+          <v-btn prepend-icon="mdi-launch" variant="text" style="width: 100%;" class="pbm-btn" > Veja a página <strong style="margin: 0 2px;">{{PBMPage}}</strong> do protocolo de tratamento farmacológico da anemia</v-btn>
         </RouterLink>
   </v-card>
   <Alert :warningAlert="warningAlert" />
@@ -319,40 +319,31 @@ export default {
   computed: {
     ...mapWritableState(useExamStore, ["saveButtonClicked", "saveButtonClicked2", "saveButtonClicked3"]),
     hasPBMLinkPage() {
-      return (
-        this.flow.includes('G3-1') ||
-        this.flow.includes('G3-2') ||
-        this.flow.includes('G3-6') ||
-        this.flow.includes('G3-10') ||
-        this.flow.includes('G3-11') ||
-        this.flow.includes('G3-15') ||
-        this.flow.includes('G3-16') ||
-        this.flow.includes('G3-20') ||
-        this.flow.includes('G3-21')
-      )
+      const validFlows = ['G3-1', 'G3-2', 'G3-6', 'G3-10', 'G3-11', 'G3-15', 'G3-16', 'G3-20', 'G3-21', 'G3-31', 'G3-32', 'G3-33', 'G3-41'];
+
+      const flowArray = this.flow.split('/');
+      return flowArray.some(flow => validFlows.includes(flow));
     },
     PBMPage() {
-     let page4 = (
-      this.flow.includes('G3-1') ||
-      this.flow.includes('G3-2') ||
-      this.flow.includes('G3-6') ||
-      this.flow.includes('G3-10') ||
-      this.flow.includes('G3-11') ||
-      this.flow.includes('G3-15') ||
-      this.flow.includes('G3-16')
-     )
+     const page4 = () => {
+      const validFlows = ['G3-1', 'G3-2', 'G3-6', 'G3-10', 'G3-11', 'G3-15', 'G3-16', 'G3-20', 'G3-21', 'G3-31', 'G3-32', 'G3-33', 'G3-41'];
+      const flowArray = this.flow.split('/');
+      return flowArray.some(flow => validFlows.includes(flow));
+     }
 
-     let page3 = (
-      this.flow.includes('G3-20') ||
-      this.flow.includes('G3-21')
-      )
+     const page3 = () => {
+      let validFlows = ['G4-1', 'G4-2'];
+      const flowArray = this.flow.split('/');
+      return flowArray.some(flow => validFlows.includes(flow));
+     }
 
-      if (page4) {
+     // page 3 should be ckecked first
+     if (page3()) {
+       return 3
+     }
+
+      if (page4()) {
         return 4
-      }
-
-      if (page3) {
-        return 3
       }
 
       return 1
