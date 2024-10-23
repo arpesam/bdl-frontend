@@ -39,7 +39,7 @@ import { RouterLink, RouterView } from 'vue-router'
 
         <template v-slot:append>
           <div class="pa-2">
-            v0.14.beta
+            v1.0.1-beta
           </div>
         </template>
       </v-navigation-drawer>
