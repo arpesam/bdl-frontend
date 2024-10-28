@@ -319,20 +319,19 @@ export default {
   computed: {
     ...mapWritableState(useExamStore, ["saveButtonClicked", "saveButtonClicked2", "saveButtonClicked3"]),
     hasPBMLinkPage() {
-      const validFlows = ['G3-1', 'G3-2', 'G3-6', 'G3-10', 'G3-11', 'G3-15', 'G3-16', 'G3-20', 'G3-21', 'G3-31', 'G3-32', 'G3-33', 'G3-41'];
-
+      const validFlows = ['G3-1', 'G3-2', 'G3-6', 'G3-10', 'G3-11', 'G3-15', 'G3-16', 'G3-20', 'G3-21', 'G3-31', 'G3-32', 'G3-33', 'G3-41', 'G4-1', 'G4-2'];
       const flowArray = this.flow.split('/');
       return flowArray.some(flow => validFlows.includes(flow));
     },
     PBMPage() {
      const page4 = () => {
-      const validFlows = ['G3-1', 'G3-2', 'G3-6', 'G3-10', 'G3-11', 'G3-15', 'G3-16', 'G3-20', 'G3-21', 'G3-31', 'G3-32', 'G3-33', 'G3-41'];
+      const validFlows = ['G3-1', 'G3-2', 'G3-6', 'G3-10', 'G3-11', 'G3-15', 'G3-16', 'G3-31', 'G3-32', 'G3-33', 'G3-41'];
       const flowArray = this.flow.split('/');
       return flowArray.some(flow => validFlows.includes(flow));
      }
 
      const page3 = () => {
-      let validFlows = ['G4-1', 'G4-2'];
+      let validFlows = ['G3-20', 'G3-21', 'G4-1', 'G4-2'];
       const flowArray = this.flow.split('/');
       return flowArray.some(flow => validFlows.includes(flow));
      }
