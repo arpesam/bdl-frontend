@@ -6,6 +6,7 @@
     rounded="lg"
     width="100%"
     class="pa-4 text-center mx-auto"
+    min-width="300"
     @click="hideDetails"
   >
     <div v-if="!showDetails" class="trash-btn">
@@ -33,7 +34,7 @@
         <v-icon icon="mdi-list-box-outline"></v-icon> {{ patient.register_num }}
       </p>
       <p class="text-disabled text-body-2">
-        <v-icon icon="mdi-baby-face-outline"></v-icon> {{ patient.birth_date }}
+        <v-icon icon="mdi-baby-face-outline"></v-icon> {{ patient.age || patient.birth_date }}
       </p>
       <!-- etnia -->
       <p class="text-disabled text-body-2">

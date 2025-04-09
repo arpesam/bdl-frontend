@@ -37,7 +37,16 @@
           v-model="patient.height"
         ></v-text-field>
         <!-- <br /> -->
-        <DateInput3 @input="(v) => handleInput(v)" :rules="rules.birth" :value="patient.birth_date" style="width: 250px;"  placeholder="dd/mm/aaaa" />
+        <!-- <DateInput3 @input="(v) => handleInput(v)" :rules="rules.birth" :value="patient.birth_date" style="width: 250px;"  placeholder="dd/mm/aaaa" /> -->
+
+        <v-text-field
+          style="width: 250px; margin-bottom: 10px"
+          label="Idade"
+          placeholder="32"
+          :rules="rules.number"
+          hide-details="auto"
+          v-model="patient.weight"
+        ></v-text-field>
 
 
         <v-select
@@ -88,6 +97,7 @@ export default {
         register_num: '',
         birth_date: '',
         weight: '',
+        age: '',
         ethnicity: 'Parda',
         genre: 'masculino',
         height: '',
@@ -137,8 +147,9 @@ export default {
       return (
         !!this.patient.initials &&
         !!this.patient.register_num &&
-        !!this.patient.birth_date &&
+        // !!this.patient.birth_date &&
         !!this.patient.weight &&
+        !!this.patient.age &&
         !!this.patient.ethnicity &&
         !!this.patient.genre &&
         !!this.patient.height &&
@@ -148,32 +159,32 @@ export default {
     }
   },
   methods: {
-    handleInput(v) {
-      v.preventDefault()
-      console.log("v.targets", v);
-      let bd = this.patient.birth_date
-      if (v.inputType == "deleteContentBackward" || v.inputType == "deleteContentForward") {
-        bd = bd.substring(0, bd.length - 1);
-        this.patient.birth_date = bd
-        return
-      }
+    // handleInput(v) {
+    //   v.preventDefault()
+    //   console.log("v.targets", v);
+    //   let bd = this.patient.birth_date
+    //   if (v.inputType == "deleteContentBackward" || v.inputType == "deleteContentForward") {
+    //     bd = bd.substring(0, bd.length - 1);
+    //     this.patient.birth_date = bd
+    //     return
+    //   }
 
-      const positiveIntegerRegex = /^\d+$/;
+    //   const positiveIntegerRegex = /^\d+$/;
 
-      console.log("bd.lenght", bd.length);
-      if (!positiveIntegerRegex.test(v.data) || !v?.data || bd.length == 10) {
-        return
-      }
+    //   console.log("bd.lenght", bd.length);
+    //   if (!positiveIntegerRegex.test(v.data) || !v?.data || bd.length == 10) {
+    //     return
+    //   }
 
-      console.log("v.inputType", v.inputType);
-      let val = v.data
-      if (bd.length == 1 || bd.length == 4) {
-        val += "/"
-      }
-      bd = bd + val
+    //   console.log("v.inputType", v.inputType);
+    //   let val = v.data
+    //   if (bd.length == 1 || bd.length == 4) {
+    //     val += "/"
+    //   }
+    //   bd = bd + val
 
-      this.patient.birth_date = bd
-    },
+    //   this.patient.birth_date = bd
+    // },
     register() {
       this.btn.loading = true
       this.btn.disabled = true
@@ -221,8 +232,9 @@ export default {
       this.patient = {
         initials: '',
         register_num: '',
-        birth_date: '',
+        // birth_date: '',
         weight: '',
+        age: '',
         ethnicity: 'Parda',
         genre: 'masculino',
         height: '',

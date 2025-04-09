@@ -44,6 +44,19 @@ async function fetchPatients() {
     })
     .then((response) => {
       // debugger
+      response.data.patients = response.data.patients.map((patient) => {
+        // debugger
+        const [day, month, year] = patient.birth_date.split('/');
+        const birthDate = new Date(`${year}-${month}-${day}`);
+        const ageDifMs = Date.now() - birthDate.getTime();
+        const ageDate = new Date(ageDifMs);
+        patient.age = Math.abs(ageDate.getUTCFullYear() - 1970);
+        console.log("---------", patient.initials, patient.birth_date, patient.age);
+        return patient;
+      });
+
+      console.log("patients ---------", response.data.patients);
+
       return response.data
     })
     .catch((err) => {
