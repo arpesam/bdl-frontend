@@ -45,7 +45,7 @@
           placeholder="32"
           :rules="rules.number"
           hide-details="auto"
-          v-model="patient.weight"
+          v-model="patient.age"
         ></v-text-field>
 
 
