@@ -46,6 +46,10 @@ async function fetchPatients() {
       // debugger
       response.data.patients = response.data.patients.map((patient) => {
         // debugger
+        if (patient.age) {
+          return patient
+        }
+
         const [day, month, year] = patient.birth_date.split('/');
         const birthDate = new Date(`${year}-${month}-${day}`);
         const ageDifMs = Date.now() - birthDate.getTime();
