@@ -439,10 +439,22 @@ export default {
         this.selected_physical_exam = v.filter((item) => item !== "Não");
       }
     },
+    set_creatinina: {
+      get() {
+        return this.creatinina
+      },
+      set(v) {
+        if (!v || v != this.creatinina) {
+          this.saveButtonClicked = 0
+        }
+        this.hemostasis_value = v.filter((item) => item !== "Não");
+      }
+    },
     getExpandIcon() {
       return !!this.showConduct ? 'mdi-chevron-up' : 'mdi-chevron-down'
     },
     needTransfusion() {
+      console.log("reprocessing...");
       const processExamInputs = this.processExamInputsAction()
       const result = processExamInputs(this)
       this.conductSuggestionText = result.conductText
@@ -459,7 +471,13 @@ export default {
       this.flow = result.flow
 
       if (!this.isGroup1Filled) {
+        // console.log("!this.isGroup1Filled");
         this.saveButtonClicked = 0
+      }
+
+      if (!this.isGroup2Filled) {
+        // console.log("!this.isGroup2Filled");
+        this.saveButtonClicked2 = 0
       }
 
       if (this.$refs.conductdiv) {
