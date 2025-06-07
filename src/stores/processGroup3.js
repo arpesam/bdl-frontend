@@ -5,7 +5,7 @@ export function processGroup3(exams, group2Suggestion) {
   let hasCronicHepatopatia = exams.set_hemostasis_value.includes('Hepatopatia crônica')
   let leococites = exams.selected_leucocito
   let plaquetas = exams.selected_plaquetas
-  let ferro = exams.selected_ferro_serico
+  // let ferro = exams.selected_ferro_serico
   let ferritine = exams.selected_ferritina
   let sat_transferrina = exams.selected_transferrine_saturation
   let b12 = exams.selected_b12_vitamine
@@ -140,7 +140,7 @@ export function processGroup3(exams, group2Suggestion) {
     if (inc('G2-3') && TFG_GT_60 && FERR_GT_500)
       return defaultResp(
         'G3-13',
-        'Anemia por doença crônica, sem necessidade de reposição com ferro.'
+        'Anemia por doença crônica, sem necessidade de reposição com ferro. Considerar uso de EPO.'
       )
     if (inc('G2-3') && TFG_GT_60 && SAT_GT_20)
       return defaultResp(
@@ -169,10 +169,10 @@ export function processGroup3(exams, group2Suggestion) {
     if (inc('G2-4') && TFG_GT_60 && FERR_GT_500)
       return defaultResp(
         'G3-18',
-        'Anemia por doença crônica, sem necessidade de reposição com ferro.'
+        'Anemia por doença crônica, sem necessidade de reposição com ferro. Considerar uso de EPO.'
       )
     if (inc('G2-4') && TFG_GT_60 && SAT_GT_20)
-      return defaultResp('G3-19', 'Sem necessidade de reposição com ferro.')
+      return defaultResp('G3-19', 'Sem necessidade de reposição com ferro. Considerar uso de EPO.')
   }
 
   // G2-5

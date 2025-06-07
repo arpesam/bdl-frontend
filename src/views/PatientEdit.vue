@@ -12,7 +12,7 @@
         <v-text-field
           class="mt-2"
           style="width: 250px; margin-bottom: 10px"
-          label="Iniciais"
+          label="Iniciais do paciente"
           :rules="rules.mandatory"
           hide-details="auto"
           v-model="patient.initials"
@@ -20,7 +20,7 @@
 
         <v-text-field
           style="width: 250px; margin-bottom: 10px"
-          label="Núm. de registro"
+          label="Núm. do prontuário"
           :rules="rules.mandatory"
           hide-details="auto"
           v-model="patient.register_num"

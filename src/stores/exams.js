@@ -3,8 +3,9 @@ import { processGroup1 } from './processGroup1'
 import { processGroup2 } from './processGroup2'
 import { processGroup3 } from './processGroup3'
 import { processGroup4 } from './processGroup4'
+import { usePatientStore } from './patients'
 
-import { neutral } from './utils'
+import { neutral, calcularTFG } from './utils'
 
 export const useExamStore = defineStore('examStore', {
   state: () => ({
@@ -19,7 +20,7 @@ export const useExamStore = defineStore('examStore', {
     }
   },
   actions: {
-    processExamInputsAction: (state) => (exams) => {
+    processExamInputsAction: (state) => (exams, pid) => {
       return processExamInputs(exams)
     },
     hasSaved(v) {
@@ -30,18 +31,20 @@ export const useExamStore = defineStore('examStore', {
 
 function processExamInputs(exams = {}) {
   let isGroup1Filled = checkGroup1Filled(exams)
-  console.log('isGroup1Filled', isGroup1Filled)
   const examStore = useExamStore()
+
+  if (!exams.selected_gloumerar) {
+    let tfg = calcularTFG(exams.creatinina, exams.patient_age, exams.patient_genre)
+    exams.selected_gloumerar = tfg < 60 ? 'TFG < 60 ml/min/1,73m2' : 'TFG > 60 ml/min/1,73m2'
+  }
+  console.log("tfg: ", exams.selected_gloumerar);
 
   // Access the saveButtonClicked state
   const saveButtonClicked = examStore.saveButtonClicked
 
-  console.log('saveButtonClicked', saveButtonClicked)
-
   let isGroup2Filled = checkGroup2Filled(exams)
   if (!isGroup1Filled || saveButtonClicked == 0) {
     // check also if the button was clicked
-    console.log('>>>> !isGroup1Filled || saveButtonClicked == 0')
     let resp = {
       flow: 'NO-INPUT',
       conductText: 'Complete todos os dados abaixo e clique em "Salvar". \n A conduta será mostrada aqui. Você pode salvar e retornar quando quiser.',
@@ -59,50 +62,37 @@ function processExamInputs(exams = {}) {
   }
 
   const saveButtonClicked2 = examStore.saveButtonClicked2
-  console.log('saveButtonClicked2', saveButtonClicked2)
 
   const group1Suggestion = processGroup1(exams)
-  console.log('group1Suggestion', group1Suggestion)
 
   isGroup2Filled = checkGroup2Filled(exams)
-  console.log('isGroup2Filled', isGroup2Filled)
 
   if (isGroup1Filled && !isGroup2Filled) {
-    console.log('>>>> isGroup1Filled && !isGroup2Filled')
     group1Suggestion.isGroup1Filled = isGroup1Filled
     group1Suggestion.isGroup2Filled = isGroup2Filled
-    console.log('group 2 not filled, returning group 1 suggestion')
     return returnMiddleware(group1Suggestion, exams)
   }
 
   const group2Suggestion = processGroup2(exams, group1Suggestion)
-  console.log('group2Suggestion', group2Suggestion)
 
   if (isGroup1Filled && isGroup2Filled && saveButtonClicked2 == 0) {
-    console.log('>>>> isGroup1Filled && isGroup2Filled && saveButtonClicked2 == 0')
     group1Suggestion.isGroup1Filled = isGroup1Filled
     group1Suggestion.isGroup2Filled = isGroup2Filled
     return returnMiddleware(group1Suggestion, exams)
   }
 
   let isGroup3Filled = checkGroup3Filled(exams, group2Suggestion)
-  console.log('isGroup3Filled', isGroup3Filled)
 
   if (isGroup1Filled && isGroup2Filled && !isGroup3Filled) {
-    console.log('>>>> isGroup1Filled && isGroup2Filled && !isGroup3Filled')
     group2Suggestion.isGroup1Filled = isGroup1Filled
     group2Suggestion.isGroup2Filled = isGroup2Filled
-    console.log('group 3 not filled, returning group 2 suggestion')
     return returnMiddleware(group2Suggestion, exams)
   }
 
   const group3Suggestion = processGroup3(exams, group2Suggestion)
-  console.log('group3Suggestion', group3Suggestion)
   group1Suggestion.isGroup3Filled = isGroup3Filled
 
-  console.log('+++++++++++++++++++', isGroup1Filled, isGroup2Filled, isGroup3Filled)
   if (isGroup1Filled && isGroup2Filled && isGroup3Filled) {
-    console.log('>>>> isGroup1Filled && isGroup2Filled && isGroup3Filled')
     group3Suggestion.isGroup1Filled = isGroup1Filled
     group3Suggestion.isGroup2Filled = isGroup2Filled
     group3Suggestion.isGroup3Filled = isGroup3Filled
@@ -120,7 +110,6 @@ function returnMiddleware(suggestion = {}, exams = {}) {
   let plaquetas = exams.selected_plaquetas
   // let b12 = exams.selected_b12_vitamine
   // let folic_acid = exams.selected_folic_acid
-  console.log('leococites ', leococites, plaquetas)
 
   // if (leococites == '<4000' && plaquetas == '<100') {
   //   suggestion.askB12Vitamine = true
@@ -160,7 +149,14 @@ function checkGroup1Filled(exams) {
 }
 
 function checkGroup2Filled(exams) {
-  return !!checkGroup1Filled(exams) && !!exams.selected_vcm && !!exams.selected_hcm && !!exams.selected_leucocito && !!exams.selected_plaquetas && !!exams.selected_gloumerar
+  return !!checkGroup1Filled(exams) &&
+  !!exams.selected_vcm &&
+  !!exams.selected_hcm &&
+  !!exams.selected_leucocito &&
+  !!exams.selected_plaquetas &&
+  !!exams.selected_gloumerar &&
+  !!exams.ureia &&
+  !!exams.creatinina
 }
 
 function checkGroup3Filled(exams, group2Suggestion = {}) {
@@ -174,7 +170,7 @@ function checkGroup3Filled(exams, group2Suggestion = {}) {
   let b12Vitamine = group2Suggestion.askB12Vitamine ? !!exams.selected_b12_vitamine : true
   let folicAcid = group2Suggestion.askFolicAcid ? !!exams.selected_folic_acid : true
   let ferritine = group2Suggestion.askFerritine ? !!exams.selected_ferritina : true
-  let ferroSerico = group2Suggestion.askFerroSerico ? !!exams.selected_ferro_serico : true
+  // let ferroSerico = group2Suggestion.askFerroSerico ? !!exams.selected_ferro_serico : true
 
-  return !!checkGroup2Filled(exams) && ferritineSaturation && b12Vitamine && folicAcid && ferritine && ferroSerico
+  return !!checkGroup2Filled(exams) && ferritineSaturation && b12Vitamine && folicAcid && ferritine
 }

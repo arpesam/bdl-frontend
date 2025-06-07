@@ -1,53 +1,52 @@
 <template>
+  <!-- Teste {{ patient_age }} {{ patient_genre }} -->
   <!-- CONDUTA -->
-  <v-card
-    v-if="!warningAlert"
-    class="conduct-box" :elevation="0"
-    :color="needTransfusion"
-    ref="conductdiv"
-    @click="showConduct = !showConduct"
-  >
-        <v-card-item style="padding-bottom: 0 !important; margin: 0;">
-          <v-card-title style="font-size: 13px; font-weight: bold;">{{ `Sugestão de conduta [${flow}]` }}</v-card-title>
-        </v-card-item>
+  <v-card v-if="!warningAlert" class="conduct-box" :elevation="0" :color="needTransfusion" ref="conductdiv"
+    @click="showConduct = !showConduct">
+    <v-card-item style="padding-bottom: 0 !important; margin: 0;">
+      <v-card-title style="font-size: 13px; font-weight: bold;">{{ `Sugestão de conduta [${flow}]` }}</v-card-title>
+    </v-card-item>
 
-        <v-card-text v-if="showConduct && !overlay" style="margin-bottom: 30px;">
-          <div v-if="conductSuggestionText2">{{ conductSuggestionText2  }} <br/><br/></div>
-          {{getConductSuggestionText}}
-        </v-card-text>
-        <v-card-text v-if="overlay" style="margin-bottom: 30px;">
-          <LoadingComponent  :loading="overlay" height="50px" width="50px"/>
-        </v-card-text>
-        <v-card-actions
-
-          style="margin: 0; min-height: 10px !important; position: absolute; bottom: 0; left: 0; right: 0;"
-          class="d-flex justify-center"
-        >
-            <v-btn style="margin: 0;" rounded="0" block :icon="getExpandIcon" size="x-medium"></v-btn>
-        </v-card-actions>
+    <v-card-text v-if="showConduct && !overlay" style="margin-bottom: 30px;">
+      <div v-if="conductSuggestionText2">{{ conductSuggestionText2 }} <br /><br /></div>
+      {{ getConductSuggestionText }}
+    </v-card-text>
+    <v-card-text v-if="overlay" style="margin-bottom: 30px;">
+      <LoadingComponent :loading="overlay" height="50px" width="50px" />
+    </v-card-text>
+    <v-card-actions style="margin: 0; min-height: 10px !important; position: absolute; bottom: 0; left: 0; right: 0;"
+      class="d-flex justify-center">
+      <v-btn style="margin: 0;" rounded="0" block :icon="getExpandIcon" size="x-medium"></v-btn>
+    </v-card-actions>
   </v-card>
 
-  <v-card
-    v-if="!warningAlert && showConduct && hasPBMLinkPage"
-    class="conduct-pbm" :elevation="0"
-    color="info"
-    ref="conductdiv"
-  >
-        <RouterLink target="_blank" :to="`/pbm/pages#page${PBMPage}`">
-          <v-btn prepend-icon="mdi-launch" variant="text" style="width: 100%;" class="pbm-btn" > Veja a página <strong style="margin: 0 2px;">{{PBMPage}}</strong> do protocolo de tratamento farmacológico da anemia</v-btn>
-        </RouterLink>
+  <v-card v-if="!warningAlert && showConduct && hasPBMLinkPage" class="conduct-pbm" :elevation="2" color="#f5d273"
+>
+
+    <v-card-text class="pbm-card-text" :to="`/pbm/pages#page${PBMPage}`">
+      <v-btn
+        :to="`/pbm/pages#page${PBMPage}`"
+        target="_blank"
+        variant="text"
+        color="#f5d273"
+        style="width: 100%; color: black; min-height: 70px; text-transform: none; text-align: center; vertical-align: middle;"
+      >
+          <b>Clique aqui para ver a página <strong style="margin: 0 1px;">{{ PBMPage }}</strong> <br>do protocolo de tratamento
+          farmacológico da anemia</b>
+      </v-btn>
+    </v-card-text>
   </v-card>
   <Alert :warningAlert="warningAlert" />
 
   <!-- GRUPO 3 -->
-  <div v-if="isGroup2Filled && !overlay && saveButtonClicked2" >
-  <!-- <div v-if="isGroup2Filled"> -->
-    <InputPanel v-if="askFerroSerico" title="Ferro sérico:" :value="selected_ferro_serico">
+  <div v-if="isGroup2Filled && !overlay && saveButtonClicked2">
+    <!-- <div v-if="isGroup2Filled"> -->
+    <!-- <InputPanel v-if="askFerroSerico" title="Ferro sérico:" :value="selected_ferro_serico">
       <v-radio-group v-model="selected_ferro_serico">
         <v-radio label="< 60 mcg/dl" value="< 60 mcg/dl"></v-radio>
         <v-radio label="≥ 60 mcg/dl" value="≥ 60 mcg/dl"></v-radio>
       </v-radio-group>
-    </InputPanel>
+    </InputPanel> -->
 
     <InputPanel v-if="askFerritine" title="Ferritina:" :value="selected_ferritina">
       <v-radio-group v-model="selected_ferritina">
@@ -113,11 +112,20 @@
       </v-radio-group>
     </InputPanel>
 
-    <InputPanel title="Taxa de filtração glomerular:" :value="selected_gloumerar">
+    <!-- <InputPanel title="Taxa de filtração glomerular:" :value="selected_gloumerar">
       <v-radio-group v-model="selected_gloumerar" inline>
         <v-radio label="TFG < 60 ml/min/1,73m2" value="TFG < 60 ml/min/1,73m2"></v-radio>
         <v-radio label="TFG > 60 ml/min/1,73m2" value="TFG > 60 ml/min/1,73m2"></v-radio>
       </v-radio-group>
+    </InputPanel> -->
+
+    <InputPanel title="Uréia:" :value="ureia">
+      <v-text-field v-model="ureia" label="Entre 1 e 500mg/dL" type="number" :rules="[ureiaRule]"
+        :placeholder="ureia ? ureia : 'Digite a ureia'" />
+    </InputPanel>
+    <InputPanel title="Creatinina:" :value="creatinina">
+      <v-text-field v-model="creatinina" label="Entre 0.1 e 50.99mg/dL" type="number" :rules="[creatininaRule]"
+        :placeholder="creatinina ? creatinina : 'Digite o valor da creatinina'" />
     </InputPanel>
   </div>
 
@@ -133,60 +141,72 @@
 
     <InputPanel title="Presença de comorbidades?" :value="comorbities">
       <div>
-        <v-checkbox v-model="set_comorbities" label="Coronariopatia Isquêmica" value="Coronariopatia Isquêmica"></v-checkbox>
-        <v-checkbox v-model="set_comorbities" label="Insuficiência Cardíaca" value="Insuficiência Cardíaca"></v-checkbox>
+        <v-checkbox v-model="set_comorbities" label="Coronariopatia Isquêmica"
+          value="Coronariopatia Isquêmica"></v-checkbox>
+        <v-checkbox v-model="set_comorbities" label="Insuficiência Cardíaca"
+          value="Insuficiência Cardíaca"></v-checkbox>
         <v-checkbox v-model="set_comorbities" label="DPOC" value="DPOC"></v-checkbox>
         <v-checkbox v-model="set_comorbities" label="Doença Renal Crônica" value="Doença Renal Crônica"></v-checkbox>
         <v-checkbox v-model="set_comorbities" label="Nenhuma das anteriores" value="Não"></v-checkbox>
       </div>
     </InputPanel>
 
-    <InputPanel title="Exame físico: apresenta as alterações abaixo?" :value="selected_physical_exam" >
-        <!-- <v-checkbox v-model="set_selected_physical_exam" label="Dispnéia e/ou sinais de insuficiência respiratória" value="Dispnéia e/ou sinais de insuficiência respiratória" ></v-checkbox>
+    <InputPanel title="Exame físico: apresenta as alterações abaixo?" :value="selected_physical_exam">
+      <!-- <v-checkbox v-model="set_selected_physical_exam" label="Dispnéia e/ou sinais de insuficiência respiratória" value="Dispnéia e/ou sinais de insuficiência respiratória" ></v-checkbox>
         <v-checkbox v-model="set_selected_physical_exam" label="Má perfusão tecidual" value="Má perfusão tecidual"></v-checkbox>
         <v-checkbox v-model="set_selected_physical_exam" label="Sonolência e/ou alteração do nível da consciência" value="Sonolência e/ou alteração do nível da consciência" ></v-checkbox>
         <v-checkbox v-model="set_selected_physical_exam" label="PAM < 70 mmHg e/ou FC > 100 bpm" value="PAM < 70 mmHg e/ou FC > 100 bpm"></v-checkbox>
         <v-checkbox v-model="set_selected_physical_exam" label="Nenhuma das anteriores" value="Não"></v-checkbox> -->
-        <v-checkbox v-model="set_selected_physical_exam" label="Sinais de insuficiência respiratória aguda" value="Sinais de insuficiência respiratória aguda"></v-checkbox>
-        <v-checkbox v-model="set_selected_physical_exam" label="Alteração do nível de consciência" value="Alteração do nível de consciência"></v-checkbox>
-        <v-checkbox v-model="set_selected_physical_exam" label="PAM < 70 mmHg e FC > 100 bpm" value="PAM < 70 mmHg e FC > 100 bpm"></v-checkbox>
-        <v-checkbox v-model="set_selected_physical_exam" label="Nenhuma das anteriores" value="Não"></v-checkbox>
+      <v-checkbox v-model="set_selected_physical_exam" label="Sinais de insuficiência respiratória aguda"
+        value="Sinais de insuficiência respiratória aguda"></v-checkbox>
+      <v-checkbox v-model="set_selected_physical_exam" label="Alteração do nível de consciência"
+        value="Alteração do nível de consciência"></v-checkbox>
+      <v-checkbox v-model="set_selected_physical_exam" label="PAM < 70 mmHg e FC > 100 bpm"
+        value="PAM < 70 mmHg e FC > 100 bpm"></v-checkbox>
+      <v-checkbox v-model="set_selected_physical_exam" label="Nenhuma das anteriores" value="Não"></v-checkbox>
     </InputPanel>
 
     <InputPanel title="Procedimento cirúrgico a ser realizado:" :value="selected_procedure">
       <v-radio-group v-model="selected_procedure">
-        <v-radio label="Pequeno porte (ex: cirurgias dermatológicas, procedimentos dentários, cirurgias endoscópicas, herniorrafias, cirurgias ortopédicas e ginecológicas menores, endarterectomia, RTU)" value="Pequeno porte"></v-radio>
+        <v-radio
+          label="Pequeno porte (ex: cirurgias dermatológicas, procedimentos dentários, cirurgias endoscópicas, herniorrafias, cirurgias ortopédicas e ginecológicas menores, endarterectomia, RTU)"
+          value="Pequeno porte"></v-radio>
         <br>
-        <v-radio label="Médio porte (ex: cirurgias intra-abdominais, angioplastia periférica, aneurisma endovascular, histerectomia, cirurgias plásticas maiores, cirurgia ortopédica de quadril ou coluna, transplante renal, neurocirurgia)" value="Médio porte"></v-radio>
+        <v-radio
+          label="Médio porte (ex: cirurgias intra-abdominais, angioplastia periférica, aneurisma endovascular, histerectomia, cirurgias plásticas maiores, cirurgia ortopédica de quadril ou coluna, transplante renal, neurocirurgia)"
+          value="Médio porte"></v-radio>
         <br>
-        <v-radio label="Grande porte (ex: cirurgia cardíaca, cirurgia vascular maior, transplante hepático ou pulmonar, cirurgia  de ressecção hepática, cirurgia duodeno-pancreática, cistectomia, pneumectomia, amputação de membro inferior, esofagectomia)" value="Grande porte"></v-radio>
+        <v-radio
+          label="Grande porte (ex: cirurgia cardíaca, cirurgia vascular maior, transplante hepático ou pulmonar, cirurgia  de ressecção hepática, cirurgia duodeno-pancreática, cistectomia, pneumectomia, amputação de membro inferior, esofagectomia)"
+          value="Grande porte"></v-radio>
         <br>
-        <v-text-field
-          v-if="selected_procedure"
-          v-model="previous_hemoglobine_text"
-          label="Especifique"
-        ></v-text-field>
+        <v-text-field v-if="selected_procedure" v-model="previous_hemoglobine_text" label="Especifique"></v-text-field>
       </v-radio-group>
     </InputPanel>
 
     <InputPanel title="Antecedente de hemoglobinopatia?" :value="previous_hemoglobine_value">
-        <v-checkbox v-model="set_previous_hemoglobine_value" label="Anemia falciforme" value="Anemia falciforme"></v-checkbox>
-        <v-checkbox v-model="set_previous_hemoglobine_value" label="Talassemia" value="Talassemia"></v-checkbox>
-        <v-checkbox v-model="set_previous_hemoglobine_value" label="Outro:" value="Outro"></v-checkbox>
-        <v-text-field v-if="previous_hemoglobine_value.includes('Outro')" v-model="previous_hemoglobine_text" label="Especifique" ></v-text-field>
-        <v-checkbox v-model="set_previous_hemoglobine_value" label="Não" value="Não"></v-checkbox>
+      <v-checkbox v-model="set_previous_hemoglobine_value" label="Anemia falciforme"
+        value="Anemia falciforme"></v-checkbox>
+      <v-checkbox v-model="set_previous_hemoglobine_value" label="Talassemia" value="Talassemia"></v-checkbox>
+      <v-checkbox v-model="set_previous_hemoglobine_value" label="Outro:" value="Outro"></v-checkbox>
+      <v-text-field v-if="previous_hemoglobine_value.includes('Outro')" v-model="previous_hemoglobine_text"
+        label="Especifique"></v-text-field>
+      <v-checkbox v-model="set_previous_hemoglobine_value" label="Não" value="Não"></v-checkbox>
     </InputPanel>
 
     <InputPanel title="Antecedente de alterações da hemostasia:" :value="hemostasis_value">
-        <v-checkbox v-model="set_hemostasis_value" label="Hemofilia" value="Hemofilia"></v-checkbox>
-        <v-checkbox v-model="set_hemostasis_value" label="Hepatopatia crônica" value="Hepatopatia crônica"></v-checkbox>
-        <v-checkbox v-model="set_hemostasis_value" label="Disfunção plaquetária" value="Disfunção plaquetária"></v-checkbox>
-        <v-checkbox v-model="set_hemostasis_value" label="Outro:" value="Outro"></v-checkbox>
-        <v-text-field v-if="hemostasis_value.includes('Outro')" v-model="hemostasis_text" label="Especifique" ></v-text-field>
-        <v-checkbox v-model="set_hemostasis_value" label="Não" value="Não"></v-checkbox>
+      <v-checkbox v-model="set_hemostasis_value" label="Hemofilia" value="Hemofilia"></v-checkbox>
+      <v-checkbox v-model="set_hemostasis_value" label="Hepatopatia crônica" value="Hepatopatia crônica"></v-checkbox>
+      <v-checkbox v-model="set_hemostasis_value" label="Disfunção plaquetária"
+        value="Disfunção plaquetária"></v-checkbox>
+      <v-checkbox v-model="set_hemostasis_value" label="Outro:" value="Outro"></v-checkbox>
+      <v-text-field v-if="hemostasis_value.includes('Outro')" v-model="hemostasis_text"
+        label="Especifique"></v-text-field>
+      <v-checkbox v-model="set_hemostasis_value" label="Não" value="Não"></v-checkbox>
     </InputPanel>
 
-    <InputPanel title="Uso de medicações que aumentam risco de sangramento (anticoagulantes, AAS):" :value="selected_medication" >
+    <InputPanel title="Uso de medicações que aumentam risco de sangramento (anticoagulantes, AAS):"
+      :value="selected_medication">
       <v-radio-group v-model="selected_medication" inline>
         <v-radio label="Sim" value="Sim"></v-radio>
         <v-radio label="Não" value="Não"></v-radio>
@@ -204,46 +224,40 @@
   <!-- BUTTONS -->
   <v-row class="mt-5">
     <v-sheet>
-        <v-btn
-          fab
-          fixed
-          size="x-large"
-          color="#038C8C"
-          style="color: white"
-          :disabled="overlay"
-          :style="{ position: 'fixed', bottom: '0.6rem', right: '0.6rem', zIndex: 1 }"
-          @click="registerExam"
-          :loading="overlay"
-        >
+      <v-btn fab fixed size="x-large" color="#038C8C" style="color: white" :disabled="overlay"
+        :style="{ position: 'fixed', bottom: '0.6rem', right: '0.6rem', zIndex: 1 }" @click="registerExam"
+        :loading="overlay">
         Salvar
-        </v-btn>
-        <v-btn class="ml-8 pl-4 pr-4" variant="flat" color="warning" @click="resetDialog = true" :disabled="overlay">
-          Resetar valores
-        </v-btn>
+      </v-btn>
+      <v-btn class="ml-8 pl-4 pr-4" variant="flat" color="warning" @click="resetDialog = true" :disabled="overlay">
+        Resetar valores
+      </v-btn>
     </v-sheet>
   </v-row>
 
   <!-- RESET DIALOG -->
   <v-row justify="center">
-      <v-dialog v-model="resetDialog" width="800">
-        <v-card>
-          <v-card-title>
-            <span class="text-h5">Atenção!</span>
-          </v-card-title>
-          <v-card-text>
-            Ao continuar, todos os dados clínicos deste paciente serão apagados. Deseja continuar?
-          </v-card-text>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="red-darken-1" variant="outlined" @click="resetDialog = false" :disabled="overlay" v-if="!overlay">
-              Cancelar
-            </v-btn>
-            <v-btn color="green-darken-1" variant="outlined" @click="resetAllValues" :disabled="overlay" :loading="overlay">
-              Sim, apagar
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
+    <v-dialog v-model="resetDialog" width="800">
+      <v-card>
+        <v-card-title>
+          <span class="text-h5">Atenção!</span>
+        </v-card-title>
+        <v-card-text>
+          Ao continuar, todos os dados clínicos deste paciente serão apagados. Deseja continuar?
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="red-darken-1" variant="outlined" @click="resetDialog = false" :disabled="overlay"
+            v-if="!overlay">
+            Cancelar
+          </v-btn>
+          <v-btn color="green-darken-1" variant="outlined" @click="resetAllValues" :disabled="overlay"
+            :loading="overlay">
+            Sim, apagar
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-row>
 
   <template>
@@ -260,6 +274,7 @@ import LoadingComponent from '@/components/Loading.vue'
 import InputPanel from '@/components/InputPanel.vue'
 import { mapActions, mapWritableState } from 'pinia'
 import { useExamStore } from '@/stores/exams'
+import { usePatientStore } from '@/stores/patients'
 
 export default {
   components: {
@@ -268,10 +283,12 @@ export default {
     InputPanel
   },
   props: {
-    id: String
+    id: String,
   },
   data() {
     return {
+      patient_age: '',
+      patient_genre: '',
       showConduct: true,
       flow: '',
       resetDialog: false,
@@ -300,6 +317,8 @@ export default {
       selected_procedure: null,
       selected_procedure_text: '',
       hemostasis_text: '',
+      creatinina: '',
+      ureia: '',
       selected_medication: null,
       selected_hb: null,
       selected_vcm: null,
@@ -309,7 +328,7 @@ export default {
       selected_transfusion: null,
       selected_gloumerar: null,
 
-      selected_ferro_serico: null,
+      // selected_ferro_serico: null,
       selected_ferritina: null,
       selected_transferrine_saturation: null,
       selected_b12_vitamine: null,
@@ -319,30 +338,40 @@ export default {
   computed: {
     ...mapWritableState(useExamStore, ["saveButtonClicked", "saveButtonClicked2", "saveButtonClicked3"]),
     hasPBMLinkPage() {
-      const validFlows = ['G3-1', 'G3-2', 'G3-6', 'G3-10', 'G3-11', 'G3-15', 'G3-16', 'G3-20', 'G3-21', 'G3-31', 'G3-32', 'G3-33', 'G3-41', 'G4-1', 'G4-2'];
+      const validFlows = ['G3-1', 'G3-2', 'G3-3', 'G3-4', 'G3-6', 'G3-10', 'G3-11', 'G3-12', 'G3-13', 'G3-15', 'G3-16', 'G3-17', 'G3-18', 'G3-19', 'G3-20', 'G3-21', 'G3-31', 'G3-32', 'G3-33', 'G3-41', 'G4-1', 'G4-2'];
       const flowArray = this.flow.split('/');
       return flowArray.some(flow => validFlows.includes(flow));
     },
     PBMPage() {
-     const page4 = () => {
-      const validFlows = ['G3-1', 'G3-2', 'G3-6', 'G3-10', 'G3-11', 'G3-15', 'G3-16', 'G3-31', 'G3-32', 'G3-33', 'G3-41'];
-      const flowArray = this.flow.split('/');
-      return flowArray.some(flow => validFlows.includes(flow));
-     }
+      const page6 = () => {
+        const validFlows = ['G3-4', 'G3-7', 'G3-8', 'G3-9', 'G3-13', 'G3-18', 'G3-19'];
+        const flowArray = this.flow.split('/');
+        return flowArray.some(flow => validFlows.includes(flow));
+      }
 
-     const page3 = () => {
-      let validFlows = ['G3-20', 'G3-21', 'G4-1', 'G4-2'];
-      const flowArray = this.flow.split('/');
-      return flowArray.some(flow => validFlows.includes(flow));
-     }
+      const page4 = () => {
+        const validFlows = ['G3-1', 'G3-2', 'G3-3', 'G3-6', 'G3-10', 'G3-11', 'G3-12', 'G3-15', 'G3-16', 'G3-17', 'G3-31', 'G3-32', 'G3-33', 'G3-41'];
+        const flowArray = this.flow.split('/');
+        return flowArray.some(flow => validFlows.includes(flow));
+      }
 
-     // page 3 should be ckecked first
-     if (page3()) {
-       return 3
-     }
+      const page3 = () => {
+        let validFlows = ['G3-20', 'G3-21', 'G4-1', 'G4-2'];
+        const flowArray = this.flow.split('/');
+        return flowArray.some(flow => validFlows.includes(flow));
+      }
+
+      // page 3 should be ckecked first
+      if (page3()) {
+        return 3
+      }
 
       if (page4()) {
         return 4
+      }
+
+      if (page6()) {
+        return 6
       }
 
       return 1
@@ -414,44 +443,76 @@ export default {
       return !!this.showConduct ? 'mdi-chevron-up' : 'mdi-chevron-down'
     },
     needTransfusion() {
-        const processExamInputs = this.processExamInputsAction()
-        const result = processExamInputs(this)
-        this.conductSuggestionText = result.conductText
-        this.conductSuggestionText2 = result.conductText2
-        this.conductSuggestionColor = result.color
-        this.askFerroSerico = result.askFerroSerico
-        this.askFerritine = result.askFerritine
-        this.askFerritineSaturation = result.askFerritineSaturation
-        this.askB12Vitamine = result.askB12Vitamine
-        this.askFolicAcid = result.askFolicAcid
-        this.isGroup1Filled = result.isGroup1Filled
-        this.isGroup2Filled = result.isGroup2Filled
-        this.isGroup3Filled = result.isGroup3Filled
-        this.flow = result.flow
+      const processExamInputs = this.processExamInputsAction()
+      const result = processExamInputs(this)
+      this.conductSuggestionText = result.conductText
+      this.conductSuggestionText2 = result.conductText2
+      this.conductSuggestionColor = result.color
+      this.askFerroSerico = result.askFerroSerico
+      this.askFerritine = result.askFerritine
+      this.askFerritineSaturation = result.askFerritineSaturation
+      this.askB12Vitamine = result.askB12Vitamine
+      this.askFolicAcid = result.askFolicAcid
+      this.isGroup1Filled = result.isGroup1Filled
+      this.isGroup2Filled = result.isGroup2Filled
+      this.isGroup3Filled = result.isGroup3Filled
+      this.flow = result.flow
 
-        if (!this.isGroup1Filled) {
-          this.saveButtonClicked = 0
-        }
+      if (!this.isGroup1Filled) {
+        this.saveButtonClicked = 0
+      }
 
-        if (this.$refs.conductdiv) {
-          this.spacerHeight = this.$refs.conductdiv.$el.clientHeight + 'px';
-        }
+      if (this.$refs.conductdiv) {
+        this.spacerHeight = this.$refs.conductdiv.$el.clientHeight + 'px';
+      }
 
-        return this.conductSuggestionColor
+      return this.conductSuggestionColor
     },
   },
   methods: {
     ...mapActions(useExamStore, ["hasSaved", "processExamInputsAction"]),
+    ureiaRule(value) {
+      if (value === '' || value === null) {
+        return 'Campo obrigatório'; // or return true if you want to skip required check here
+      }
+
+      const number = parseFloat(value);
+      if (isNaN(number) || number < 1 || number > 500) {
+        return 'Uréia precisa ser entre 1 e 500mg/dL';
+      }
+
+      return true;
+    },
+    creatininaRule(value) {
+      if (value === '' || value === null) {
+        return 'Campo obrigatório'; // or return true if you want to skip required check here
+      }
+
+      const number = parseFloat(value);
+      if (isNaN(number) || number < 0 || number > 50.99) {
+        return 'A creatinina precisa ser entre 1 e 50.99mg/dL';
+      }
+
+      return true;
+    },
     registerExam() {
-      window.scrollTo(0,0)
+      window.scrollTo(0, 0)
       this.overlay = true
       this.warningAlert = ''
+
+      if (!this.creatininaRule(this.creatinina)) {
+        this.overlay = false
+        this.warningAlert = 'A creatinina precisa ser entre 1 e 50'
+        return
+      }
 
       axios
         .post(
           `${this.APIbasePath}/patient/${this.id}/exam`,
           {
             patient_id: this.id,
+            patient_age: this.patient_age,
+            patient_genre: this.patient_genre,
             comorbities: this.comorbities,
             previous_hemoglobine_value: this.previous_hemoglobine_value,
             previous_hemoglobine_text: this.previous_hemoglobine_text,
@@ -459,6 +520,8 @@ export default {
             selected_procedure_text: this.selected_procedure_text,
             hemostasis_value: this.hemostasis_value,
             hemostasis_text: this.hemostasis_text,
+            creatinina: this.creatinina,
+            ureia: this.ureia,
             selected_medication: this.selected_medication,
             selected_hb: this.selected_hb,
             selected_vcm: this.selected_vcm,
@@ -466,10 +529,10 @@ export default {
             selected_leucocito: this.selected_leucocito,
             selected_plaquetas: this.selected_plaquetas,
             selected_transfusion: this.selected_transfusion,
-            selected_gloumerar: this.selected_gloumerar,
+            // selected_gloumerar: this.selected_gloumerar,
             selected_physical_exam: this.selected_physical_exam,
 
-            selected_ferro_serico: this.selected_ferro_serico,
+            // selected_ferro_serico: this.selected_ferro_serico,
             selected_ferritina: this.selected_ferritina,
             selected_transferrine_saturation: this.selected_transferrine_saturation,
             selected_b12_vitamine: this.selected_b12_vitamine,
@@ -512,7 +575,7 @@ export default {
         .catch(this.handleErrors)
     },
     resetAllValues() {
-      window.scrollTo(0,0)
+      window.scrollTo(0, 0)
       this.overlay = true
       this.warningAlert = ''
       axios
@@ -520,6 +583,8 @@ export default {
           `${this.APIbasePath}/patient/${this.id}/exam`,
           {
             patient_id: this.id,
+            patient_age: this.patient_age,
+            patient_genre: this.patient_genre,
 
             comorbities: [],
             previous_hemoglobine_value: [],
@@ -529,6 +594,8 @@ export default {
             selected_procedure: null,
             selected_procedure_text: '',
             hemostasis_text: '',
+            creatinina: '',
+            ureia: '',
             selected_medication: null,
             selected_hb: null,
             selected_vcm: null,
@@ -536,9 +603,9 @@ export default {
             selected_leucocito: null,
             selected_plaquetas: null,
             selected_transfusion: null,
-            selected_gloumerar: null,
+            // selected_gloumerar: null,
 
-            selected_ferro_serico: null,
+            // selected_ferro_serico: null,
             selected_ferritina: null,
             selected_transferrine_saturation: null,
             selected_b12_vitamine: null,
@@ -592,6 +659,8 @@ export default {
       this.selected_procedure = null
       this.selected_procedure_text = ''
       this.hemostasis_text = ''
+      this.creatinina = ''
+      this.ureia = ''
       this.selected_medication = null
       this.selected_hb = null
       this.selected_vcm = null
@@ -601,7 +670,7 @@ export default {
       this.selected_transfusion = null
       this.selected_gloumerar = null
 
-      this.selected_ferro_serico = null
+      // this.selected_ferro_serico = null
       this.selected_ferritina = null
       this.selected_transferrine_saturation = null
       this.selected_b12_vitamine = null
@@ -609,7 +678,21 @@ export default {
     },
   },
   mounted() {
-    window.scrollTo(0,0)
+    let patientStore = usePatientStore()
+    let patient = patientStore.getPatientByID(this.id);
+    if (patient) {
+      this.patient_age = patient.age;
+      this.patient_genre = patient.genre;
+    } else {
+      // Sometimes the store is not updated, so we try to get it from localStorage
+      let patientStr = localStorage.getItem(`${this.id}`)
+      let patient = JSON.parse(patientStr)
+      this.patient_age = patient.age;
+      this.patient_genre = patient.genre;
+    }
+
+
+    window.scrollTo(0, 0)
     this.warningAlert = ''
 
     this.overlay = true
@@ -632,6 +715,8 @@ export default {
         this.selected_procedure = exam.selected_procedure
         this.selected_procedure_text = exam.selected_procedure_text
         this.hemostasis_text = exam.hemostasis_text
+        this.creatinina = !!exam.creatinina ? parseFloat(exam.creatinina) : 0
+        this.ureia = !!exam.ureia ? parseFloat(exam.ureia) : 0
         this.selected_medication = exam.selected_medication
         this.selected_hb = exam.selected_hb
         this.selected_vcm = exam.selected_vcm
@@ -639,9 +724,11 @@ export default {
         this.selected_leucocito = exam.selected_leucocito
         this.selected_plaquetas = exam.selected_plaquetas
         this.selected_transfusion = exam.selected_transfusion
-        this.selected_gloumerar = exam.selected_gloumerar
+        if (!this.creatinina) {
+          this.selected_gloumerar = exam.selected_gloumerar
+        }
 
-        this.selected_ferro_serico = exam.selected_ferro_serico
+        // this.selected_ferro_serico = exam.selected_ferro_serico
         this.selected_ferritina = exam.selected_ferritina
         this.selected_transferrine_saturation = exam.selected_transferrine_saturation
         this.selected_b12_vitamine = exam.selected_b12_vitamine
@@ -651,12 +738,9 @@ export default {
         const result = processExamInputs(this)
         this.flow = result.flow
 
-        console.log("mounting - results", result);
         if (result.isGroup1Filled) {
-          console.log("settin save button 1 to 1", );
           this.saveButtonClicked = 1
         } else {
-          console.log("group 1 is not filled in mounting", );
           this.saveButtonClicked = 0
           this.saveButtonClicked2 = 0
         }
@@ -677,14 +761,16 @@ export default {
 </script>
 
 <style scoped>
-label{
+label {
   font-size: 14px !important;
   margin: 0;
 }
 
 .v-input--selection-controls .v-input--checkbox {
-  margin: 0; /* Set margin to zero to remove the default margin */
+  margin: 0;
+  /* Set margin to zero to remove the default margin */
 }
+
 .v-label {
   /* background-color: red; */
   margin: 0;
@@ -693,8 +779,8 @@ label{
 }
 
 .v-checkbox .v-selection-control {
-    min-height: 0;
-    max-height: 15px;
+  min-height: 0;
+  max-height: 15px;
 }
 
 .conduct-box {
@@ -708,21 +794,34 @@ label{
   color: white
 }
 
-.conduct-pbm{
-  border-radius: 0px;
+.conduct-pbm {
+  border-radius: 5px;
   display: flex;
   justify-content: center;
-  color: white !important;
+  margin: 5px;
+
+  /* color: white !important; */
   /* border: 1px solid red; */
 }
 
 .pbm-btn {
-  color: white;
+  color: black;
   width: 100%;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: bold;
   text-transform: none;
   letter-spacing: 0.0178571429em;
+}
+
+.pbm-card-text{
+  text-align: center;
+  padding: 0;
+}
+
+.pbm-card-text:hover {
+  background-color: #bfa457; /* Slightly darker on hover */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  cursor: pointer;
 }
 
 </style>

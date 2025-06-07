@@ -32,7 +32,7 @@ export function processGroup2(exams, group1Suggestion) {
     return {
       ...group1Suggestion,
       flow: group1Suggestion.flow + '/' + flow,
-      askFerroSerico: true,
+      askFerroSerico: false,
       askFerritine: true,
       askFerritineSaturation: true
     }
@@ -67,7 +67,7 @@ export function processGroup2(exams, group1Suggestion) {
       ...defaultResp('G2-6'),
       askB12Vitamine: true,
       askFolicAcid: true,
-      askFerroSerico: true,
+      askFerroSerico: false,
       askFerritine: true,
       askFerritineSaturation: true
     }
@@ -77,7 +77,7 @@ export function processGroup2(exams, group1Suggestion) {
       ...defaultResp('G2-7'),
       askB12Vitamine: true,
       askFolicAcid: true,
-      askFerroSerico: true,
+      askFerroSerico: false,
       askFerritine: true,
       askFerritineSaturation: true
     }
@@ -87,7 +87,7 @@ export function processGroup2(exams, group1Suggestion) {
       ...defaultResp('G2-8'),
       askB12Vitamine: true,
       askFolicAcid: true,
-      askFerroSerico: true,
+      askFerroSerico: false,
       askFerritine: true,
       askFerritineSaturation: true
     }
@@ -97,7 +97,7 @@ export function processGroup2(exams, group1Suggestion) {
       ...defaultResp('G2-9'),
       askB12Vitamine: true,
       askFolicAcid: true,
-      askFerroSerico: true,
+      askFerroSerico: false,
       askFerritine: true,
       askFerritineSaturation: true
     }
@@ -105,7 +105,7 @@ export function processGroup2(exams, group1Suggestion) {
   return {
     ...group1Suggestion,
     flow: group1Suggestion.flow + '/' + 'G2-00',
-    askFerroSerico: true,
+    askFerroSerico: false,
     askFerritine: true,
     askFerritineSaturation: true,
     askB12Vitamine: true,

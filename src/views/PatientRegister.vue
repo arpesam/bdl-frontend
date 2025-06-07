@@ -13,7 +13,7 @@
         <!-- <br /> -->
         <v-text-field
           style="width: 250px; margin-bottom: 10px"
-          label="Núm. de registro do paciente"
+          label="Núm. do prontuário"
           :rules="rules.mandatory"
           hide-details="auto"
           v-model="patient.register_num"
