@@ -68,7 +68,7 @@ export function processGroup3(exams, group2Suggestion) {
     if (inc('G2-1') && TFG_GT_60 && FERR_LT_30 && SAT_LT_20)
       return defaultResp(
         'G3-1',
-        'Anemia ferropriva. Inciar reposição de ferro. Sugerimos dar preferência para fero endovenoso em caso de cirurgia próxima. Para calculo da dose total de hidróxifo de ferro: (13-Hb) X 2,4 X peso + 500.'
+        'Anemia ferropriva. Inciar reposição de ferro. Sugerimos dar preferência para ferro endovenoso em caso de cirurgia próxima. Para cálculo da dose total de hidróxido de ferro: (13Hb) X 2,4 X peso + 500.'
       )
 
     if (inc('G2-1') && TFG_GT_60 && FERR_30_100 && SAT_LT_20)
@@ -101,7 +101,7 @@ export function processGroup3(exams, group2Suggestion) {
     if (inc('G2-2') && TFG_LT_60 && FERR_LT_100 && SAT_LT_20)
       return defaultResp(
         'G3-6',
-        'Anemia ferropriva e anemia da doença renal crônica. Inciar reposição de ferro. Sugerimos dar preferência para fero endovenoso em caso de cirurgia próxima. Para calculo da dose total de hidróxifo de ferro: (13-Hb) X 2,4 X peso + 500.  Após tratamento, encaminhar ao nefrologista para avaliar inicio de EPO.'
+        'Anemia ferropriva e anemia da doença renal crônica. Inciar reposição de ferro. Sugerimos dar preferência para ferro endovenoso em caso de cirurgia próxima. Para cálculo da dose total de hidróxido de ferro: (13Hb) X 2,4 X peso + 500.  Após tratamento, encaminhar ao nefrologista para avaliar inicio de EPO.'
       )
     if (inc('G2-2') && TFG_LT_60 && FERR_GT_500)
       return defaultResp(
@@ -125,7 +125,7 @@ export function processGroup3(exams, group2Suggestion) {
     if (inc('G2-3') && TFG_GT_60 && FERR_LT_30 && SAT_LT_20)
       return defaultResp(
         'G3-10',
-        'Anemia ferropriva. Inciar reposição de ferro. Sugerimos dar preferência para fero endovenoso em caso de cirurgia próxima. Para calculo da dose total de hidróxifo de ferro: (13-Hb) X 2,4 X peso + 500.'
+        'Anemia ferropriva. Inciar reposição de ferro. Sugerimos dar preferência para ferro endovenoso em caso de cirurgia próxima. Para cálculo da dose total de hidróxido de ferro: (13Hb) X 2,4 X peso + 500.'
       )
     if (inc('G2-3') && TFG_GT_60 && FERR_30_100 && SAT_LT_20)
       return defaultResp(
@@ -154,7 +154,7 @@ export function processGroup3(exams, group2Suggestion) {
     if (inc('G2-4') && TFG_GT_60 && FERR_LT_30 && SAT_LT_20)
       return defaultResp(
         'G3-15',
-        'Anemia ferropriva. Inciar reposição de ferro. Sugerimos dar preferência para fero endovenoso em caso de cirurgia próxima. Para calculo da dose total de hidróxifo de ferro: (13-Hb) X 2,4 X peso + 500.'
+        'Anemia ferropriva. Inciar reposição de ferro. Sugerimos dar preferência para ferro endovenoso em caso de cirurgia próxima. Para cálculo da dose total de hidróxido de ferro: (13Hb) X 2,4 X peso + 500.'
       )
     if (inc('G2-4') && TFG_GT_60 && FERR_30_100 && SAT_LT_20)
       return defaultResp(
@@ -296,7 +296,7 @@ export function processGroup3(exams, group2Suggestion) {
     if (inc('G2-6') && TFG_GT_60 && FERR_LT_30 && SAT_LT_20)
       return defaultResp(
         'G3-31',
-        'Anemia ferropriva. Inciar reposição de ferro. Sugerimos dar preferência para fero endovenoso em caso de cirurgia próxima. Para calculo da dose total de hidróxifo de ferro: (13-Hb) X 2,4 X peso + 500.'
+        'Anemia ferropriva. Inciar reposição de ferro. Sugerimos dar preferência para ferro endovenoso em caso de cirurgia próxima. Para cálculo da dose total de hidróxido de ferro: (13Hb) X 2,4 X peso + 500.'
       )
     if (inc('G2-6') && TFG_GT_60 && FERR_30_100 && SAT_LT_20)
       return defaultResp(
@@ -322,7 +322,7 @@ export function processGroup3(exams, group2Suggestion) {
     if (inc('G2-7') && TFG_LT_60 && FERR_LT_100 && SAT_LT_20)
       return defaultResp(
         'G3-36',
-        'Anemia ferropriva e anemia da doença renal crônica. Inciar reposição de ferro. Sugerimos dar preferência para fero endovenoso em caso de cirurgia próxima. Para calculo da dose total de hidróxifo de ferro: (13-Hb) X 2,4 X peso + 500.  Após tratamento, encaminhar ao nefrologista para avaliar inicio de EPO.'
+        'Anemia ferropriva e anemia da doença renal crônica. Inciar reposição de ferro. Sugerimos dar preferência para ferro endovenoso em caso de cirurgia próxima. Para cálculo da dose total de hidróxido de ferro: (13Hb) X 2,4 X peso + 500.  Após tratamento, encaminhar ao nefrologista para avaliar inicio de EPO.'
       )
     if (inc('G2-7') && TFG_LT_60 && FERR_100_500 && SAT_LT_20)
       return defaultResp(
@@ -351,7 +351,7 @@ export function processGroup3(exams, group2Suggestion) {
     if (inc('G2-8') && TFG_GT_60 && FERR_LT_30 && SAT_LT_20)
       return defaultResp(
         'G3-41',
-        'Anemia ferropriva. Inciar reposição de ferro. Sugerimos dar preferência para fero endovenoso em caso de cirurgia próxima. Para calculo da dose total de hidróxifo de ferro: (13-Hb) X 2,4 X peso + 500.'
+        'Anemia ferropriva. Inciar reposição de ferro. Sugerimos dar preferência para ferro endovenoso em caso de cirurgia próxima. Para cálculo da dose total de hidróxido de ferro: (13Hb) X 2,4 X peso + 500.'
       )
     if (inc('G2-8') && TFG_GT_60 && FERR_30_100 && SAT_LT_20)
       return defaultResp(
@@ -378,7 +378,7 @@ export function processGroup3(exams, group2Suggestion) {
     if (inc('G2-9') && TFG_LT_60 && FERR_LT_100 && SAT_LT_20)
       return defaultResp(
         'G3-46',
-        'Anemia ferropriva e anemia da doença renal crônica. Inciar reposição de ferro. Sugerimos dar preferência para fero endovenoso em caso de cirurgia próxima. Para calculo da dose total de hidróxifo de ferro: (13-Hb) X 2,4 X peso + 500.  Após tratamento, encaminhar ao nefrologista para avaliar inicio de EPO.'
+        'Anemia ferropriva e anemia da doença renal crônica. Inciar reposição de ferro. Sugerimos dar preferência para ferro endovenoso em caso de cirurgia próxima. Para cálculo da dose total de hidróxido de ferro: (13Hb) X 2,4 X peso + 500.  Após tratamento, encaminhar ao nefrologista para avaliar inicio de EPO.'
       )
     if (inc('G2-9') && TFG_LT_60 && FERR_100_500 && SAT_LT_20)
       return defaultResp(
